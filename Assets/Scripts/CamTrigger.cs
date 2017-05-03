@@ -29,6 +29,7 @@ public class CamTrigger : MonoBehaviour {
 	}
 	void OnTriggerExit (Collider col) {
 		if (col.tag == "Player") {
+            _camScript.Target = col.gameObject.transform;
             _camScript.DistanceView = _camScript.DistanceOnExit;
 		}
 	}

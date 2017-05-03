@@ -60,7 +60,7 @@ public class Camera_Movement : MonoBehaviour {
 			_wantedPosition = _target.position;
 		else
 			_wantedPosition = _target.position + _distanceView;
-		_dynamicTarget.transform.position = Vector3.Lerp (_dynamicTarget.transform.position, 
+		    _dynamicTarget.transform.position = Vector3.Lerp (_dynamicTarget.transform.position, 
 			_wantedPosition, _smoothness);
 	}	
 }
