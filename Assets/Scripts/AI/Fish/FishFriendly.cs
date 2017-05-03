@@ -12,9 +12,8 @@ public class FishFriendly : Fish
     {
         base.Start();
 
-        stateCache[typeof(FishStateIdle)] = new FishStateIdle(this);
-        stateCache[typeof(FishStateMove)] = new FishStateWayPoint(this);
+        stateCache[typeof(FishStateWayPoint)] = new FishStateWayPoint(this);
 
-        SetState<FishStateIdle>();
+        SetState<FishStateWayPoint>();
     }
 }

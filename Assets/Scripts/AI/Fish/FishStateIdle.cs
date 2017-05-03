@@ -16,6 +16,8 @@ public class FishStateIdle : FishState
 
     public override void Step()
     {
+        fish.transform.position = new Vector3(fish.transform.position.x, fish.transform.position.y, 0);
+
         if (_count < _duration)
         {
             _count++;

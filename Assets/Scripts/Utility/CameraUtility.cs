@@ -24,11 +24,11 @@ public class CameraUtility : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Q))
         {
-            transform.position += Vector3.up;
+            transform.position += Vector3.down;
         }
         if (Input.GetKey(KeyCode.E))
         {
-            transform.position += Vector3.down;
+            transform.position += Vector3.up;
         }
     }
 }
