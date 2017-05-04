@@ -45,7 +45,7 @@ public class SubMovement : MonoBehaviour {
                 quat.eulerAngles = right;
                 transform.rotation = quat;
             }
-            _rigidBody.AddForce(dir * (distance / 10), ForceMode.VelocityChange);
+            _rigidBody.AddForce(dir * (distance / 20), ForceMode.VelocityChange);
         }
 
         if (_charged){
