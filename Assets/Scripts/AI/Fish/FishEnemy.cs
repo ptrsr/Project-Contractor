@@ -4,11 +4,22 @@ using UnityEngine;
 
 public class FishEnemy : Fish
 {
+    [Header("Enemy Fish Variables")]
     [SerializeField]
-    private Transform _target;
+    private float _chaseSpeed = 25f;
+    public float ChaseSpeed { get { return _chaseSpeed; } }
+
+    [SerializeField]
+    private float _detectionRange = 10f;
+    public float DetectionRange { get { return _detectionRange; } }
+
+    [SerializeField]
+    private Transform _target = null;
     public Transform Target { get { return _target; } }
 
-    public LayerMask mask;
+    [SerializeField]
+    private LayerMask _ignoreDetection = -1;
+    public LayerMask IgnoreDetection { get { return _ignoreDetection; } }
 
     public override void Start()
     {
@@ -21,6 +32,12 @@ public class FishEnemy : Fish
         SetState<FishStateIdle>();
     }
 
+    public override void Update()
+    {
+        base.Update();
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+    }
 
     public void OnCollisionEnter(Collision c)
     {

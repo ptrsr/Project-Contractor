@@ -6,31 +6,30 @@ public class FishStateWayPoint : FishState
 {
     public FishStateWayPoint(Fish pFish) : base(pFish) { }
 
-    private List<Transform> _wayPoints;
+    private FishFriendly _fishFriendly;
     private int _wayPointId = 0;
 
     public override void Initialize()
     {
-        _wayPoints = ((FishFriendly)fish).WayPoints;
+        _fishFriendly = (FishFriendly)fish;
     }
 
     public override void Step()
     {
-        if (Vector3.Distance(fish.transform.position, _wayPoints[_wayPointId].position) < 4)
+        if (Vector3.Distance(fish.transform.position, _fishFriendly.WayPoints[_wayPointId].position) < _fishFriendly.WayPointDistance)
         {
             NextWayPoint();
         }
 
-        Vector3 direction = _wayPoints[_wayPointId].position - fish.transform.position;
-        Quaternion lookDir = Quaternion.LookRotation(direction);
-        lookDir.eulerAngles -= new Vector3(-90, 0, 0);
-        fish.transform.rotation = Quaternion.Slerp(fish.transform.rotation, lookDir, 0.05f);
-        fish.Body.AddRelativeForce(new Vector3(0, 0.5f), ForceMode.Force);
+        fish.Direction = _fishFriendly.WayPoints[_wayPointId].position - fish.transform.position;
+
+        fish.RotateTowards(fish.Direction);
+        fish.Body.AddRelativeForce(new Vector3(0, fish.MoveSpeed), ForceMode.Force);
     }
 
     private void NextWayPoint()
     {
-        if (_wayPointId == _wayPoints.Count - 1)
+        if (_wayPointId == _fishFriendly.WayPoints.Count - 1)
             _wayPointId = 0;
         else
             _wayPointId++;

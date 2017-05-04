@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class FishFriendly : Fish
 {
+    [Header("Friendly Fish Variables")]
+    [SerializeField]
+    private int _wayPointDistance = 4;
+    public int WayPointDistance { get { return _wayPointDistance; } }
+
     [SerializeField]
     private List<Transform> _wayPoints;
     public List<Transform> WayPoints { get { return _wayPoints; } }

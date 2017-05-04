@@ -6,100 +6,86 @@ public class FishStateMove : FishState
 {
     public FishStateMove(Fish pFish) : base(pFish) { }
 
-    Transform target;
+    private FishEnemy _fishEnemy;
     float range = 6;
-    float xForce = 0;
-    float yForce = 0;
-    float force = 20;
     int delay = 50;
     int count = 0;
 
     public override void Initialize()
     {
-        target = ((FishEnemy)fish).Target;
+        _fishEnemy = (FishEnemy)fish;
 
+        DetectTarget();
+        SetRandomDirection();
+        DetectWall();
+    }
+
+    public override void Step()
+    {
+        Debug.DrawRay(fish.transform.position, fish.Direction);
+
+        if (fish.RotateTowards(fish.Direction))
+        {
+            fish.Body.AddForce(fish.Direction, ForceMode.Force);
+            fish.SetState<FishStateIdle>();
+        }
+    }
+
+    private void SetRandomDirection()
+    {
         Vector3 difPos = fish.transform.position - fish.OriginPos;
 
-        if (xForce == 0 && yForce == 0)
-        {
-            if (difPos.x < -range)
-            {
-                xForce = force;
-            }
-            else if (difPos.x > range)
-            {
-                xForce = -force;
-            }
-            else
-            {
-                xForce = Random.Range(-force, force);
-            }
+        float xForce;
+        float yForce;
 
-            if (difPos.y < -range)
-            {
-                yForce = force;
-            }
-            else if (difPos.y > range)
-            {
-                yForce = -force;
-            }
-            else
-            {
-                yForce = Random.Range(-force, force);
-            }
-        }
+        if (difPos.x < -range)
+            xForce = fish.MoveSpeed;
+        else if (difPos.x > range)
+            xForce = -fish.MoveSpeed;
+        else
+            xForce = Random.Range(-fish.MoveSpeed, fish.MoveSpeed);
 
+        if (difPos.y < -range)
+            yForce = fish.MoveSpeed;
+        else if (difPos.y > range)
+            yForce = -fish.MoveSpeed;
+        else
+            yForce = Random.Range(-fish.MoveSpeed, fish.MoveSpeed);
+
+        fish.Direction = new Vector3(xForce, yForce, 0);
+    }
+
+    private void DetectWall()
+    {
         RaycastHit hit;
-        if (Physics.Raycast(fish.transform.position, new Vector3(xForce, yForce, 0), out hit, 6, ~((FishEnemy)fish).mask))
+        if (Physics.Raycast(fish.transform.position, fish.Direction, out hit, 6, ~_fishEnemy.IgnoreDetection))
         {
             //Wall detected
             if (Vector3.Distance(hit.point, fish.transform.position) < 6)
             {
                 Vector3 dir = hit.point - fish.transform.position;
 
+                //Avoid wall by rotating to a different direction
                 do
                 {
                     dir = new Vector3(dir.x * Mathf.Cos(90) - dir.y * Mathf.Sin(90), dir.x * Mathf.Sin(90) + dir.y * Mathf.Cos(90));
                     Debug.DrawRay(fish.transform.position, dir, Color.red, 2f);
-                } while (Physics.Raycast(fish.transform.position, dir, out hit, 6, ~((FishEnemy)fish).mask));
+                } while (Physics.Raycast(fish.transform.position, dir, out hit, 6, ~_fishEnemy.IgnoreDetection));
 
                 dir = dir.normalized;
-                xForce = dir.x * force;
-                yForce = dir.y * force;
+                fish.Direction = new Vector3(dir.x * fish.MoveSpeed, dir.y * fish.MoveSpeed, 0);
             }
         }
-
-        float wallDis = Vector3.Distance(fish.transform.position, hit.point);
-        float targetDis = Vector3.Distance(fish.OriginPos, target.position);
-        float origDis = Vector3.Distance(fish.transform.position, fish.OriginPos);;
-
-        if (!Physics.Linecast(fish.transform.position, target.position, ~((FishEnemy)fish).mask) && targetDis < 10 && origDis < 10)
-            fish.SetState<FishStateChase>();
     }
 
-    public override void Step()
+    private void DetectTarget()
     {
-        fish.transform.position = new Vector3(fish.transform.position.x, fish.transform.position.y, 0);
+        float targetDis = Vector3.Distance(fish.OriginPos, _fishEnemy.Target.position);
+        float origDis = Vector3.Distance(fish.transform.position, fish.OriginPos); ;
 
-        Debug.DrawRay(fish.transform.position, new Vector3(xForce, yForce, 0));
-
-        if (count != delay)
+        if (!Physics.Linecast(fish.transform.position, _fishEnemy.Target.position, ~((FishEnemy)fish).IgnoreDetection) && targetDis < _fishEnemy.DetectionRange && origDis < _fishEnemy.DetectionRange)
         {
-            Quaternion lookDir = Quaternion.LookRotation(new Vector3(xForce, yForce, 0));
-            lookDir.eulerAngles -= new Vector3(-90, 0, 0);
-            fish.transform.rotation = Quaternion.Slerp(fish.transform.rotation, lookDir, 0.05f);
-            count++;
-        }
-        else
-        {
-            count = 0;
-
-            fish.Body.AddForce(new Vector3(xForce, yForce, 0), ForceMode.Force);
-
-            xForce = 0;
-            yForce = 0;
-
-            fish.SetState<FishStateIdle>();
+            fish.SetState<FishStateChase>();
         }
     }
 }

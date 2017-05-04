@@ -6,37 +6,27 @@ public class FishStateChase : FishState
 {
     public FishStateChase(Fish pFish) : base(pFish) { }
 
-    Transform target;
+    private FishEnemy _fishEnemy;
     int delay = 50;
     int count = 0;
 
     public override void Initialize()
     {
-        target = ((FishEnemy)fish).Target;
+        _fishEnemy = (FishEnemy)fish;
     }
 
     public override void Step()
     {
-        fish.transform.position = new Vector3(fish.transform.position.x, fish.transform.position.y, 0);
-
-        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > 4)
+        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > _fishEnemy.DetectionRange)
+        {
             fish.SetState<FishStateMove>();
-
-        Vector3 dir = target.position - fish.transform.position;
-
-        if (count != delay)
-        {
-            Quaternion lookDir = Quaternion.LookRotation(dir);
-            lookDir.eulerAngles -= new Vector3(-90, 0, 0);
-            fish.transform.rotation = Quaternion.Slerp(fish.transform.rotation, lookDir, 0.15f);
-            count++;
         }
-        else
+
+        Vector3 dir = _fishEnemy.Target.position - fish.transform.position;
+
+        if (fish.RotateTowards(dir, fish.RotationModifier))
         {
-            fish.Body.AddForce(dir.normalized * 25, ForceMode.Force);
-
-            count = 0;
-
+            fish.Body.AddForce(dir.normalized * _fishEnemy.ChaseSpeed);
             fish.SetState<FishStateIdle>();
         }
     }

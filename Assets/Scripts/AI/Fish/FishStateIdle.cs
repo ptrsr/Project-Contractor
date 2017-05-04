@@ -7,7 +7,6 @@ public class FishStateIdle : FishState
     public FishStateIdle(Fish pFish) : base(pFish) { }
 
     private int _count = 0;
-    private int _duration = 100;
 
     public override void Initialize()
     {
@@ -18,7 +17,8 @@ public class FishStateIdle : FishState
     {
         fish.transform.position = new Vector3(fish.transform.position.x, fish.transform.position.y, 0);
 
-        if (_count < _duration)
+        //Idle time
+        if (_count < fish.IdleTime)
         {
             _count++;
         }
