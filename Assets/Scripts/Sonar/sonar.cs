@@ -20,6 +20,7 @@ public class sonar : MonoBehaviour {
 	void Start() {
 		pulse = new float[3];
 		activepulse = new bool[3];
+        _cam.depthTextureMode = DepthTextureMode.Depth;
 	}
 
 	void Update () {
