@@ -8,93 +8,88 @@ public class sonar : MonoBehaviour {
 	public Transform _origin;
 	public Camera _cam;
 
-	public float _speed = 20;
-	public float _width = 1;
-	public float _travel = 10;
+	private bool _sonar;
+	private float _speed = 5;
 
-	public bool _sonar;
+	public float _frequency;
+	private float _interval;
+	private float _width;
+	private float _traveldistance;
 
-	public float[] pulse;
-	public bool[] activepulse;
+	public int _pulselength;
+	private float[] pulse;
+	private bool[] activepulse;
 
 	void Start() {
-		pulse = new float[3];
-		activepulse = new bool[3];
-        _cam.depthTextureMode = DepthTextureMode.Depth;
+		pulse = new float[_pulselength];
+		activepulse = new bool[_pulselength];
+		_cam.depthTextureMode = DepthTextureMode.Depth;
 	}
 
 	void Update () {
-		SonarControl();
+		PassiveSonar ();
 		PulseActivate ();
+		FrequencyControl ();
 		PulseControl ();
 	}
 
+	void FrequencyControl() {
+		float shift = (_frequency - 1) / (5 - 1);
+
+		_interval = Mathf.Lerp (0.25f, 3f, shift);
+		_width = Mathf.Lerp (0.2f, 2f, shift);
+		_traveldistance = Mathf.Lerp (5f, 20f, shift);
+	}
+
 	void PulseActivate() {
-		
 		if (_sonar) {
-			if (!activepulse [0]) {
-				activepulse [0] = true;
-				return;
-			}
-			if (!activepulse [1]) {
-				activepulse [1] = true;
-				return;
-			}
-			if (!activepulse [2]) {
-				activepulse [2] = true;
-				return;
+			for (int i = 0; i < _pulselength; i++) {
+				if (!activepulse [i]) {
+					activepulse [i] = true;
+					return;
+				}
 			}
 		}
 	}
 
 	void PulseControl() {
-
-		if (activepulse [0]) {
-			pulse [0] += Time.deltaTime * _speed;
-			if (pulse [0] > _travel) {
-				activepulse [0] = false;
-				pulse [0] = 0;
+		for (int i = 0; i < _pulselength; i++) {
+			if (activepulse [i]) {
+				pulse [i] += Time.deltaTime * _speed;
+				if (pulse [i] > _traveldistance) {
+					activepulse [i] = false;
+					pulse [i] = 0;
+				}
 			}
 		}
-
-		if (activepulse [1]) {
-			pulse [1] += Time.deltaTime * _speed;
-			if (pulse [1] > _travel) {
-				activepulse [1] = false;
-				pulse [1] = 0;
-			}
-		}
-
-		if (activepulse [2]) {
-			pulse [2] += Time.deltaTime * _speed;
-			if (pulse [2] > _travel) {
-				activepulse [2] = false;
-				pulse [2] = 0;
-			}
-		}
-
 	}
-
-	void SonarControl() {
-		if (Input.GetKeyDown (KeyCode.Space))
+		
+	void ActiveSonar() {
+		_sonar = Input.GetKeyDown (KeyCode.Space);
+	}
+		
+	float time;
+	void PassiveSonar () {
+		time += Time.deltaTime;
+		if (time > _interval) {
 			_sonar = true;
-		else
+			time = 0;
+		} else {
 			_sonar = false;
+		}
 	}
 
 
 
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst){
-		
 		SonarMat.SetVector ("_origin", _origin.position);
 		SonarMat.SetFloat ("_width", _width);
+		SonarMat.SetInt ("_pulselength", _pulselength);
 		SonarMat.SetFloatArray ("_pulses", pulse);
 		RaycastCornerBlit (src, dst, SonarMat);
-
 	}
-
-
+		
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
 	{
 		// Compute Frustum Corners
