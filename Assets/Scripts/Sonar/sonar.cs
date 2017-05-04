@@ -37,7 +37,7 @@ public class sonar : MonoBehaviour {
 		float shift = (_frequency - 1) / (5 - 1);
 
 		_interval = Mathf.Lerp (0.25f, 3f, shift);
-		_width = Mathf.Lerp (0.2f, 2f, shift);
+		_width = Mathf.Lerp (1f, 5f, shift);
 		_traveldistance = Mathf.Lerp (5f, 20f, shift);
 	}
 
