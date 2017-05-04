@@ -58,10 +58,10 @@ public class FishStateMove : FishState
     private void DetectWall()
     {
         RaycastHit hit;
-        if (Physics.Raycast(fish.transform.position, fish.Direction, out hit, 6, ~_fishEnemy.IgnoreDetection))
+        if (Physics.Raycast(fish.transform.position, fish.Direction, out hit, _fishEnemy.WallDetectionRange, ~_fishEnemy.IgnoreDetection))
         {
             //Wall detected
-            if (Vector3.Distance(hit.point, fish.transform.position) < 6)
+            if (Vector3.Distance(hit.point, fish.transform.position) < _fishEnemy.WallDetectionRange)
             {
                 Vector3 dir = hit.point - fish.transform.position;
 
@@ -69,8 +69,8 @@ public class FishStateMove : FishState
                 do
                 {
                     dir = new Vector3(dir.x * Mathf.Cos(90) - dir.y * Mathf.Sin(90), dir.x * Mathf.Sin(90) + dir.y * Mathf.Cos(90));
-                    Debug.DrawRay(fish.transform.position, dir, Color.red, 2f);
-                } while (Physics.Raycast(fish.transform.position, dir, out hit, 6, ~_fishEnemy.IgnoreDetection));
+                    Debug.DrawRay(fish.transform.position, dir, Color.red, 1f);
+                } while (Physics.Raycast(fish.transform.position, dir, out hit, _fishEnemy.WallDetectionRange, ~_fishEnemy.IgnoreDetection));
 
                 dir = dir.normalized;
                 fish.Direction = new Vector3(dir.x * fish.MoveSpeed, dir.y * fish.MoveSpeed, 0);

@@ -18,6 +18,10 @@ public class FishEnemy : Fish
     public Transform Target { get { return _target; } }
 
     [SerializeField]
+    private int _wallDetectionRange = 4;
+    public int WallDetectionRange { get { return _wallDetectionRange; } }
+
+    [SerializeField]
     private LayerMask _ignoreDetection = -1;
     public LayerMask IgnoreDetection { get { return _ignoreDetection; } }
 
