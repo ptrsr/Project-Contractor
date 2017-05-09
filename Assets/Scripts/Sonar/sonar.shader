@@ -11,8 +11,6 @@
 		Pass
 		{
 			CGPROGRAM
-			// Upgrade NOTE: excluded shader from DX11, OpenGL ES 2.0 because it uses unsized arrays
-			
 			#pragma vertex vert
 			#pragma fragment frag
 			
@@ -34,7 +32,6 @@
 			};
 
 			sampler2D _MainTex;
-			float4 _MainTex_ST;
 			sampler2D _CameraDepthTexture;
 			
 			v2f vert (appdata v)
@@ -47,9 +44,13 @@
 				return o;
 			}
 
-			float4 _origin;
 			float _width;
-			float _pulses[3];
+			int _pulselength;
+			float _pulses[20];
+			float4 originarray[20];
+			float widtharray[20];
+			int m;
+
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -61,17 +62,21 @@
 				float3 pos = _WorldSpaceCameraPos + dir;
 				fixed4 pulsecol = fixed4(0,0,0,0);
 
-				float dist = distance(pos, _origin);
-
-				for(int i = 0; i < 3; i++) {
-					if (dist < _pulses[i] && dist > _pulses[i] - _width) {
-						float diff = 1 - (_pulses[i] - dist) / (_width);
+				for(int i = 0; i < _pulselength; i++) {
+					float dist = distance(pos, originarray[i]);
+					if (dist < _pulses[i] && dist > _pulses[i] - widtharray[i]) {
+						float diff = 1 - (_pulses[i] - dist) / (widtharray[i]);
 						pulsecol = lerp(fixed4(1,0,0,1), fixed4(1,1,1,1), diff* .5);
 						pulsecol *= diff;
 					}
 				}
 
-				return col *= pulsecol;
+				if(m==0)
+					return col + pulsecol;
+				else
+					return col * pulsecol; 
+
+//				return if(m==0){col * pulsecol;} else{
 			}
 			ENDCG
 		}

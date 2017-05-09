@@ -19,10 +19,19 @@ public class sonar : MonoBehaviour {
 	public int _pulselength;
 	private float[] pulse;
 	private bool[] activepulse;
+	private Vector4[] origin;
+	private float[] travel;
+	private float[] width;
+
+	public bool multiply = false;
+	private int m;
 
 	void Start() {
-		pulse = new float[_pulselength];
 		activepulse = new bool[_pulselength];
+		pulse = new float[_pulselength];
+		origin = new Vector4[_pulselength];
+		travel = new float[_pulselength];
+		width = new float[_pulselength];
 		_cam.depthTextureMode = DepthTextureMode.Depth;
 	}
 
@@ -31,13 +40,18 @@ public class sonar : MonoBehaviour {
 		PulseActivate ();
 		FrequencyControl ();
 		PulseControl ();
+
+		if (multiply)
+			m = 1;
+		else
+			m = 0;
 	}
 
 	void FrequencyControl() {
 		float shift = (_frequency - 1) / (5 - 1);
 
 		_interval = Mathf.Lerp (0.25f, 3f, shift);
-		_width = Mathf.Lerp (1f, 5f, shift);
+		_width = Mathf.Lerp (2.0f, 7f, shift);
 		_traveldistance = Mathf.Lerp (5f, 20f, shift);
 	}
 
@@ -46,6 +60,9 @@ public class sonar : MonoBehaviour {
 			for (int i = 0; i < _pulselength; i++) {
 				if (!activepulse [i]) {
 					activepulse [i] = true;
+					origin [i] = _origin.position;
+					width [i] = _width;
+					travel [i] = _traveldistance;
 					return;
 				}
 			}
@@ -56,18 +73,18 @@ public class sonar : MonoBehaviour {
 		for (int i = 0; i < _pulselength; i++) {
 			if (activepulse [i]) {
 				pulse [i] += Time.deltaTime * _speed;
-				if (pulse [i] > _traveldistance) {
+				if (pulse [i] > travel[i]) {
 					activepulse [i] = false;
 					pulse [i] = 0;
 				}
 			}
 		}
 	}
-		
+
 	void ActiveSonar() {
 		_sonar = Input.GetKeyDown (KeyCode.Space);
 	}
-		
+
 	float time;
 	void PassiveSonar () {
 		time += Time.deltaTime;
@@ -80,16 +97,17 @@ public class sonar : MonoBehaviour {
 	}
 
 
-
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst){
-		SonarMat.SetVector ("_origin", _origin.position);
 		SonarMat.SetFloat ("_width", _width);
 		SonarMat.SetInt ("_pulselength", _pulselength);
 		SonarMat.SetFloatArray ("_pulses", pulse);
+		SonarMat.SetVectorArray ("originarray", origin);
+		SonarMat.SetFloatArray ("widtharray", width);
+		SonarMat.SetInt ("m", m);
 		RaycastCornerBlit (src, dst, SonarMat);
 	}
-		
+
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
 	{
 		// Compute Frustum Corners
