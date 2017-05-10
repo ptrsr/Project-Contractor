@@ -6,19 +6,19 @@ public class FishStateContinuesMove : FishState
 {
     public FishStateContinuesMove(Fish pFish) : base(pFish) { }
 
-    private FishEnemy _fishEnemy;
+    private ElectricEel _eel;
 
     public override void Initialize()
     {
-        _fishEnemy = (FishEnemy)fish;
+        _eel = (ElectricEel)fish;
     }
 
     public override void Step()
     {
         fish.Body.AddForce(new Vector3(fish.MoveSpeed, 0, 0), ForceMode.Acceleration);
         
-        Debug.DrawRay(fish.transform.position, fish.Direction * _fishEnemy.WallDetectionRange);
-        if (Physics.Raycast(fish.transform.position, fish.Direction, 2f, ~_fishEnemy.IgnoreDetection))
+        Debug.DrawRay(fish.transform.position, fish.Direction * _eel.WallDetectionRange);
+        if (Physics.Raycast(fish.transform.position, fish.Direction, 2f, ~_eel.IgnoreDetection))
         {
             fish.MoveSpeed = -fish.MoveSpeed;
             fish.SetState<FishStateFlipRotation>();

@@ -18,13 +18,16 @@ public class ElectricEel : FishNeutral
 
     public override void Update()
     {
-        base.Update();
+        BindZ();
 
-        transform.position = new Vector3(transform.position.x, OriginPos.y, 0f);
+        base.Update();
     }
 
     public void OnCollisionEnter(Collision c)
     {
+        if (c.rigidbody == null)
+            return;
+
         //Stun player
 
         c.rigidbody.AddForce(new Vector3(MoveSpeed / 2f, 2f, 0), ForceMode.Impulse);
