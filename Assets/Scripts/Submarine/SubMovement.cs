@@ -8,6 +8,9 @@ public class SubMovement : MonoBehaviour {
     private Rigidbody _rigidBody;
     private Camera _camera;
 
+    [SerializeField]
+    private Transform light;
+
     private bool _tapping;
     private float _lastTap;
     private float _tapTime = 1;
@@ -20,16 +23,20 @@ public class SubMovement : MonoBehaviour {
         _camera = Camera.main;
 	}
 
-	void Update () {
+	void Update ()
+    {
+        Vector3 pos = Input.mousePosition;
+        pos.z = -Camera.main.transform.position.z;
+        pos = Camera.main.ScreenToWorldPoint(pos);
+        Vector3 dir = pos - transform.position;
+        dir = dir.normalized;
+
+        float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
+
+        light.eulerAngles = new Vector3(angle - 90, 90, 0);
+
         if (Input.GetMouseButton(0))
         {
-            Vector3 pos = Input.mousePosition;
-            pos.z = -Camera.main.transform.position.z;
-            pos = Camera.main.ScreenToWorldPoint(pos);
-            Vector3 dir = pos - transform.position;
-            float distance = Vector3.Distance(pos, transform.position);
-            dir = dir.normalized;
-            float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
             if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y > 180)
             {
                 Vector3 right = new Vector3(0, 90, 0);
@@ -45,7 +52,8 @@ public class SubMovement : MonoBehaviour {
                 quat.eulerAngles = right;
                 transform.rotation = quat;
             }
-            _rigidBody.AddForce(dir * (distance / 20), ForceMode.VelocityChange);
+            float distance = Vector3.Distance(pos, transform.position);
+            _rigidBody.AddForce(dir * (distance / 10), ForceMode.VelocityChange);
         }
 
         if (_charged){
@@ -66,10 +74,10 @@ public class SubMovement : MonoBehaviour {
             if ((Time.time - _lastTap) < _tapTime)
             {
                 Debug.Log("DoubleTap");
-                Vector3 pos = Input.mousePosition;
+                pos = Input.mousePosition;
                 pos.z = -Camera.main.transform.position.z;
                 pos = Camera.main.ScreenToWorldPoint(pos);
-                Vector3 dir = pos - transform.position;
+                dir = pos - transform.position;
                 float distance = Vector3.Distance(pos, transform.position);
                 _rigidBody.AddForce(dir * (distance / 15), ForceMode.Impulse);
                 _tapping = false;
