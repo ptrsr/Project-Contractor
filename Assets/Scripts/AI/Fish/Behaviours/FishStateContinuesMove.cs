@@ -18,7 +18,7 @@ public class FishStateContinuesMove : FishState
         fish.Body.AddForce(new Vector3(fish.MoveSpeed, 0, 0), ForceMode.Acceleration);
         
         Debug.DrawRay(fish.transform.position, fish.Direction * _eel.WallDetectionRange);
-        if (Physics.Raycast(fish.transform.position, fish.Direction, 2f, ~_eel.IgnoreDetection))
+        if (Physics.Raycast(fish.transform.position, fish.Direction, _eel.WallDetectionRange, ~_eel.IgnoreDetection))
         {
             fish.MoveSpeed = -fish.MoveSpeed;
             fish.SetState<FishStateFlipRotation>();
