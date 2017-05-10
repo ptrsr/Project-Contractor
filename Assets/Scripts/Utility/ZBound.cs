@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ZBound : MonoBehaviour
 {
+    public bool tap = false;
+
     public void Update()
     {
         if (Input.GetKey(KeyCode.UpArrow))
@@ -21,6 +23,10 @@ public class ZBound : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.position += Vector3.right * 0.1f;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            tap = true;
         }
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);

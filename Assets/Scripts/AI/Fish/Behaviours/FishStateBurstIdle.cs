@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateIdle : FishState
+public class FishStateBurstIdle : FishState
 {
-    public FishStateIdle(Fish pFish) : base(pFish) { }
+    public FishStateBurstIdle(Fish pFish) : base(pFish) { }
 
     private int _count = 0;
 
     public override void Initialize()
     {
-
+        //Empty
     }
 
     public override void Step()
@@ -24,7 +24,7 @@ public class FishStateIdle : FishState
         }
         else
         {
-            fish.SetState<FishStateMove>();
+            fish.SetState<FishStateBurstMove>();
             _count = 0;
         }
     }

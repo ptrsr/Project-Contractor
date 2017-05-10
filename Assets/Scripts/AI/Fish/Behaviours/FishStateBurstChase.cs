@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateChase : FishState
+public class FishStateBurstChase : FishState
 {
-    public FishStateChase(Fish pFish) : base(pFish) { }
+    public FishStateBurstChase(Fish pFish) : base(pFish) { }
 
     private FishEnemy _fishEnemy;
-    int delay = 50;
-    int count = 0;
 
     public override void Initialize()
     {
@@ -17,9 +15,9 @@ public class FishStateChase : FishState
 
     public override void Step()
     {
-        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > _fishEnemy.DetectionRange)
+        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > _fishEnemy.Range)
         {
-            fish.SetState<FishStateMove>();
+            fish.SetState<FishStateBurstMove>();
         }
 
         Vector3 dir = _fishEnemy.Target.position - fish.transform.position;
@@ -27,7 +25,7 @@ public class FishStateChase : FishState
         if (fish.RotateTowards(dir, fish.RotationModifier))
         {
             fish.Body.AddForce(dir.normalized * _fishEnemy.ChaseSpeed);
-            fish.SetState<FishStateIdle>();
+            fish.SetState<FishStateBurstIdle>();
         }
     }
 }

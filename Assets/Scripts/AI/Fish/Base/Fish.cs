@@ -8,7 +8,7 @@ public abstract class Fish : MonoBehaviour
     [Header("Fish General Variables")]
     [SerializeField]
     private float _moveSpeed = 20f;
-    public float MoveSpeed { get { return _moveSpeed; } }
+    public float MoveSpeed { get { return _moveSpeed; } set { _moveSpeed = value; } }
 
     [SerializeField]
     private int _rotationTime = 60;
@@ -40,6 +40,7 @@ public abstract class Fish : MonoBehaviour
     //State tracking
     protected Dictionary<Type, FishState> stateCache = new Dictionary<Type, FishState>();
     private FishState _state;
+    public FishState GetState { get { return _state; } }
 
     public virtual void Start()
     {
@@ -59,11 +60,17 @@ public abstract class Fish : MonoBehaviour
         _state.Initialize();
     }
 
-    public bool RotateTowards(Vector3 target, float rotationModifier = 0f)
+    //Removing a state
+    public void RemoveState<T>() where T : FishState
+    {
+        stateCache[typeof(T)] = null;
+    }
+
+    public bool RotateTowards(Vector3 direction, float rotationModifier = 0f)
     {
         if (_rotationCount != _rotationTime)
         {
-            Quaternion lookDir = Quaternion.LookRotation(target);
+            Quaternion lookDir = Quaternion.LookRotation(direction);
             lookDir.eulerAngles -= new Vector3(-90, 0, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookDir, _rotationSpeed + rotationModifier);
             _rotationCount++;
@@ -78,5 +85,11 @@ public abstract class Fish : MonoBehaviour
             //Done rotating
             return true;
         }
+    }
+
+    //Places the object on z = 0
+    protected void BindZ()
+    {
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
     }
 }
