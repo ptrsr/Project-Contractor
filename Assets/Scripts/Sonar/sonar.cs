@@ -80,8 +80,12 @@ public class Sonar : MonoBehaviour
 		aWidth      = new float[_sonar.maxPulses];
 	}
 
-	void Update () {
-		PassiveSonar ();
+	void Update ()
+    {
+        _depth = -Camera.main.transform.position.y / 80;
+        _fog.worldLight.intensity = 1 - _depth;
+
+        PassiveSonar ();
 		ActiveSonar();
 		PulseActivate ();
 		FrequencyControl ();
@@ -153,9 +157,11 @@ public class Sonar : MonoBehaviour
         _mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
         _mat.SetFloat("_zoom", -transform.position.z);
 
+
+
         Vector2 spotScreenPos = WorldToScreen(_fog.spotLight.position);
 
-        _mat.SetVector("_spotPos", WorldToScreen(spotScreenPos));
+        _mat.SetVector("_spotPos", spotScreenPos);
         _mat.SetVector("_spotDir", MouseDirection(spotScreenPos));
 
         //sonar

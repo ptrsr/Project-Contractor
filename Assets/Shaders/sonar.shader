@@ -33,15 +33,21 @@
 				float4 ray	   : TEXCOORD2;
 			};
 			
+			uniform float4 _startColor;
+			uniform float4 _endColor;
+			uniform float  _depth;
+
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 
 				o.vertex  = UnityObjectToClipPos(v.vertex);
+				o.color   = lerp(_startColor, _endColor, _depth - v.uv.y / 5);
+
 				o.uv	  = v.uv;
 				o.uvdepth = v.uv.xy;
 				o.ray	  = v.ray;
-				
 				return o;
 			}
 
@@ -49,23 +55,18 @@
 			uniform sampler2D _MainTex;
 			uniform sampler2D _CameraDepthTexture;
 
+
 			//sonar
 			uniform int    _maxPulses;
 			uniform float  _aPulseDist[20];
 			uniform float4 _aOrigin   [20];
 			uniform float  _aWidth    [20];
 
-			int m;
-
 			//fog
-			uniform float4 _startColor;
-			uniform float4 _endColor;
-
-			uniform float _depth;
 			uniform float _zoom;
 
 			uniform float4 _spotPos;
-			uniform float4  _spotDir;
+			uniform float4 _spotDir;
 
 			uniform float _intensity;
 
@@ -100,17 +101,14 @@
 				float4 fog = max(lighting, 1 - _depth) * i.color;
 				float4 volumetric = pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
 
-				return lighting;
-
 				if (linearDepth == 1)
 					return fog + volumetric;
 
-				return lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
+				float4 finalColor = lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
 
-				//if(m==0)
-				//	return fColor + pColor;
-				//else
-				//	return fColor * pColor;
+				finalColor.g += pColor.r;
+
+				return finalColor;
 			}
 
 			float spot(v2f i)
