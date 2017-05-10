@@ -33,16 +33,16 @@ Shader "Custom/Fog"
 
 			struct input
 			{
-				float4 pos : POSITION;
-				half2 uv : TEXCOORD0;
+				float4	pos	: POSITION;
+				half2	uv	: TEXCOORD0;
 			};
 
 			struct output
 			{
-				float4 pos : SV_POSITION;
-				half2 uv : TEXCOORD0;
-
-				float4 color : COLOR0;
+				float4	pos				: SV_POSITION;
+				half2	uv			    : TEXCOORD0;
+				float4	color			: COLOR0;
+				float4	interpolatedRay  : TEXCOORD2;
 			};
 
 			output vert(input i) 
@@ -60,21 +60,20 @@ Shader "Custom/Fog"
 
 			float4 frag(output o) : COLOR
 			{
-				//objects
+				//FOG
 				float4 fColor = tex2D(_MainTex, o.uv);
-
 				float dSample = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, o.uv));
 				float sampleDepth = Linear01Depth(dSample);
 
 				float lighting = spot(o) * boundary(LinearEyeDepth(dSample));
-
-				//lerp between objects and fog depending on 
 				float4 fog = max(lighting, 1 - _depth) * o.color;
 
-				if (sampleDepth == 1)
-					return fog;
+				float4 volumetric = pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
 
-				return lerp(fColor, fog, pow(sampleDepth, _intensity)) * max(lighting, 1) + pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
+				if (sampleDepth == 1)
+					return fog + volumetric;
+
+				return lerp(fColor, fog, pow(sampleDepth, _intensity)) * max(lighting, 1) + volumetric;
 			}
 
 			//calculate if the fragment is inside the spot

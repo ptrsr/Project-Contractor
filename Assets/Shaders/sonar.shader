@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		_MainTex   ("Texture", 2D) = "white" {}
 	}
 	SubShader
 	{
@@ -11,8 +11,6 @@
 		Pass
 		{
 			CGPROGRAM
-			// Upgrade NOTE: excluded shader from DX11, OpenGL ES 2.0 because it uses unsized arrays
-			
 			#pragma vertex vert
 			#pragma fragment frag
 			
@@ -21,58 +19,126 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-				float4 ray : TEXCOORD1;
+				float2 uv	  : TEXCOORD0;
+				float4 ray    : TEXCOORD1;
 			};
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-				float2 uvdepth : TEXCOORD1;
-				float4 interpolatedRay : TEXCOORD2;
-			};
+				float4 vertex  : SV_POSITION;
+				float4	color  : COLOR0;
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			sampler2D _CameraDepthTexture;
+				float2 uv	   : TEXCOORD0;
+				float2 uvdepth : TEXCOORD1;
+				float4 ray	   : TEXCOORD2;
+			};
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv.xy;
+
+				o.vertex  = UnityObjectToClipPos(v.vertex);
+				o.uv	  = v.uv;
 				o.uvdepth = v.uv.xy;
-				o.interpolatedRay = v.ray;
+				o.ray	  = v.ray;
+				
 				return o;
 			}
 
-			float4 _origin;
-			float _width;
-			float _pulses[3];
+			//textures
+			uniform sampler2D _MainTex;
+			uniform sampler2D _CameraDepthTexture;
+
+			//sonar
+			uniform int    _maxPulses;
+			uniform float  _aPulseDist[20];
+			uniform float4 _aOrigin   [20];
+			uniform float  _aWidth    [20];
+
+			int m;
+
+			//fog
+			uniform float4 _startColor;
+			uniform float4 _endColor;
+
+			uniform float _depth;
+			uniform float _zoom;
+
+			uniform float4 _spotPos;
+			uniform float4  _spotDir;
+
+			uniform float _intensity;
+
+			//functions
+			float spot(v2f i);
+			float4 gammaCorrection(float4 color);
+			float boundary(float dSample);
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.uv);
+				fixed4 fColor = tex2D(_MainTex, i.uv);
+				float dSample = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
 
-				float rawDepth = DecodeFloatRG(tex2D(_CameraDepthTexture, i.uvdepth));
-				float linearDepth = Linear01Depth(rawDepth);
-				float4 dir = linearDepth * i.interpolatedRay;
+				float linearDepth = Linear01Depth(dSample);
+				float4 dir = linearDepth * i.ray;
 				float3 pos = _WorldSpaceCameraPos + dir;
-				fixed4 pulsecol = fixed4(0,0,0,0);
+				fixed4 pColor = fixed4(0,0,0,0);
 
-				float dist = distance(pos, _origin);
+				for(int j = 0; j < _maxPulses; j++) 
+				{
+					float dist = distance(pos, _aOrigin[j]);
 
-				for(int i = 0; i < 3; i++) {
-					if (dist < _pulses[i] && dist > _pulses[i] - _width) {
-						float diff = 1 - (_pulses[i] - dist) / (_width);
-						pulsecol = lerp(fixed4(1,0,0,1), fixed4(1,1,1,1), diff* .5);
-						pulsecol *= diff;
+					if (dist < _aPulseDist[j] && dist > _aPulseDist[j] - _aWidth[j])
+					{
+						float diff = 1 - (_aPulseDist[j] - dist) / (_aWidth[j]);
+						pColor = lerp(fixed4(1,0,0,1), fixed4(1,1,1,1), diff);
+						pColor *= diff;
 					}
 				}
 
-				return col *= pulsecol;
+				float lighting = spot(i) * boundary(LinearEyeDepth(dSample));
+				float4 fog = max(lighting, 1 - _depth) * i.color;
+				float4 volumetric = pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
+
+				return lighting;
+
+				if (linearDepth == 1)
+					return fog + volumetric;
+
+				return lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
+
+				//if(m==0)
+				//	return fColor + pColor;
+				//else
+				//	return fColor * pColor;
 			}
+
+			float spot(v2f i)
+			{
+				float angle = 9;
+				float falloff = 2;
+
+				float camDist = 15;
+				float scaling = 20;
+
+				float fustrum = pow(max(dot(normalize(i.uv - _spotPos.xy), _spotDir), 0), angle);
+				float dist = pow(min(1 - distance(_spotPos.xy, i.uv) * (1 + (_zoom - camDist) / scaling), 1), falloff);
+
+				return fustrum * dist;
+			}
+
+			float4 gammaCorrection(float4 color)
+			{
+				float gamma = 0.7 + (_depth - 0.2) / 2;
+
+				return float4(pow(color.xyz, 1.0 / gamma).xyz, 1);
+			}
+
+			float boundary(float dSample)
+			{
+				return clamp((dSample - 14) / 1, 0, 1);
+			}
+
 			ENDCG
 		}
 	}

@@ -45,26 +45,24 @@ public class Fog : MonoBehaviour
         _worldLight.intensity = 1 - _depth;
     }
 
-    private void OnRenderImage(RenderTexture src, RenderTexture dest)
-    {
-        if (_shader != null && _depth > 0)
-        {
-            _material.SetFloat("_intensity", intensity);
-            _material.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
-            _material.SetFloat("_zoom", -transform.position.z);
+    //private void OnRenderImage(RenderTexture src, RenderTexture dest)
+    //{
+    //    if (_shader != null && _depth > 0)
+    //    {
+    //        _material.SetFloat("_intensity", intensity);
+    //        _material.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+    //        _material.SetFloat("_zoom", -transform.position.z);
 
-            Vector2 spotScreenPos = WorldToScreen(_spotLight.transform.position);
+    //        _material.SetVector("_spotPos", WorldToScreen(_spotLight.transform.position));
+    //        _material.SetVector("_spotDir", MouseDirection(spotScreenPos));
+    //        Graphics.Blit(src, dest, _material);
 
-            _material.SetVector("_spotPos", spotScreenPos);
-            _material.SetVector("_spotDir", MouseDirection(spotScreenPos));
-            Graphics.Blit(src, dest, _material);
-
-        }
-        else
-        {
-            Graphics.Blit(src, dest);
-        }
-    }
+    //    }
+    //    else
+    //    {
+    //        Graphics.Blit(src, dest);
+    //    }
+    //}
 
     private Vector2 MouseDirection(Vector2 objectPos)
     {
