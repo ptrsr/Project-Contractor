@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib SubmarineV1.mtl
+mtllib SubMarineV2.mtl
 g default
 v 2.946847 1.791505 0.771525
 v 2.946847 2.110346 1.090366
