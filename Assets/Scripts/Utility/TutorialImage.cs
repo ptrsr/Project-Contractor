@@ -54,6 +54,12 @@ public class TutorialImage : MonoBehaviour
     }
 
 
+    public void SetImage()
+    {
+
+    }
+
+
     public void InitImage(bool left)
     {
         _tutorialStart = true;

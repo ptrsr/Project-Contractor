@@ -15,11 +15,15 @@ public class SubMovement : MonoBehaviour {
     [SerializeField]
     private int chargeSpeed = 50;
 
+
+    //----------------------------------Checks for submarine states----------------------------
     private bool _tapping = false;
     private bool _charged = false;
     private bool _slowed = false;
     private bool _left = false;
     private bool _right = false;
+
+    //---------------------------------Charging date--------------------------------------------
     private float _lastTap;
     [SerializeField]
     private float _tapIntervalsForCharge = 1;
@@ -28,24 +32,41 @@ public class SubMovement : MonoBehaviour {
     private float _counter = 0;
 
 
-	void Awake () {
+    //------------------------------Rotation of sumbarine---------------------------------------
+    private Quaternion left = new Quaternion();
+    private Quaternion right = new Quaternion();
+    private Quaternion forward = new Quaternion();
+
+    [SerializeField]
+    private Vector3 _possibleLeftTurn = new Vector3(0, 25, 0);
+    [SerializeField]
+    private Vector3 _possibleRightTurn = new Vector3(0, -25, 0);
+    [SerializeField]
+    private float _smoothnessOfTurning = 0.1f;
+
+
+    void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        FindObjectOfType<TutorialImage>().SetChaseTarget(this.transform);
-	}
+        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        left = GetQuaternionFromVector(_possibleLeftTurn);
+        right = GetQuaternionFromVector(_possibleRightTurn);
+        forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
+    }
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         if (_left)
         {
-            transform.rotation = GetQuaternionFromVector(new Vector3(0, 90, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation,left, _smoothnessOfTurning);
         }
         if (_right)
         {
-            transform.rotation = GetQuaternionFromVector(new Vector3(0, -90, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation, right, _smoothnessOfTurning);
         }
         //Cooldown after you charge(double tap)
         if (_charged)
@@ -85,6 +106,12 @@ public class SubMovement : MonoBehaviour {
                 speed /= 2;
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
+        }
+        else
+        {
+            _left = false;
+            _right = false;
+            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
         //Check for double tapping for charge
         if (Input.GetMouseButtonDown(0))
