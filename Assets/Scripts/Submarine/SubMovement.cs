@@ -64,7 +64,7 @@ public class SubMovement : MonoBehaviour {
 
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
-        _oxygen = FindObjectOfType<Oxygen>();
+        //_oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
         TutorialImage tutorial = FindObjectOfType<TutorialImage>();
@@ -79,7 +79,7 @@ public class SubMovement : MonoBehaviour {
     }
 
 	void FixedUpdate () {
-        _oxygen.Remove(1);
+       // _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         GetCorrectDirection();
         RotateDependingOnDirection();
