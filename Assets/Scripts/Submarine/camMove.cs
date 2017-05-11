@@ -31,7 +31,7 @@ public class camMove : MonoBehaviour {
 		Vector3 dir = player.transform.position - _lazyTarget.transform.position;
 		float dis = dir.magnitude;
 		if (dis > 1)
-			_lazyTarget.transform.position += dir.normalized * 0.1f;
+			_lazyTarget.transform.position += dir.normalized * (dis/5);
 	}
 		
 	void dynaTarget() {
