@@ -79,7 +79,7 @@ public class SubMovement : MonoBehaviour {
     }
 
 	void FixedUpdate () {
-       // _oxygen.Remove(1);
+        // _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         GetCorrectDirection();
         RotateDependingOnDirection();
@@ -160,7 +160,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingLeft = true;
         }
-        else if (dir.x <= -0.3f && dir.y <= -0.3f)
+        else if (dir.x <= -0.3f && dir.y <= -0.1f)
         {
             _goingDownLeft = true;
         }
@@ -168,7 +168,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingUpLeft = true;
         }
-        else if (dir.x <= 0.3f && dir.y <= -0.3f)
+        else if (dir.x <= 0.3f && dir.y <= -0.1f)
         {
             _goingDownRight = true;
         }
