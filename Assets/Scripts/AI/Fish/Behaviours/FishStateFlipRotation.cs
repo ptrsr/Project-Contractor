@@ -15,7 +15,7 @@ public class FishStateFlipRotation : FishState
         fish.Direction = -fish.Direction;
         //Play rotation animaion
         _targetRot = fish.transform.rotation;
-        _targetRot.eulerAngles = new Vector3(0f, fish.transform.eulerAngles.y - 180f, 90f);
+        _targetRot.eulerAngles = new Vector3(0f, fish.transform.eulerAngles.y - 180f, 0f);
     }
 
     public override void Step()

@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class ElectricEel : FishNeutral
 {
+    [Header("Electric Eel Variables")]
+    [SerializeField]
+    private float _knockbackStrength = 100f;
+
+    [SerializeField]
+    private float _knockUpStrength = 25f;
+
     public override void Start()
     {
         base.Start();
 
-        Direction = Vector3.right * WallDetectionRange;
+        Direction = (Vector3.right * WallDetectionRange).normalized;
 
         stateCache[typeof(FishStateContinuesMove)] = new FishStateContinuesMove(this);
         stateCache[typeof(FishStateFlipRotation)] = new FishStateFlipRotation(this);
@@ -30,6 +37,6 @@ public class ElectricEel : FishNeutral
 
         //Stun player
 
-        c.rigidbody.AddForce(new Vector3(MoveSpeed / 2f, 2f, 0), ForceMode.Impulse);
+        c.rigidbody.AddForce(new Vector3(Direction.x * _knockbackStrength, _knockUpStrength), ForceMode.Impulse);
     }
 }

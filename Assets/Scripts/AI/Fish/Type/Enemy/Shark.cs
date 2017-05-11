@@ -29,10 +29,7 @@ public class Shark : FishEnemy
         if (c.transform != Target)
             return;
 
-        Rigidbody body = c.collider.GetComponent<Rigidbody>();
-
-        if (body != null)
-            body.AddForce(Direction.normalized * KnockBackStrength, ForceMode.Impulse);
+        c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
 
         SetState<FishStatePatrolIdle>();
     }

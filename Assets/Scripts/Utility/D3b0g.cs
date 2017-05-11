@@ -55,10 +55,6 @@ public class D3b0g : MonoBehaviour
                 _current = fish;
                 Show();
             }
-            else
-            {
-                Hide();
-            }
         }
     }
 
@@ -72,16 +68,20 @@ public class D3b0g : MonoBehaviour
             FishEnemy enemy = (FishEnemy)_current;
             _text.text = string.Format(
                 "State: {0}\n" +
-                "Direction: {1}\n" +
-                "Speed: {2}\n" +
-                "Range to origin: {3}\n" +
-                "Range to target: {4}\n" +
-                "Can chase target: {5}",
+                "Range: {1}\n" +
+                "Direction: {2}\n" +
+                "Speed: {3}\n" +
+                "Range to origin: {4}\n" +
+                "Range to target: {5}\n" +
+                "Target from origin: {6}\n" +
+                "Can chase target: {7}",
                 enemy.GetState,
+                enemy.Range,
                 enemy.Direction,
                 enemy.Body.velocity,
                 Vector3.Distance(enemy.transform.position, enemy.OriginPos),
-                Vector3.Distance(enemy.Target.transform.position, enemy.transform.position),
+                Vector3.Distance(enemy.Target.position, enemy.transform.position),
+                Vector3.Distance(enemy.Target.position, enemy.OriginPos),
                 enemy.DetectTarget());
         }
         else if (_current is FishNeutral)

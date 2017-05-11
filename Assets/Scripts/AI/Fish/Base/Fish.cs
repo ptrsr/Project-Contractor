@@ -71,7 +71,8 @@ public abstract class Fish : MonoBehaviour
         if (_rotationCount != _rotationTime)
         {
             Quaternion lookDir = Quaternion.LookRotation(direction);
-            lookDir.eulerAngles -= new Vector3(-90, 0, 0);
+            lookDir.eulerAngles = new Vector3(0, lookDir.eulerAngles.y + 90, lookDir.eulerAngles.x);
+
             transform.rotation = Quaternion.Slerp(transform.rotation, lookDir, _rotationSpeed + rotationModifier);
             _rotationCount++;
 

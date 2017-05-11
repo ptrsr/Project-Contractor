@@ -21,8 +21,12 @@ public class FishStatePatrol : FishState
         fish.RotateTowards(fish.Direction);
         if (_shark.DetectTarget())
             fish.SetState<FishStatePatrolChase>();
-        _shark.DetectWall();
 
+        //Check for walls and solve collision issues
+        if (_shark.DetectWall())
+            _counter = 0;
+
+        //Counting till next direction
         if (_counter == _shark.TimeForRandomDir)
         {
             _shark.SetRandomDirection();
@@ -31,6 +35,7 @@ public class FishStatePatrol : FishState
         else
             _counter++;
 
-        fish.Body.AddForce(fish.Direction.normalized * fish.MoveSpeed);   
+        //Move in direction
+        fish.Body.AddForce(_shark.Direction * fish.MoveSpeed);   
     }
 }
