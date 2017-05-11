@@ -1,4 +1,4 @@
-﻿Shader "custom/sonar"
+﻿Shader "custom/PostFX"
 {
 	Properties
 	{
@@ -55,7 +55,6 @@
 			uniform sampler2D _MainTex;
 			uniform sampler2D _CameraDepthTexture;
 
-
 			//sonar
 			uniform int    _maxPulses;
 			uniform float  _aPulseDist[20];
@@ -63,12 +62,19 @@
 			uniform float  _aWidth    [20];
 
 			//fog
-			uniform float _zoom;
+			uniform float _intensity;
 
+			//spotlight
 			uniform float4 _spotPos;
 			uniform float4 _spotDir;
 
-			uniform float _intensity;
+			uniform float _zoom;
+
+			uniform float _spotAngle;
+			uniform float _spotFallOff;
+
+			uniform float _camDist;
+			uniform float _spotScaling;
 
 			//functions
 			float spot(v2f i);
@@ -113,14 +119,13 @@
 
 			float spot(v2f i)
 			{
-				float angle = 9;
 				float falloff = 2;
 
 				float camDist = 15;
 				float scaling = 20;
 
-				float fustrum = pow(max(dot(normalize(i.uv - _spotPos.xy), _spotDir), 0), angle);
-				float dist = pow(min(1 - distance(_spotPos.xy, i.uv) * (1 + (_zoom - camDist) / scaling), 1), falloff);
+				float fustrum = pow(max(dot(normalize(i.uv - _spotPos.xy), _spotDir), 0), _spotAngle);
+				float dist = pow(min(1 - distance(_spotPos.xy, i.uv) * (1 + (_zoom - _camDist) / _spotScaling), 1), _spotFallOff);
 
 				return fustrum * dist;
 			}
