@@ -10,24 +10,64 @@ public class SubMovement : MonoBehaviour {
     private Camera _camera;
     private Vector3 _startPosition;
 
-    private bool _tapping;
+    [SerializeField]
+    private int dragSpeed = 10;
+    [SerializeField]
+    private int chargeSpeed = 50;
+
+
+    //----------------------------------Checks for submarine states----------------------------
+    private bool _tapping = false;
     private bool _charged = false;
+    private bool _slowed = false;
+    private bool _left = false;
+    private bool _right = false;
+
+    //---------------------------------Charging date--------------------------------------------
     private float _lastTap;
-    private float _tapTime = 1;
+    [SerializeField]
+    private float _tapIntervalsForCharge = 1;
+    [SerializeField]
     private float _cooldown = 90;
     private float _counter = 0;
 
 
-	void Start () {
+    //------------------------------Rotation of sumbarine---------------------------------------
+    private Quaternion left = new Quaternion();
+    private Quaternion right = new Quaternion();
+    private Quaternion forward = new Quaternion();
+
+    [SerializeField]
+    private Vector3 _possibleLeftTurn = new Vector3(0, 25, 0);
+    [SerializeField]
+    private Vector3 _possibleRightTurn = new Vector3(0, -25, 0);
+    [SerializeField]
+    private float _smoothnessOfTurning = 0.1f;
+
+
+    void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
-        _oxygen = FindObjectOfType<Oxygen>();
+        //_oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-	}
+        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        left = GetQuaternionFromVector(_possibleLeftTurn);
+        right = GetQuaternionFromVector(_possibleRightTurn);
+        forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
+    }
 
 	void FixedUpdate () {
-        _oxygen.Remove(1);
-
+       // _oxygen.Remove(1);
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        if (_left)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation,left, _smoothnessOfTurning);
+        }
+        if (_right)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, right, _smoothnessOfTurning);
+        }
         //Cooldown after you charge(double tap)
         if (_charged)
         {
@@ -51,14 +91,27 @@ public class SubMovement : MonoBehaviour {
 
             if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y > 180)
             {
-                transform.rotation = GetQuaternionFromVector(new Vector3(0,90,0));
+                _left = true;
+                _right = false;
             }
             if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y < 180)
             {
-                transform.rotation = GetQuaternionFromVector(new Vector3(0, -90, 0));
+                _left = false;
+                _right = true;
             }
             //adding force based on direction and distance from mouse
-            _rigidBody.AddForce(dir * (distance / 20), ForceMode.VelocityChange);
+            float speed = distance / dragSpeed;
+            if (_slowed)
+            {
+                speed /= 2;
+            }
+            _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
+        }
+        else
+        {
+            _left = false;
+            _right = false;
+            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
         //Check for double tapping for charge
         if (Input.GetMouseButtonDown(0))
@@ -70,7 +123,7 @@ public class SubMovement : MonoBehaviour {
                 SingleTap();
             }
             //if you tap a second time before _taptime(interval time for second taps) charge
-            if ((Time.time - _lastTap) < _tapTime)
+            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
             {
 
                 Debug.Log("DoubleTap");
@@ -81,7 +134,7 @@ public class SubMovement : MonoBehaviour {
 
                 float distance = Vector3.Distance(pos, transform.position);
                 
-                _rigidBody.AddForce(dir.normalized * 25, ForceMode.Impulse);
+                _rigidBody.AddForce(dir.normalized * chargeSpeed, ForceMode.Impulse);
                 _tapping = false;
                 _charged = true;
 
@@ -110,7 +163,7 @@ public class SubMovement : MonoBehaviour {
     //Coroutine for waiting after first tap
     IEnumerator SingleTap()
     {
-        yield return new WaitForSeconds(_tapTime);
+        yield return new WaitForSeconds(_tapIntervalsForCharge);
         if (_tapping)
         {
             Debug.Log("SingleTap");
@@ -133,5 +186,11 @@ public class SubMovement : MonoBehaviour {
     public void Surface()
     {
         transform.position = _startPosition;
+    }
+
+    //For octupus or whatever is gonna stick to the player and slow him down
+    public void SlowDownPlayer(bool value)
+    {
+        _slowed = value;
     }
 }
