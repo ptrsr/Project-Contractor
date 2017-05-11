@@ -17,7 +17,7 @@ class SonarValues
 [System.Serializable]
 class FogValues
 {
-    [Range(0f, 3f)]
+    [Range(0f, 30f)]
     public float intensity = 0.5f;
 
     public Color
@@ -82,7 +82,7 @@ public class Sonar : MonoBehaviour
 
 	void Update ()
     {
-        _depth = -Camera.main.transform.position.y / 80;
+        _depth = -Camera.main.transform.position.y / 1000;
         _fog.worldLight.intensity = 1 - _depth;
 
         PassiveSonar ();
