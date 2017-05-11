@@ -10,7 +10,7 @@ public class FishNeutral : Fish
     public int WallDetectionRange { get { return _wallDetectionRange; } }
     
     //Ignores the player for wall detection
-    private LayerMask _ignoreDetection = 8;
+    private LayerMask _ignoreDetection = 1 << 8;
     public LayerMask IgnoreDetection { get { return _ignoreDetection; } }
 
     public override void Start()
