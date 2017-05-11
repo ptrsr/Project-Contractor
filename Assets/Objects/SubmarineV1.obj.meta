@@ -7,11 +7,16 @@ ModelImporter:
   fileIDToRecycleName:
     100000: pCube18
     100002: //RootNode
+    100004: SubMarineV1:thruster2
     400000: pCube18
     400002: //RootNode
+    400004: SubMarineV1:thruster2
     2300000: pCube18
+    2300002: SubMarineV1:thruster2
     3300000: pCube18
+    3300002: SubMarineV1:thruster2
     4300000: pCube18
+    4300002: SubMarineV1:thruster2
   materials:
     importMaterials: 1
     materialName: 0
