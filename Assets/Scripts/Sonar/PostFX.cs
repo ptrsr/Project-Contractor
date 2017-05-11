@@ -80,8 +80,7 @@ public class PostFX : MonoBehaviour
 
         _mat = new Material(_shader);
 
-        _mat.SetVector("_startColor", _fog.startColor);
-        _mat.SetVector("_endColor",   _fog.endColor);
+
 
         activepulse = new bool[_sonar.maxPulses];
 		aPulse      = new float[_sonar.maxPulses];
@@ -255,6 +254,8 @@ public class PostFX : MonoBehaviour
     {
         //fog
         _mat.SetFloat("_intensity", _fog.intensity);
+        _mat.SetVector("_startColor", _fog.startColor);
+        _mat.SetVector("_endColor", _fog.endColor);
 
         //sonar
         _mat.SetInt("_maxPulses", _sonar.maxPulses);
