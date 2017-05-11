@@ -4,7 +4,7 @@ using UnityEngine;
 
 #region values
 [System.Serializable]
-class SonarValues
+class Sonar
 {
     public int maxPulses    = 5;
 
@@ -15,7 +15,7 @@ class SonarValues
 }
 
 [System.Serializable]
-class FogValues
+class Fog
 {
     [Range(0f, 30f)]
     public float intensity = 0.5f;
@@ -29,13 +29,13 @@ class FogValues
 }
 #endregion
 
-public class Sonar : MonoBehaviour
+public class PostFX : MonoBehaviour
 {
     [SerializeField]
-	private SonarValues _sonar = new SonarValues();
+	private Sonar _sonar = new Sonar();
 
     [SerializeField]
-    private FogValues _fog = new FogValues();
+    private Fog _fog = new Fog();
 
     [SerializeField]
     private Shader _shader;
