@@ -64,11 +64,11 @@ public class SubMovement : MonoBehaviour {
 
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
-        _oxygen = FindObjectOfType<Oxygen>();
+        //_oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
         leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
@@ -79,7 +79,7 @@ public class SubMovement : MonoBehaviour {
     }
 
 	void FixedUpdate () {
-        _oxygen.Remove(1);
+        //_oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         GetCorrectDirection();
         RotateDependingOnDirection();
@@ -102,7 +102,7 @@ public class SubMovement : MonoBehaviour {
             float distance = Vector3.Distance(pos, transform.position);
             Vector3 dir = pos - transform.position;
             dir = dir.normalized;
-            Debug.Log(dir);
+            //Debug.Log(dir);
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
            
             //adding force based on direction and distance from mouse
@@ -160,7 +160,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingLeft = true;
         }
-        else if (dir.x <= -0.3f && dir.y <= -0.3f)
+        else if (dir.x <= -0.3f && dir.y <= -0.1f)
         {
             _goingDownLeft = true;
         }
@@ -168,7 +168,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingUpLeft = true;
         }
-        else if (dir.x <= 0.3f && dir.y <= -0.3f)
+        else if (dir.x <= 0.3f && dir.y <= -0.1f)
         {
             _goingDownRight = true;
         }
@@ -182,6 +182,10 @@ public class SubMovement : MonoBehaviour {
         {
             _goingLeft = false;
             _goingRight = false;
+            _goingDownLeft = false;
+            _goingDownRight = false;
+            _goingUpLeft = false;
+            _goingUpRight = false;
             transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
     }
