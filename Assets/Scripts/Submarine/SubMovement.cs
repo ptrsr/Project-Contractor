@@ -20,8 +20,13 @@ public class SubMovement : MonoBehaviour {
     private bool _tapping = false;
     private bool _charged = false;
     private bool _slowed = false;
-    private bool _left = false;
-    private bool _right = false;
+    private bool _goingLeft = false;
+    private bool _goingRight = false;
+    private bool _goingDownLeft = false;
+    private bool _goingDownRight = false;
+    private bool _goingUpLeft = false;
+    private bool _goingUpRight = false;
+
 
     //---------------------------------Charging date--------------------------------------------
     private float _lastTap;
@@ -36,11 +41,23 @@ public class SubMovement : MonoBehaviour {
     private Quaternion left = new Quaternion();
     private Quaternion right = new Quaternion();
     private Quaternion forward = new Quaternion();
+    private Quaternion leftUp = new Quaternion();
+    private Quaternion leftDown = new Quaternion();
+    private Quaternion rightUp = new Quaternion();
+    private Quaternion rightDown = new Quaternion();
 
     [SerializeField]
     private Vector3 _possibleLeftTurn = new Vector3(0, 25, 0);
     [SerializeField]
+    private Vector3 _possibleLeftDownTurn = new Vector3(-50, 50, 0);
+    [SerializeField]
+    private Vector3 _possibleLeftUpTurn = new Vector3(50, 50, 0);
+    [SerializeField]
     private Vector3 _possibleRightTurn = new Vector3(0, -25, 0);
+    [SerializeField]
+    private Vector3 _possibleRightDownTurn = new Vector3(-50, -50, 0);
+    [SerializeField]
+    private Vector3 _possibleRightUpTurn = new Vector3(50, -50, 0);
     [SerializeField]
     private float _smoothnessOfTurning = 0.1f;
 
@@ -54,19 +71,94 @@ public class SubMovement : MonoBehaviour {
         if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
+        leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
+        leftUp = GetQuaternionFromVector(_possibleLeftUpTurn);
+        rightDown = GetQuaternionFromVector(_possibleRightDownTurn);
+        rightUp = GetQuaternionFromVector(_possibleRightUpTurn);
         forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
     }
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        if (_left)
+        GetCorrectDirection();
+        if (_goingLeft)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation,left, _smoothnessOfTurning);
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempLeft = new Quaternion();
+                tempLeft.eulerAngles = left.eulerAngles * (distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, left, _smoothnessOfTurning);
         }
-        if (_right)
+        else if (_goingDownLeft)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, right, _smoothnessOfTurning);
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempLeft = new Quaternion();
+                tempLeft.eulerAngles = leftDown.eulerAngles * (distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, leftDown, _smoothnessOfTurning);
+        }
+        else if (_goingUpLeft)
+        {
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempLeft = new Quaternion();
+                tempLeft.eulerAngles = leftUp.eulerAngles * (distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, leftUp, _smoothnessOfTurning);
+        }
+        if (_goingRight)
+        {
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempRight = new Quaternion();
+                tempRight.eulerAngles = right.eulerAngles * -(distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, right, _smoothnessOfTurning);
+        }
+        if (_goingUpRight)
+        {
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempRight = new Quaternion();
+                tempRight.eulerAngles = rightUp.eulerAngles * -(distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, rightUp, _smoothnessOfTurning);
+        }
+        if (_goingDownRight)
+        {
+            Vector3 pos = GetMousePosition();
+            float distance = Vector3.Distance(pos, transform.position);
+            if (distance < 1)
+            {
+                Quaternion tempRight = new Quaternion();
+                tempRight.eulerAngles = rightDown.eulerAngles * -(distance / 10);
+                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
+            }
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, rightDown, _smoothnessOfTurning);
         }
         //Cooldown after you charge(double tap)
         if (_charged)
@@ -84,21 +176,12 @@ public class SubMovement : MonoBehaviour {
         {
 
             Vector3 pos = GetMousePosition();
-            Vector3 dir = pos - transform.position;
             float distance = Vector3.Distance(pos, transform.position);
+            Vector3 dir = pos - transform.position;
             dir = dir.normalized;
+            Debug.Log(dir);
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-
-            if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y > 180)
-            {
-                _left = true;
-                _right = false;
-            }
-            if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y < 180)
-            {
-                _left = false;
-                _right = true;
-            }
+           
             //adding force based on direction and distance from mouse
             float speed = distance / dragSpeed;
             if (_slowed)
@@ -106,12 +189,6 @@ public class SubMovement : MonoBehaviour {
                 speed /= 2;
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
-        }
-        else
-        {
-            _left = false;
-            _right = false;
-            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
         //Check for double tapping for charge
         if (Input.GetMouseButtonDown(0))
@@ -125,21 +202,64 @@ public class SubMovement : MonoBehaviour {
             //if you tap a second time before _taptime(interval time for second taps) charge
             if ((Time.time - _lastTap) < _tapIntervalsForCharge)
             {
-
+                Vector3 pos = GetMousePosition();
+                float distance = Vector3.Distance(pos, transform.position);
                 Debug.Log("DoubleTap");
-                Vector3 pos = Input.mousePosition;
                 pos.z = -Camera.main.transform.position.z;
                 pos = Camera.main.ScreenToWorldPoint(pos);
                 Vector3 dir = pos - transform.position;
 
-                float distance = Vector3.Distance(pos, transform.position);
-                
                 _rigidBody.AddForce(dir.normalized * chargeSpeed, ForceMode.Impulse);
                 _tapping = false;
                 _charged = true;
 
             }
             _lastTap = Time.time;
+        }
+    }
+
+    private void GetCorrectDirection() {
+        _goingLeft = false;
+        _goingRight = false;
+        _goingUpLeft = false;
+        _goingUpRight = false;
+        _goingDownRight = false;
+        _goingDownLeft = false;
+        Vector3 pos = GetMousePosition();
+        float distance = Vector3.Distance(pos, transform.position);
+        Vector3 dir = pos - transform.position;
+        dir = dir.normalized;
+        if (dir.x >= 0.5f && dir.y < 0.5f)
+        {
+            _goingRight = true;
+        }
+        else if (dir.x <= -0.5f && dir.y <= 0.5f  )
+        {
+            _goingLeft = true;
+        }
+        else if (dir.x <= -0.3f && dir.y <= -0.3f)
+        {
+            _goingDownLeft = true;
+        }
+        else if (dir.x <= -0.3f && dir.y >= 0.3f)
+        {
+            _goingUpLeft = true;
+        }
+        else if (dir.x <= 0.3f && dir.y <= -0.3f)
+        {
+            _goingDownRight = true;
+        }
+        else if (dir.x <= 0.3f && dir.y >= 0.3f)
+        {
+            _goingUpRight = true;
+        }
+
+
+        if (!Input.GetMouseButton(0))
+        {
+            _goingLeft = false;
+            _goingRight = false;
+            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
     }
 
