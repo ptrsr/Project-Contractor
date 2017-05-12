@@ -64,11 +64,11 @@ public class SubMovement : MonoBehaviour {
 
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
-        //_oxygen = FindObjectOfType<Oxygen>();
+        _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
         leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
@@ -79,87 +79,10 @@ public class SubMovement : MonoBehaviour {
     }
 
 	void FixedUpdate () {
-       // _oxygen.Remove(1);
+        _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         GetCorrectDirection();
-        if (_goingLeft)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempLeft = new Quaternion();
-                tempLeft.eulerAngles = left.eulerAngles * (distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, left, _smoothnessOfTurning);
-        }
-        else if (_goingDownLeft)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempLeft = new Quaternion();
-                tempLeft.eulerAngles = leftDown.eulerAngles * (distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, leftDown, _smoothnessOfTurning);
-        }
-        else if (_goingUpLeft)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempLeft = new Quaternion();
-                tempLeft.eulerAngles = leftUp.eulerAngles * (distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempLeft, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, leftUp, _smoothnessOfTurning);
-        }
-        if (_goingRight)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempRight = new Quaternion();
-                tempRight.eulerAngles = right.eulerAngles * -(distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, right, _smoothnessOfTurning);
-        }
-        if (_goingUpRight)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempRight = new Quaternion();
-                tempRight.eulerAngles = rightUp.eulerAngles * -(distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, rightUp, _smoothnessOfTurning);
-        }
-        if (_goingDownRight)
-        {
-            Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
-            if (distance < 1)
-            {
-                Quaternion tempRight = new Quaternion();
-                tempRight.eulerAngles = rightDown.eulerAngles * -(distance / 10);
-                transform.rotation = Quaternion.Slerp(transform.rotation, tempRight, _smoothnessOfTurning);
-            }
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, rightDown, _smoothnessOfTurning);
-        }
+        RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
         if (_charged)
         {
@@ -237,7 +160,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingLeft = true;
         }
-        else if (dir.x <= -0.3f && dir.y <= -0.3f)
+        else if (dir.x <= -0.3f && dir.y <= -0.1f)
         {
             _goingDownLeft = true;
         }
@@ -245,7 +168,7 @@ public class SubMovement : MonoBehaviour {
         {
             _goingUpLeft = true;
         }
-        else if (dir.x <= 0.3f && dir.y <= -0.3f)
+        else if (dir.x <= 0.3f && dir.y <= -0.1f)
         {
             _goingDownRight = true;
         }
@@ -261,6 +184,48 @@ public class SubMovement : MonoBehaviour {
             _goingRight = false;
             transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
         }
+    }
+
+    private void RotateDependingOnDirection()
+    {
+        if (_goingLeft)
+        {
+            RotateDependingOnDistance(left);
+        }
+        else if (_goingDownLeft)
+        {
+            RotateDependingOnDistance(leftDown);
+        }
+        else if (_goingUpLeft)
+        {
+            RotateDependingOnDistance(leftUp);
+        }
+        else if (_goingRight)
+        {
+            RotateDependingOnDistance(right);
+        }
+        else if (_goingUpRight)
+        {
+            RotateDependingOnDistance(rightUp);
+        }
+        else if (_goingDownRight)
+        {
+            RotateDependingOnDistance(rightDown);
+        }
+    }
+
+    private void RotateDependingOnDistance(Quaternion quat)
+    {
+        Vector3 pos = GetMousePosition();
+        float distance = Vector3.Distance(pos, transform.position);
+        if (distance < 1)
+        {
+            Quaternion tempQuat = new Quaternion();
+            tempQuat.eulerAngles = quat.eulerAngles * -(distance / 10);
+            transform.rotation = Quaternion.Slerp(transform.rotation, tempQuat, _smoothnessOfTurning);
+        }
+        else
+            transform.rotation = Quaternion.Slerp(transform.rotation, quat, _smoothnessOfTurning);
     }
 
     //Get mouse position in world space
