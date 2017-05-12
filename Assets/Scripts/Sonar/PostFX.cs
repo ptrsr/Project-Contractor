@@ -152,10 +152,15 @@ public class PostFX : MonoBehaviour
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst)
     {
+        updateShader();
 
+        //sonar
+        _mat.SetInt("_maxPulses", _sonar.maxPulses);
+        _mat.SetFloatArray("_aPulseDist", aPulse);
+        _mat.SetVectorArray("_aOrigin", origin);
+        _mat.SetFloatArray("_aWidth", aWidth);
 
         Vector2 spotScreenPos = WorldToScreen(_light.transform.position);
-
         _mat.SetVector("_spotPos", spotScreenPos);
         _mat.SetVector("_spotDir", MouseDirection(spotScreenPos));
 
@@ -257,11 +262,6 @@ public class PostFX : MonoBehaviour
         _mat.SetVector("_startColor", _fog.startColor);
         _mat.SetVector("_endColor", _fog.endColor);
 
-        //sonar
-        _mat.SetInt("_maxPulses", _sonar.maxPulses);
-        _mat.SetFloatArray("_aPulseDist", aPulse);
-        _mat.SetVectorArray("_aOrigin", origin);
-        _mat.SetFloatArray("_aWidth", aWidth);
 
         //spotlight
         _mat.SetFloat("_zoom", -transform.position.z);
