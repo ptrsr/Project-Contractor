@@ -102,7 +102,6 @@ public class SubMovement : MonoBehaviour {
             float distance = Vector3.Distance(pos, transform.position);
             Vector3 dir = pos - transform.position;
             dir = dir.normalized;
-            Debug.Log(dir);
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
            
             //adding force based on direction and distance from mouse
