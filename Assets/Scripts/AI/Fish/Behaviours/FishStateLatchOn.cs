@@ -20,7 +20,7 @@ public class FishStateLatchOn : FishState
     {
         fish.transform.position = _fishEnemy.Target.transform.position + new Vector3(0f, 0f, -1f);
 
-        if (_fishEnemy.Target.GetComponent<ZBound>().tap)
-            fish.SetState<FishStateLatchOff>();
+        //if (_fishEnemy.Target.GetComponent<ZBound>().tap)
+        //    fish.SetState<FishStateLatchOff>();
     }
 }

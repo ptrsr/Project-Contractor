@@ -21,8 +21,8 @@ public class Octupus : FishEnemy
     {
         base.Update();
 
-        if (Target.GetComponent<ZBound>().tap)
-            SetState<FishStateLatchOff>();
+        //if (Target.GetComponent<ZBound>().tap)
+        //    SetState<FishStateLatchOff>();
     }
 
     public void OnCollisionEnter(Collision c)
