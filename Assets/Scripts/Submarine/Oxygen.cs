@@ -10,6 +10,7 @@ public class Oxygen : MonoBehaviour {
     private Image _image;
     private Color _currentColor;
     private SubMovement _submarine;
+    private Image _sliderImage;
     private bool _surface = false;
     private float _alpha = 0;
 	private void Start () {
@@ -17,11 +18,15 @@ public class Oxygen : MonoBehaviour {
         _image = GetComponentInParent<Image>();
         _currentColor = _image.color;
         _submarine = FindObjectOfType<SubMovement>();
+        AudioSource s = FindObjectOfType<AudioSource>();
+        _sliderImage = s.GetComponent<Image>();
 
-	}
+
+    }
 
     private void Update()
     {
+        UpdateColor();
         if(_slider.value == 0)
         {
             _surface = true;
@@ -41,6 +46,12 @@ public class Oxygen : MonoBehaviour {
                 
             }
         }
+    }
+
+    private void UpdateColor()
+    {
+        float max = _slider.maxValue;
+        _sliderImage.color = Color.Lerp(Color.red, Color.green, _slider.value / max);
     }
 
     public void Add(int value)
