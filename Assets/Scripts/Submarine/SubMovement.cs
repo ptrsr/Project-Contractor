@@ -10,16 +10,23 @@ public class SubMovement : MonoBehaviour {
     private Camera _camera;
     private Vector3 _startPosition;
 
+
+    //-----------------------------------Movement speed variables------------------------------
     [SerializeField]
-    private int dragSpeed = 10;
+    private int _dragSpeed = 10;
     [SerializeField]
-    private int chargeSpeed = 50;
+    private int _maxSpeed = 4;
+    [SerializeField]
+    private int _distanceForMaxSpeed = 20;
+    [SerializeField]
+    private int _chargeSpeed = 50;
 
 
     //----------------------------------Checks for submarine states----------------------------
     private bool _tapping = false;
     private bool _charged = false;
     private bool _slowed = false;
+    private bool _stunned = false;
     private bool _goingLeft = false;
     private bool _goingRight = false;
     private bool _goingDownLeft = false;
@@ -34,7 +41,10 @@ public class SubMovement : MonoBehaviour {
     private float _tapIntervalsForCharge = 1;
     [SerializeField]
     private float _cooldown = 90;
-    private float _counter = 0;
+    [SerializeField]
+    private int _stunSlowTime = 60;
+    private int _counter = 0;
+    private int _stunSlowCounter = 0;
 
 
     //------------------------------Rotation of sumbarine---------------------------------------
@@ -67,8 +77,8 @@ public class SubMovement : MonoBehaviour {
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
         leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
@@ -80,7 +90,19 @@ public class SubMovement : MonoBehaviour {
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
+        //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        //return only if stunned only count when slowed 
+        if(_stunned)
+        {
+            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
+            return;
+        }
+        else if (_slowed)
+        {
+            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
+        }
+        //Gets correct direction of mouse and rotates depending on that
         GetCorrectDirection();
         RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
@@ -94,6 +116,7 @@ public class SubMovement : MonoBehaviour {
             else { _counter++; }
             return;
         }
+
         //Movement through dragging
         if (Input.GetMouseButton(0))
         {
@@ -102,11 +125,15 @@ public class SubMovement : MonoBehaviour {
             float distance = Vector3.Distance(pos, transform.position);
             Vector3 dir = pos - transform.position;
             dir = dir.normalized;
-            Debug.Log(dir);
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-           
+
             //adding force based on direction and distance from mouse
-            float speed = distance / dragSpeed;
+            float speed = 0;
+            if (distance > _distanceForMaxSpeed)
+            {
+                speed = _maxSpeed;
+            }
+            else { speed = distance / _dragSpeed; }
             if (_slowed)
             {
                 speed /= 2;
@@ -126,13 +153,9 @@ public class SubMovement : MonoBehaviour {
             if ((Time.time - _lastTap) < _tapIntervalsForCharge)
             {
                 Vector3 pos = GetMousePosition();
-                float distance = Vector3.Distance(pos, transform.position);
-                Debug.Log("DoubleTap");
-                pos.z = -Camera.main.transform.position.z;
-                pos = Camera.main.ScreenToWorldPoint(pos);
                 Vector3 dir = pos - transform.position;
 
-                _rigidBody.AddForce(dir.normalized * chargeSpeed, ForceMode.Impulse);
+                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Impulse);
                 _tapping = false;
                 _charged = true;
 
@@ -141,6 +164,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Gets correct direction of mouse
     private void GetCorrectDirection() {
         _goingLeft = false;
         _goingRight = false;
@@ -186,6 +210,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Rotates depending on the direction of the mouse
     private void RotateDependingOnDirection()
     {
         if (_goingLeft)
@@ -214,6 +239,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Rotates depending on the distance from the mouse(from small rotation to full) for smoothness
     private void RotateDependingOnDistance(Quaternion quat)
     {
         Vector3 pos = GetMousePosition();
@@ -277,5 +303,29 @@ public class SubMovement : MonoBehaviour {
     public void SlowDownPlayer(bool value)
     {
         _slowed = value;
+        _stunSlowCounter = 0;
+    }
+
+    //For eel or whatever is going to stun the player
+    public void StunPlayer(bool value)
+    {
+        _stunned = true;
+        _stunSlowCounter = 0;
+    }
+
+    //Delay that takes a counter and to count with and later returns(more convenient) 
+    //After delay player is unslowed and unstunned
+    private int StunSlowDelay(int frames, int counter = 0)
+    {
+        if(counter >= frames)
+        {
+            StunPlayer(false);
+            SlowDownPlayer(false);
+        }
+        else
+        {
+            counter++;
+        }
+        return counter;
     }
 }
