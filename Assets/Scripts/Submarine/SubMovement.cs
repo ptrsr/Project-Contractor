@@ -10,6 +10,8 @@ public class SubMovement : MonoBehaviour {
     private Camera _camera;
     private Vector3 _startPosition;
 
+
+    //-----------------------------------Movement speed variables------------------------------
     [SerializeField]
     private int _dragSpeed = 10;
     [SerializeField]
@@ -75,8 +77,8 @@ public class SubMovement : MonoBehaviour {
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
         leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
@@ -88,7 +90,9 @@ public class SubMovement : MonoBehaviour {
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
+        //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        //return only if stunned only count when slowed 
         if(_stunned)
         {
             _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
@@ -98,6 +102,7 @@ public class SubMovement : MonoBehaviour {
         {
             _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
         }
+        //Gets correct direction of mouse and rotates depending on that
         GetCorrectDirection();
         RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
@@ -159,6 +164,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Gets correct direction of mouse
     private void GetCorrectDirection() {
         _goingLeft = false;
         _goingRight = false;
@@ -204,6 +210,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Rotates depending on the direction of the mouse
     private void RotateDependingOnDirection()
     {
         if (_goingLeft)
@@ -232,6 +239,7 @@ public class SubMovement : MonoBehaviour {
         }
     }
 
+    //Rotates depending on the distance from the mouse(from small rotation to full) for smoothness
     private void RotateDependingOnDistance(Quaternion quat)
     {
         Vector3 pos = GetMousePosition();
@@ -298,12 +306,15 @@ public class SubMovement : MonoBehaviour {
         _stunSlowCounter = 0;
     }
 
+    //For eel or whatever is going to stun the player
     public void StunPlayer(bool value)
     {
         _stunned = true;
         _stunSlowCounter = 0;
     }
 
+    //Delay that takes a counter and to count with and later returns(more convenient) 
+    //After delay player is unslowed and unstunned
     private int StunSlowDelay(int frames, int counter = 0)
     {
         if(counter >= frames)

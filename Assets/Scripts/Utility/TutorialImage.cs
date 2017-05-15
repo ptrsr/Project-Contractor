@@ -11,7 +11,7 @@ public class TutorialImage : MonoBehaviour
     private bool _init = false;
     private bool _scaled = false;
 
-    private void Awake()
+    private void Start()
     {
         _images = new Image[3];
         //Get the HUD RawImage for camera rendering
@@ -56,7 +56,7 @@ public class TutorialImage : MonoBehaviour
 
     public void SetImage()
     {
-
+        //to Set and rescale the new tutorial image(from tutorial manager probably)
     }
 
 
