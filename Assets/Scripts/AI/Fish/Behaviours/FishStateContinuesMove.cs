@@ -15,7 +15,7 @@ public class FishStateContinuesMove : FishState
 
     public override void Step()
     {
-        fish.RotateTowards(fish.Direction - new Vector3(0f, 0f, fish.Direction.x > 0 ? -90f : 90f));
+        fish.RotateTowards(_eel.GetLookRotation(fish.Direction));
 
         Debug.DrawRay(fish.transform.position, fish.Direction * _eel.WallDetectionRange);
         if (Physics.Raycast(fish.transform.position, fish.Direction, _eel.WallDetectionRange, ~_eel.IgnoreDetection))

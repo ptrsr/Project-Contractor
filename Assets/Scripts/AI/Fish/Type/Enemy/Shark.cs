@@ -33,4 +33,11 @@ public class Shark : FishEnemy
 
         SetState<FishStatePatrolIdle>();
     }
+
+    public override Quaternion GetLookRotation(Vector3 direction)
+    {
+        Quaternion lookRot = base.GetLookRotation(direction);
+        lookRot.eulerAngles = new Vector3(0, lookRot.eulerAngles.y + 90f, lookRot.eulerAngles.x);
+        return lookRot;
+    }
 }

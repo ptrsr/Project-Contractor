@@ -18,7 +18,7 @@ public class FishStatePatrol : FishState
 
     public override void Step()
     {
-        fish.RotateTowards(fish.Direction);
+        fish.RotateTowards(_shark.GetLookRotation(fish.Direction));
         if (_shark.DetectTarget())
             fish.SetState<FishStatePatrolChase>();
 

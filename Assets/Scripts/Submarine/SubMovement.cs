@@ -85,8 +85,6 @@ public class SubMovement : MonoBehaviour {
             //if you tap a second time before _taptime(interval time for second taps) charge
             if ((Time.time - _lastTap) < _tapIntervalForCharge)
             {
-
-                Debug.Log("DoubleTap");
                 Vector3 pos = Input.mousePosition;
                 pos.z = -Camera.main.transform.position.z;
                 pos = Camera.main.ScreenToWorldPoint(pos);

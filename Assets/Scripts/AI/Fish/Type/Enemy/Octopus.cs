@@ -2,8 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Octupus : FishEnemy
+public class Octopus : FishEnemy
 {
+    [Header("Octopus Variables")]
+    [SerializeField]
+    private float _idleIntervalChange = 2f;
+    public float IdleIntervalChange { get { return _idleIntervalChange; } }
+
+    //Resting location
+    private Transform _rock;
+    public Transform Rock { get { return _rock; } }
+
+    private bool _isChasing = false;
+    public bool IsChasing { get { return _isChasing; } }
+
     public override void Start()
     {
         base.Start();
@@ -20,9 +32,6 @@ public class Octupus : FishEnemy
     public override void Update()
     {
         base.Update();
-
-        if (Target.GetComponent<ZBound>().tap)
-            SetState<FishStateLatchOff>();
     }
 
     public void OnCollisionEnter(Collision c)
@@ -31,5 +40,12 @@ public class Octupus : FishEnemy
             return;
 
         SetState<FishStateLatchOn>();
+    }
+
+    public override Quaternion GetLookRotation(Vector3 direction)
+    {
+        Quaternion lookRot = base.GetLookRotation(direction);
+        lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
+        return lookRot;
     }
 }

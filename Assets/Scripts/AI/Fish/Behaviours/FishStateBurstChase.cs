@@ -6,25 +6,25 @@ public class FishStateBurstChase : FishState
 {
     public FishStateBurstChase(Fish pFish) : base(pFish) { }
 
-    private FishEnemy _fishEnemy;
+    private Octopus _octopus;
 
     public override void Initialize()
     {
-        _fishEnemy = (FishEnemy)fish;
+        _octopus = (Octopus)fish;
     }
 
     public override void Step()
     {
-        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > _fishEnemy.Range)
+        if (Vector3.Distance(fish.transform.position, fish.OriginPos) > _octopus.Range)
         {
             fish.SetState<FishStateBurstMove>();
         }
 
-        Vector3 dir = _fishEnemy.Target.position - fish.transform.position;
+        Vector3 dir = _octopus.Target.position - fish.transform.position;
 
-        if (fish.RotateTowards(dir, fish.RotationModifier))
+        if (fish.RotateTowards(_octopus.GetLookRotation(dir), fish.RotationModifier))
         {
-            fish.Body.AddForce(dir.normalized * _fishEnemy.ChaseSpeed);
+            fish.Body.AddForce(dir.normalized * _octopus.ChaseSpeed);
             fish.SetState<FishStateBurstIdle>();
         }
     }

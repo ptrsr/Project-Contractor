@@ -41,11 +41,13 @@ public class D3b0g : MonoBehaviour
         {
             Vector3 pos = Input.mousePosition;
             pos = Camera.main.ScreenToWorldPoint(pos);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);// new Ray(pos, Vector3.down);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
             {
+                Hide();
+
                 Fish fish = hit.collider.GetComponent<Fish>();
                 _tempRenderers = hit.collider.gameObject.GetComponentsInChildren<MeshRenderer>();
 
@@ -86,7 +88,22 @@ public class D3b0g : MonoBehaviour
         }
         else if (_current is FishNeutral)
         {
-
+            FishNeutral neutral = (FishNeutral)_current;
+            _text.text = string.Format(
+                "State: {0}\n" +
+                "Range: {1}\n" +
+                "Direction: {2}\n" +
+                "Speed: {3}\n" +
+                "Range to origin: {4}\n" +
+                "Target from origin: {5}\n" +
+                "Can chase target: {6}",
+                neutral.GetState,
+                neutral.DetectionRange,
+                neutral.Direction,
+                neutral.Body.velocity,
+                Vector3.Distance(neutral.transform.position, neutral.OriginPos),
+                Vector3.Distance(neutral.OriginPos, neutral.Target.position),
+                (Vector3.Distance(neutral.OriginPos, neutral.Target.position) < neutral.DetectionRange));
         }
         else if (_current is FishFriendly)
         {
