@@ -11,8 +11,12 @@ public class TutorialImage : MonoBehaviour
     private bool _init = false;
     private bool _scaled = false;
 
+    private Canvas _canvas;
+
     private void Start()
     {
+        _canvas = GetComponent<Canvas>();
+        _canvas.enabled = false;
         _images = new Image[3];
         //Get the HUD RawImage for camera rendering
         _images = GetComponentsInChildren<Image>();
@@ -77,6 +81,7 @@ public class TutorialImage : MonoBehaviour
                 }
             }
         }
+        _canvas.enabled = true;
         _init = true;
     }
     
@@ -94,6 +99,7 @@ public class TutorialImage : MonoBehaviour
 
             }
         }
+        _canvas.enabled = false;
         _init = false;
     }
 
