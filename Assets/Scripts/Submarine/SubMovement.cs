@@ -11,15 +11,20 @@ public class SubMovement : MonoBehaviour {
     private Vector3 _startPosition;
 
     [SerializeField]
-    private int dragSpeed = 10;
+    private int _dragSpeed = 10;
     [SerializeField]
-    private int chargeSpeed = 50;
+    private int _maxSpeed = 4;
+    [SerializeField]
+    private int _distanceForMaxSpeed = 20;
+    [SerializeField]
+    private int _chargeSpeed = 50;
 
 
     //----------------------------------Checks for submarine states----------------------------
     private bool _tapping = false;
     private bool _charged = false;
     private bool _slowed = false;
+    private bool _stunned = false;
     private bool _goingLeft = false;
     private bool _goingRight = false;
     private bool _goingDownLeft = false;
@@ -34,7 +39,10 @@ public class SubMovement : MonoBehaviour {
     private float _tapIntervalsForCharge = 1;
     [SerializeField]
     private float _cooldown = 90;
-    private float _counter = 0;
+    [SerializeField]
+    private int _stunSlowTime = 60;
+    private int _counter = 0;
+    private int _stunSlowCounter = 0;
 
 
     //------------------------------Rotation of sumbarine---------------------------------------
@@ -81,6 +89,15 @@ public class SubMovement : MonoBehaviour {
 	void FixedUpdate () {
         _oxygen.Remove(1);
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        if(_stunned)
+        {
+            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
+            return;
+        }
+        else if (_slowed)
+        {
+            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
+        }
         GetCorrectDirection();
         RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
@@ -94,6 +111,7 @@ public class SubMovement : MonoBehaviour {
             else { _counter++; }
             return;
         }
+
         //Movement through dragging
         if (Input.GetMouseButton(0))
         {
@@ -102,11 +120,15 @@ public class SubMovement : MonoBehaviour {
             float distance = Vector3.Distance(pos, transform.position);
             Vector3 dir = pos - transform.position;
             dir = dir.normalized;
-            Debug.Log(dir);
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-           
+
             //adding force based on direction and distance from mouse
-            float speed = distance / dragSpeed;
+            float speed = 0;
+            if (distance > _distanceForMaxSpeed)
+            {
+                speed = _maxSpeed;
+            }
+            else { speed = distance / _dragSpeed; }
             if (_slowed)
             {
                 speed /= 2;
@@ -126,13 +148,9 @@ public class SubMovement : MonoBehaviour {
             if ((Time.time - _lastTap) < _tapIntervalsForCharge)
             {
                 Vector3 pos = GetMousePosition();
-                float distance = Vector3.Distance(pos, transform.position);
-                Debug.Log("DoubleTap");
-                pos.z = -Camera.main.transform.position.z;
-                pos = Camera.main.ScreenToWorldPoint(pos);
                 Vector3 dir = pos - transform.position;
 
-                _rigidBody.AddForce(dir.normalized * chargeSpeed, ForceMode.Impulse);
+                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Impulse);
                 _tapping = false;
                 _charged = true;
 
@@ -277,5 +295,26 @@ public class SubMovement : MonoBehaviour {
     public void SlowDownPlayer(bool value)
     {
         _slowed = value;
+        _stunSlowCounter = 0;
+    }
+
+    public void StunPlayer(bool value)
+    {
+        _stunned = true;
+        _stunSlowCounter = 0;
+    }
+
+    private int StunSlowDelay(int frames, int counter = 0)
+    {
+        if(counter >= frames)
+        {
+            StunPlayer(false);
+            SlowDownPlayer(false);
+        }
+        else
+        {
+            counter++;
+        }
+        return counter;
     }
 }
