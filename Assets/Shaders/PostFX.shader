@@ -6,10 +6,11 @@
 	}
 	SubShader
 	{
-		Cull Off ZWrite Off ZTest Always
 
 		Pass
 		{
+			Cull Off ZWrite Off ZTest Always
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -29,8 +30,7 @@
 				float4	color  : COLOR0;
 
 				float2 uv	   : TEXCOORD0;
-				float2 uvdepth : TEXCOORD1;
-				float4 ray	   : TEXCOORD2;
+				float4 ray	   : TEXCOORD1;
 			};
 			
 			uniform float4 _startColor;
@@ -46,7 +46,6 @@
 				o.color   = lerp(_startColor, _endColor, _depth - v.uv.y / 5);
 
 				o.uv	  = v.uv;
-				o.uvdepth = v.uv.xy;
 				o.ray	  = v.ray;
 				return o;
 			}
@@ -135,6 +134,58 @@
 				return clamp((dSample - 14) / 1, 0, 1);
 			}
 
+			ENDCG
+		}
+
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+			#include "UnityCG.cginc"
+
+			struct appdata
+			{
+				float4 vertex : POSITION;
+			};
+
+			struct v2f
+			{
+				float4 vertex  : SV_POSITION;
+			};
+
+			v2f vert(appdata v)
+			{
+				v2f o;
+
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_Target
+			{
+				return fixed4(1,0,0,1);
+			}
+			ENDCG
+		}
+
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert_img
+			#pragma fragment frag
+
+			#include "UnityCG.cginc"
+
+			uniform sampler2D _MainTex;
+			uniform sampler2D _CameraDepthTexture;
+
+			float4 frag(v2f_img i) : COLOR
+			{
+				return tex2D(_MainTex, i.uv);
+				return Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv)));
+			}
 			ENDCG
 		}
 	}

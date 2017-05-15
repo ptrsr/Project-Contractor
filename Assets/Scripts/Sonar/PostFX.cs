@@ -51,16 +51,20 @@ public class PostFX : MonoBehaviour
     private SpotLight _light = new SpotLight();
 
     [SerializeField]
-    private Shader _shader;
+    private Shader _fxShader;
 
     [SerializeField]
     private Transform _origin;
 
-    private Material _mat; 
-	private Camera _cam;
+    private Material _fxMat;
+
+    private Camera _cam;
 
 	private bool _active;
     private float _depth;
+
+
+    public float testDist;
 
     #region sonar arrays
 
@@ -78,8 +82,7 @@ public class PostFX : MonoBehaviour
         _cam = Camera.main;
         _cam.depthTextureMode = DepthTextureMode.Depth;
 
-        _mat = new Material(_shader);
-
+        _fxMat    = new Material(_fxShader);
 
 
         activepulse = new bool[_sonar.maxPulses];
@@ -155,18 +158,18 @@ public class PostFX : MonoBehaviour
         updateShader();
 
         //sonar
-        _mat.SetInt("_maxPulses", _sonar.maxPulses);
-        _mat.SetFloatArray("_aPulseDist", aPulse);
-        _mat.SetVectorArray("_aOrigin", origin);
-        _mat.SetFloatArray("_aWidth", aWidth);
+        _fxMat.SetInt("_maxPulses", _sonar.maxPulses);
+        _fxMat.SetFloatArray("_aPulseDist", aPulse);
+        _fxMat.SetVectorArray("_aOrigin", origin);
+        _fxMat.SetFloatArray("_aWidth", aWidth);
 
         Vector2 spotScreenPos = WorldToScreen(_light.transform.position);
-        _mat.SetVector("_spotPos", spotScreenPos);
-        _mat.SetVector("_spotDir", MouseDirection(spotScreenPos));
+        _fxMat.SetVector("_spotPos", spotScreenPos);
+        _fxMat.SetVector("_spotDir", MouseDirection(spotScreenPos));
 
-        _mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+        _fxMat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
 
-        RaycastCornerBlit(src, dst, _mat);
+        RaycastCornerBlit(src, dst, _fxMat);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
@@ -202,7 +205,7 @@ public class PostFX : MonoBehaviour
 		// Custom Blit, encoding Frustum Corners as additional Texture Coordinates
 		RenderTexture.active = dest;
 
-		mat.SetTexture("_MainTex", source);
+		mat.SetTexture("_SceneTex", source);
 
 		GL.PushMatrix();
 		GL.LoadOrtho();
@@ -229,8 +232,23 @@ public class PostFX : MonoBehaviour
 
 		GL.End();
 		GL.PopMatrix();
-	}
 
+        //mat.SetPass(1);
+
+        //GL.Begin(GL.QUADS);
+
+        //GL.Vertex3(-100, -100, testDist);
+
+        //GL.Vertex3(100, -100, testDist);
+
+        //GL.Vertex3(100, 100, testDist);
+
+        //GL.Vertex3(-100, 100, testDist);
+
+        //GL.End();
+
+        //Graphics.Blit(source, mat, 2);
+    }
 
     private Vector2 MouseDirection(Vector2 objectPos)
     {
@@ -251,25 +269,25 @@ public class PostFX : MonoBehaviour
 
     void OnValidate()
     {
-        if (Application.isPlaying && _mat != null)
+        if (Application.isPlaying && _fxMat != null)
             updateShader();
     }
 
     void updateShader()
     {
         //fog
-        _mat.SetFloat("_intensity", _fog.intensity);
-        _mat.SetVector("_startColor", _fog.startColor);
-        _mat.SetVector("_endColor", _fog.endColor);
+        _fxMat.SetFloat("_intensity", _fog.intensity);
+        _fxMat.SetVector("_startColor", _fog.startColor);
+        _fxMat.SetVector("_endColor", _fog.endColor);
 
 
         //spotlight
-        _mat.SetFloat("_zoom", -transform.position.z);
+        _fxMat.SetFloat("_zoom", -transform.position.z);
 
-        _mat.SetFloat("_spotAngle", _light.angle);
-        _mat.SetFloat("_spotFallOff", _light.fallOff);
+        _fxMat.SetFloat("_spotAngle", _light.angle);
+        _fxMat.SetFloat("_spotFallOff", _light.fallOff);
 
-        _mat.SetFloat("_camDist", _light.camDist);
-        _mat.SetFloat("_spotScaling", _light.scaling);
+        _fxMat.SetFloat("_camDist", _light.camDist);
+        _fxMat.SetFloat("_spotScaling", _light.scaling);
     }
 }
