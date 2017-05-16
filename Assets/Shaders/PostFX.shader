@@ -51,7 +51,7 @@
 			}
 
 			//textures
-			uniform sampler2D _MainTex;
+			uniform sampler2D _SceneTex;
 			uniform sampler2D _CameraDepthTexture;
 
 			//sonar
@@ -82,10 +82,11 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 fColor = tex2D(_MainTex, i.uv);
+				fixed4 fColor = tex2D(_SceneTex, i.uv);
 				float dSample = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
 
 				float linearDepth = Linear01Depth(dSample);
+
 				float4 dir = linearDepth * i.ray;
 				float3 pos = _WorldSpaceCameraPos + dir;
 				fixed4 pColor = fixed4(0,0,0,0);
@@ -139,6 +140,8 @@
 
 		Pass
 		{
+			Cull Off ZTest Always
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -152,20 +155,28 @@
 
 			struct v2f
 			{
-				float4 vertex  : SV_POSITION;
+				float4 vertex    : POSITION1;
+				float4 screenPos : SV_POSITION;
 			};
 
 			v2f vert(appdata v)
 			{
 				v2f o;
-
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.vertex = v.vertex;
+				o.screenPos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
 
+			uniform sampler2D _CameraDepthTexture;
+
+			uniform float _quadDepth;
+
 			fixed4 frag(v2f i) : SV_Target
 			{
-				return fixed4(1,0,0,1);
+				float depth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, float2(i.screenPos.x / _ScreenParams.x, i.screenPos.y / _ScreenParams.y))));
+			
+				return depth;
+			
 			}
 			ENDCG
 		}

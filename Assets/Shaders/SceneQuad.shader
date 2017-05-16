@@ -1,4 +1,4 @@
-﻿Shader "custom/DepthPass"
+﻿Shader "custom/SceneQuad"
 {
 	Properties
 	{
@@ -31,7 +31,6 @@
 				v2f o;
 
 				o.vertex  = UnityObjectToClipPos(v.vertex);
-				UNITY_TRANSFER_DEPTH(o.depth);
 				return o;
 			}
 
@@ -40,23 +39,6 @@
 				return fixed4(1,0,0,1);
 			}
 
-			ENDCG
-		}
-
-		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert_img
-			#pragma fragment frag
-
-			#include "UnityCG.cginc"
-
-			uniform sampler2D _CameraDepthTexture;
-
-			float4 frag(v2f_img i) : COLOR
-			{
-				return Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv)));
-			}
 			ENDCG
 		}
 	}

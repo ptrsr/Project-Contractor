@@ -169,11 +169,29 @@ public class PostFX : MonoBehaviour
 
         _fxMat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
 
-        RaycastCornerBlit(src, dst, _fxMat);
-	}
+        _fxMat.SetPass(1);
 
-	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
+        RaycastCornerBlit(src, dst, _fxMat);
+
+        RenderTexture.active = dst;
+
+        _fxMat.SetPass(1);
+
+        _fxMat.SetFloat("_quadDepth", testDist);
+
+        GL.Begin(GL.QUADS);
+        GL.Vertex3(-100, -100, testDist);
+        GL.Vertex3(100, -100, testDist);
+        GL.Vertex3(100, 100, testDist);
+        GL.Vertex3(-100, 100, testDist);
+        GL.End();
+
+    }
+
+    void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
 	{
+
+
         // Compute Frustum Corners
         float camFar = _cam.farClipPlane;
 		float camFov = _cam.fieldOfView;
@@ -232,20 +250,6 @@ public class PostFX : MonoBehaviour
 
 		GL.End();
 		GL.PopMatrix();
-
-        //mat.SetPass(1);
-
-        //GL.Begin(GL.QUADS);
-
-        //GL.Vertex3(-100, -100, testDist);
-
-        //GL.Vertex3(100, -100, testDist);
-
-        //GL.Vertex3(100, 100, testDist);
-
-        //GL.Vertex3(-100, 100, testDist);
-
-        //GL.End();
 
         //Graphics.Blit(source, mat, 2);
     }
