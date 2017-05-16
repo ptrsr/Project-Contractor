@@ -1,4 +1,4 @@
-﻿Shader "custom/sonar"
+﻿Shader "custom/PostFX"
 {
 	Properties
 	{
@@ -55,7 +55,6 @@
 			uniform sampler2D _MainTex;
 			uniform sampler2D _CameraDepthTexture;
 
-
 			//sonar
 			uniform int    _maxPulses;
 			uniform float  _aPulseDist[20];
@@ -63,17 +62,24 @@
 			uniform float  _aWidth    [20];
 
 			//fog
-			uniform float _zoom;
+			uniform float _intensity;
 
+			//spotlight
 			uniform float4 _spotPos;
 			uniform float4 _spotDir;
 
-			uniform float _intensity;
+			uniform float _zoom;
+
+			uniform float _spotAngle;
+			uniform float _spotFallOff;
+
+			uniform float _camDist;
+			uniform float _spotScaling;
 
 			//functions
 			float spot(v2f i);
-			float4 gammaCorrection(float4 color);
-			float boundary(float dSample);
+			float volumeBoundary(float dSample);
+			float sonarBoundary(float dSample);
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -97,7 +103,7 @@
 					}
 				}
 
-				float lighting = spot(i) * boundary(LinearEyeDepth(dSample));
+				float lighting = spot(i) * volumeBoundary(LinearEyeDepth(dSample));
 				float4 fog = max(lighting, 1 - _depth) * i.color;
 				float4 volumetric = pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
 
@@ -106,33 +112,25 @@
 
 				float4 finalColor = lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
 
-				finalColor.g += pColor.r;
+				finalColor.g += pColor.r * sonarBoundary(linearDepth);
 
 				return finalColor;
 			}
 
 			float spot(v2f i)
 			{
-				float angle = 9;
-				float falloff = 2;
-
-				float camDist = 15;
-				float scaling = 20;
-
-				float fustrum = pow(max(dot(normalize(i.uv - _spotPos.xy), _spotDir), 0), angle);
-				float dist = pow(min(1 - distance(_spotPos.xy, i.uv) * (1 + (_zoom - camDist) / scaling), 1), falloff);
+				float fustrum = pow(max(dot(normalize(i.uv - _spotPos.xy), _spotDir), 0), _spotAngle);
+				float dist = pow(min(1 - distance(_spotPos.xy, i.uv) * (1 + (_zoom - _camDist) / _spotScaling), 1), _spotFallOff);
 
 				return fustrum * dist;
 			}
 
-			float4 gammaCorrection(float4 color)
+			float sonarBoundary(float dSample)
 			{
-				float gamma = 0.7 + (_depth - 0.2) / 2;
-
-				return float4(pow(color.xyz, 1.0 / gamma).xyz, 1);
+				return pow(clamp((1 - dSample * 10) + 1.3f, 0, 1), 2);
 			}
 
-			float boundary(float dSample)
+			float volumeBoundary(float dSample)
 			{
 				return clamp((dSample - 14) / 1, 0, 1);
 			}

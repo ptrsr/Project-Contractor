@@ -17,15 +17,25 @@ class Sonar
 [System.Serializable]
 class Fog
 {
-    [Range(0f, 30f)]
-    public float intensity = 0.5f;
+    [Range(0f, 3f)]
+    public float intensity = 2f;
 
     public Color
         startColor,
         endColor;
 
     public Light worldLight;
-    public Transform spotLight;
+}
+
+[System.Serializable]
+class SpotLight
+{
+    public Transform transform;
+
+    public float angle = 9;
+    public float fallOff = 2;
+    public float camDist = 15;
+    public float scaling = 20;
 }
 #endregion
 
@@ -36,6 +46,9 @@ public class PostFX : MonoBehaviour
 
     [SerializeField]
     private Fog _fog = new Fog();
+
+    [SerializeField]
+    private SpotLight _light = new SpotLight();
 
     [SerializeField]
     private Shader _shader;
@@ -60,9 +73,6 @@ public class PostFX : MonoBehaviour
 	private Vector4[] origin;
     #endregion
 
-    public bool multiply = false;
-	private int m;
-
 	void Start()
     {
         _cam = Camera.main;
@@ -70,40 +80,30 @@ public class PostFX : MonoBehaviour
 
         _mat = new Material(_shader);
 
-        _mat.SetVector("_startColor", _fog.startColor);
-        _mat.SetVector("_endColor",   _fog.endColor);
+
 
         activepulse = new bool[_sonar.maxPulses];
 		aPulse      = new float[_sonar.maxPulses];
 		origin      = new Vector4[_sonar.maxPulses];
 		aTravel     = new float[_sonar.maxPulses];
 		aWidth      = new float[_sonar.maxPulses];
-	}
+
+        updateShader();
+    }
 
 	void Update ()
     {
         _depth = -Camera.main.transform.position.y / 1000;
         _fog.worldLight.intensity = 1 - _depth;
 
+
+        Vector2 dir = MouseDirection(WorldToScreen(_light.transform.position));
+        _light.transform.eulerAngles = new Vector3(-Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg, 90, 0);
+
         PassiveSonar ();
 		ActiveSonar();
 		PulseActivate ();
-		FrequencyControl ();
 		PulseControl ();
-
-		if (multiply)
-			m = 1;
-		else
-			m = 0;
-	}
-
-	void FrequencyControl() {
-//		float shift = (_frequency - v.f_min) / (v.f_max - v.f_min); 
-
-//		_interval = Mathf.Lerp (v.i_min, v.i_max, shift);
-//		_width = Mathf.Lerp (v.w_min, v.w_max, shift);
-//		_distance = Mathf.Lerp (v.d_min, v.d_max, shift);
-
 	}
 
 	void PulseActivate() {
@@ -152,26 +152,21 @@ public class PostFX : MonoBehaviour
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst)
     {
-        //fog
-        _mat.SetFloat("_intensity", _fog.intensity);
-        _mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
-        _mat.SetFloat("_zoom", -transform.position.z);
+        updateShader();
 
+        //sonar
+        _mat.SetInt("_maxPulses", _sonar.maxPulses);
+        _mat.SetFloatArray("_aPulseDist", aPulse);
+        _mat.SetVectorArray("_aOrigin", origin);
+        _mat.SetFloatArray("_aWidth", aWidth);
 
-
-        Vector2 spotScreenPos = WorldToScreen(_fog.spotLight.position);
-
+        Vector2 spotScreenPos = WorldToScreen(_light.transform.position);
         _mat.SetVector("_spotPos", spotScreenPos);
         _mat.SetVector("_spotDir", MouseDirection(spotScreenPos));
 
-        //sonar
-        _mat.SetInt ("_maxPulses", _sonar.maxPulses);
-		_mat.SetFloatArray ("_aPulseDist", aPulse);
-		_mat.SetVectorArray ("_aOrigin", origin);
-		_mat.SetFloatArray ("_aWidth", aWidth);
-		_mat.SetInt ("m", m);
-//		Graphics.Blit (src, dst, SonarMat);
-		RaycastCornerBlit (src, dst, _mat);
+        _mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+
+        RaycastCornerBlit(src, dst, _mat);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
@@ -252,5 +247,29 @@ public class PostFX : MonoBehaviour
         Vector2 screenPos = new Vector2(localPos.x / Screen.width, localPos.y / Screen.height);
 
         return screenPos;
+    }
+
+    void OnValidate()
+    {
+        if (Application.isPlaying && _mat != null)
+            updateShader();
+    }
+
+    void updateShader()
+    {
+        //fog
+        _mat.SetFloat("_intensity", _fog.intensity);
+        _mat.SetVector("_startColor", _fog.startColor);
+        _mat.SetVector("_endColor", _fog.endColor);
+
+
+        //spotlight
+        _mat.SetFloat("_zoom", -transform.position.z);
+
+        _mat.SetFloat("_spotAngle", _light.angle);
+        _mat.SetFloat("_spotFallOff", _light.fallOff);
+
+        _mat.SetFloat("_camDist", _light.camDist);
+        _mat.SetFloat("_spotScaling", _light.scaling);
     }
 }
