@@ -10,7 +10,7 @@ public class FishFriendly : Fish
     public int WayPointDistance { get { return _wayPointDistance; } }
 
     [SerializeField]
-    private List<Transform> _wayPoints;
+    private List<Transform> _wayPoints = null;
     public List<Transform> WayPoints { get { return _wayPoints; } }
 
     public override void Start()

@@ -23,7 +23,7 @@ public class FishStateWayPoint : FishState
 
         fish.Direction = _fishFriendly.WayPoints[_wayPointId].position - fish.transform.position;
 
-        fish.RotateTowards(fish.Direction);
+        fish.RotateTowards(fish.GetLookRotation(fish.Direction));
         fish.Body.AddRelativeForce(new Vector3(0, fish.MoveSpeed), ForceMode.Force);
     }
 

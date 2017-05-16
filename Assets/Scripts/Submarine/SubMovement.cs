@@ -10,101 +10,32 @@ public class SubMovement : MonoBehaviour {
     private Camera _camera;
     private Vector3 _startPosition;
 
+    [SerializeField]
+    private int dragSpeed = 10;
+    [SerializeField]
+    private int chanrgeSpeed = 50;
 
-    //-----------------------------------Movement speed variables------------------------------
-    [SerializeField]
-    private int _dragSpeed = 10;
-    [SerializeField]
-    private int _maxSpeed = 4;
-    [SerializeField]
-    private int _distanceForMaxSpeed = 20;
-    [SerializeField]
-    private int _chargeSpeed = 50;
-
-
-    //----------------------------------Checks for submarine states----------------------------
     private bool _tapping = false;
     private bool _charged = false;
     private bool _slowed = false;
-    private bool _stunned = false;
-    private bool _goingLeft = false;
-    private bool _goingRight = false;
-    private bool _goingDownLeft = false;
-    private bool _goingDownRight = false;
-    private bool _goingUpLeft = false;
-    private bool _goingUpRight = false;
-
-
-    //---------------------------------Charging date--------------------------------------------
     private float _lastTap;
     [SerializeField]
-    private float _tapIntervalsForCharge = 1;
+    private float _tapIntervalForCharge = 1;
     [SerializeField]
     private float _cooldown = 90;
-    [SerializeField]
-    private int _stunSlowTime = 60;
-    private int _counter = 0;
-    private int _stunSlowCounter = 0;
+    private float _counter = 0;
 
 
-    //------------------------------Rotation of sumbarine---------------------------------------
-    private Quaternion left = new Quaternion();
-    private Quaternion right = new Quaternion();
-    private Quaternion forward = new Quaternion();
-    private Quaternion leftUp = new Quaternion();
-    private Quaternion leftDown = new Quaternion();
-    private Quaternion rightUp = new Quaternion();
-    private Quaternion rightDown = new Quaternion();
-
-    [SerializeField]
-    private Vector3 _possibleLeftTurn = new Vector3(0, 25, 0);
-    [SerializeField]
-    private Vector3 _possibleLeftDownTurn = new Vector3(-50, 50, 0);
-    [SerializeField]
-    private Vector3 _possibleLeftUpTurn = new Vector3(50, 50, 0);
-    [SerializeField]
-    private Vector3 _possibleRightTurn = new Vector3(0, -25, 0);
-    [SerializeField]
-    private Vector3 _possibleRightDownTurn = new Vector3(-50, -50, 0);
-    [SerializeField]
-    private Vector3 _possibleRightUpTurn = new Vector3(50, -50, 0);
-    [SerializeField]
-    private float _smoothnessOfTurning = 0.1f;
-
-
-    void Awake () {
+	void Start () {
         _rigidBody = GetComponent<Rigidbody>();
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
-        left = GetQuaternionFromVector(_possibleLeftTurn);
-        right = GetQuaternionFromVector(_possibleRightTurn);
-        leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
-        leftUp = GetQuaternionFromVector(_possibleLeftUpTurn);
-        rightDown = GetQuaternionFromVector(_possibleRightDownTurn);
-        rightUp = GetQuaternionFromVector(_possibleRightUpTurn);
-        forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
-    }
+	}
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
-        //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        //return only if stunned only count when slowed 
-        if(_stunned)
-        {
-            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
-            return;
-        }
-        else if (_slowed)
-        {
-            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
-        }
-        //Gets correct direction of mouse and rotates depending on that
-        GetCorrectDirection();
-        RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
         if (_charged)
         {
@@ -116,24 +47,26 @@ public class SubMovement : MonoBehaviour {
             else { _counter++; }
             return;
         }
-
         //Movement through dragging
         if (Input.GetMouseButton(0))
         {
 
             Vector3 pos = GetMousePosition();
-            float distance = Vector3.Distance(pos, transform.position);
             Vector3 dir = pos - transform.position;
+            float distance = Vector3.Distance(pos, transform.position);
             dir = dir.normalized;
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
 
-            //adding force based on direction and distance from mouse
-            float speed = 0;
-            if (distance > _distanceForMaxSpeed)
+            if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y > 180)
             {
-                speed = _maxSpeed;
+                transform.rotation = GetQuaternionFromVector(new Vector3(0,90,0));
             }
-            else { speed = distance / _dragSpeed; }
+            if (Quaternion.AngleAxis(angle, Vector3.up).eulerAngles.y < 180)
+            {
+                transform.rotation = GetQuaternionFromVector(new Vector3(0, -90, 0));
+            }
+            //adding force based on direction and distance from mouse
+            float speed = distance / dragSpeed;
             if (_slowed)
             {
                 speed /= 2;
@@ -150,108 +83,22 @@ public class SubMovement : MonoBehaviour {
                 SingleTap();
             }
             //if you tap a second time before _taptime(interval time for second taps) charge
-            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
+            if ((Time.time - _lastTap) < _tapIntervalForCharge)
             {
-                Vector3 pos = GetMousePosition();
+                Vector3 pos = Input.mousePosition;
+                pos.z = -Camera.main.transform.position.z;
+                pos = Camera.main.ScreenToWorldPoint(pos);
                 Vector3 dir = pos - transform.position;
 
-                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Impulse);
+                float distance = Vector3.Distance(pos, transform.position);
+                
+                _rigidBody.AddForce(dir.normalized * chanrgeSpeed, ForceMode.Impulse);
                 _tapping = false;
                 _charged = true;
 
             }
             _lastTap = Time.time;
         }
-    }
-
-    //Gets correct direction of mouse
-    private void GetCorrectDirection() {
-        _goingLeft = false;
-        _goingRight = false;
-        _goingUpLeft = false;
-        _goingUpRight = false;
-        _goingDownRight = false;
-        _goingDownLeft = false;
-        Vector3 pos = GetMousePosition();
-        float distance = Vector3.Distance(pos, transform.position);
-        Vector3 dir = pos - transform.position;
-        dir = dir.normalized;
-        if (dir.x >= 0.5f && dir.y < 0.5f)
-        {
-            _goingRight = true;
-        }
-        else if (dir.x <= -0.5f && dir.y <= 0.5f  )
-        {
-            _goingLeft = true;
-        }
-        else if (dir.x <= -0.3f && dir.y <= -0.1f)
-        {
-            _goingDownLeft = true;
-        }
-        else if (dir.x <= -0.3f && dir.y >= 0.3f)
-        {
-            _goingUpLeft = true;
-        }
-        else if (dir.x <= 0.3f && dir.y <= -0.1f)
-        {
-            _goingDownRight = true;
-        }
-        else if (dir.x <= 0.3f && dir.y >= 0.3f)
-        {
-            _goingUpRight = true;
-        }
-
-
-        if (!Input.GetMouseButton(0))
-        {
-            _goingLeft = false;
-            _goingRight = false;
-            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
-        }
-    }
-
-    //Rotates depending on the direction of the mouse
-    private void RotateDependingOnDirection()
-    {
-        if (_goingLeft)
-        {
-            RotateDependingOnDistance(left);
-        }
-        else if (_goingDownLeft)
-        {
-            RotateDependingOnDistance(leftDown);
-        }
-        else if (_goingUpLeft)
-        {
-            RotateDependingOnDistance(leftUp);
-        }
-        else if (_goingRight)
-        {
-            RotateDependingOnDistance(right);
-        }
-        else if (_goingUpRight)
-        {
-            RotateDependingOnDistance(rightUp);
-        }
-        else if (_goingDownRight)
-        {
-            RotateDependingOnDistance(rightDown);
-        }
-    }
-
-    //Rotates depending on the distance from the mouse(from small rotation to full) for smoothness
-    private void RotateDependingOnDistance(Quaternion quat)
-    {
-        Vector3 pos = GetMousePosition();
-        float distance = Vector3.Distance(pos, transform.position);
-        if (distance < 1)
-        {
-            Quaternion tempQuat = new Quaternion();
-            tempQuat.eulerAngles = quat.eulerAngles * -(distance / 10);
-            transform.rotation = Quaternion.Slerp(transform.rotation, tempQuat, _smoothnessOfTurning);
-        }
-        else
-            transform.rotation = Quaternion.Slerp(transform.rotation, quat, _smoothnessOfTurning);
     }
 
     //Get mouse position in world space
@@ -274,7 +121,7 @@ public class SubMovement : MonoBehaviour {
     //Coroutine for waiting after first tap
     IEnumerator SingleTap()
     {
-        yield return new WaitForSeconds(_tapIntervalsForCharge);
+        yield return new WaitForSeconds(_tapIntervalForCharge);
         if (_tapping)
         {
             Debug.Log("SingleTap");
@@ -303,29 +150,5 @@ public class SubMovement : MonoBehaviour {
     public void SlowDownPlayer(bool value)
     {
         _slowed = value;
-        _stunSlowCounter = 0;
-    }
-
-    //For eel or whatever is going to stun the player
-    public void StunPlayer(bool value)
-    {
-        _stunned = true;
-        _stunSlowCounter = 0;
-    }
-
-    //Delay that takes a counter and to count with and later returns(more convenient) 
-    //After delay player is unslowed and unstunned
-    private int StunSlowDelay(int frames, int counter = 0)
-    {
-        if(counter >= frames)
-        {
-            StunPlayer(false);
-            SlowDownPlayer(false);
-        }
-        else
-        {
-            counter++;
-        }
-        return counter;
     }
 }
