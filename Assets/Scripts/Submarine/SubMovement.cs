@@ -77,8 +77,8 @@ public class SubMovement : MonoBehaviour {
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
-        TutorialImage tutorial = FindObjectOfType<TutorialImage>();
-        if (tutorial != null) tutorial.SetChaseTarget(this.transform);
+        //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
+        //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         left = GetQuaternionFromVector(_possibleLeftTurn);
         right = GetQuaternionFromVector(_possibleRightTurn);
         leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
