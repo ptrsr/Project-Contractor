@@ -21,7 +21,7 @@ public class FishStatePatrolChase : FishState
             fish.SetState<FishStatePatrol>();
         
         Vector3 dir = (_shark.Target.transform.position + (_targetBody.velocity / _shark.Difficulty)) - fish.transform.position;
-        fish.RotateTowards(dir, _shark.RotationModifier);
+        fish.RotateTowards(_shark.GetLookRotation(dir), _shark.RotationModifier);
         fish.Body.AddForce(dir.normalized * _shark.ChaseSpeed);
     }
 }

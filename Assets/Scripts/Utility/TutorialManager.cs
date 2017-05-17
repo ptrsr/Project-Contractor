@@ -5,7 +5,11 @@ using UnityEngine;
 
 public enum Case
 {
-    BumbWall = 0
+    BumbWall = 0,
+    HitByShark = 1,
+    HitByEel = 2,
+    HitByOctopus = 3,
+    OxigenFinished = 4
 };
 
 public class TutorialManager : MonoBehaviour {
@@ -18,14 +22,12 @@ public class TutorialManager : MonoBehaviour {
     // Use this for initialization
     void Start() {
         _tutorialImage = GetComponentInChildren<TutorialImage>();
-        //Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>("TutorialTextures/Bubbles.png");
-        //Debug.Log(texture.name);
     }
 
     // Update is called once per frame
     void Update() {
         if (_tutorialImage == null) return;
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             TutorialEvent(Case.BumbWall);
         }
@@ -41,6 +43,7 @@ public class TutorialManager : MonoBehaviour {
         switch (type)
         {
             case Case.BumbWall:
+                //Set that image that the tutorial will use _tutorialImage.SetImage();
                 break;
             default:
                 break;

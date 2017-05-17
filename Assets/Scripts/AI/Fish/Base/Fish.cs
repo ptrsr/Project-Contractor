@@ -34,6 +34,9 @@ public abstract class Fish : MonoBehaviour
     private Vector3 _originPos;
     public Vector3 OriginPos { get { return _originPos; } }
 
+    private Quaternion _originRot;
+    public Quaternion OriginRot { get { return _originRot; } }
+
     private Rigidbody _body;
     public Rigidbody Body { get { return _body; } }
 
@@ -45,6 +48,7 @@ public abstract class Fish : MonoBehaviour
     public virtual void Start()
     {
         _originPos = transform.position;
+        _originRot = transform.rotation;
         _body = GetComponent<Rigidbody>();
     }
 
@@ -66,14 +70,11 @@ public abstract class Fish : MonoBehaviour
         stateCache[typeof(T)] = null;
     }
 
-    public bool RotateTowards(Vector3 direction, float rotationModifier = 0f)
+    public bool RotateTowards(Quaternion lookRotation, float rotationModifier = 0f)
     {
         if (_rotationCount != _rotationTime)
         {
-            Quaternion lookDir = Quaternion.LookRotation(direction);
-            lookDir.eulerAngles = new Vector3(0, lookDir.eulerAngles.y + 90, lookDir.eulerAngles.x);
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookDir, _rotationSpeed + rotationModifier);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _rotationSpeed + rotationModifier);
             _rotationCount++;
 
             //Still rotating
@@ -86,6 +87,11 @@ public abstract class Fish : MonoBehaviour
             //Done rotating
             return true;
         }
+    }
+
+    public virtual Quaternion GetLookRotation(Vector3 direction)
+    {
+        return Quaternion.LookRotation(direction);
     }
 
     //Places the object on z = 0

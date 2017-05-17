@@ -16,7 +16,7 @@ half4 Caustics (float3 worldPos) {
 	float2 shift1 = float2(time, 0);
 	float2 shift2 = float2(0.5, time);
 	// texture overlay in world space
-	float2 fragUV = float2(worldPos.x, worldPos.z) /3;
+	float2 fragUV = float2(worldPos.x, worldPos.z) /30000;
 	half4 c1 = tex2D(_Caustics, fragUV + shift1);
 	half4 c2 = tex2D(_Caustics, fragUV + shift2);
 	half4 c = (c1*10) * (c2*10);
