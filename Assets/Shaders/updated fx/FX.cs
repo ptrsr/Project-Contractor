@@ -21,6 +21,14 @@ class Fog {
 	public float _minDepth;
 	public float _maxDepth;
 }
+[System.Serializable]
+class Caustics {
+	
+	[Range(0f,20f)]
+	public float 
+		size,
+		intensity;
+}
 #endregion
 
 public class FX : MonoBehaviour {
@@ -30,6 +38,9 @@ public class FX : MonoBehaviour {
 
 	[SerializeField]
 	private Fog _fog = new Fog();
+
+	[SerializeField]
+	private Caustics _caustics = new Caustics();
 
 	public Material _mat; 
 	public Transform _origin;
@@ -106,11 +117,15 @@ public class FX : MonoBehaviour {
 		_mat.SetVectorArray ("originarray", aOrigin);
 		_mat.SetFloat ("width", _sonar.width);
 
-		//fog
+		// fog
 		_mat.SetVector("_startColor", _fog.startColor);
 		_mat.SetVector("_endColor", _fog.endColor);
 		_mat.SetFloat ("_fogEnd", _fog.fogRange);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+
+		// caustics
+		_mat.SetFloat("causticsSize", _caustics.size);
+		_mat.SetFloat("causticsIntensity", _caustics.intensity);
 	}
 
 	[ImageEffectOpaque]
