@@ -6,21 +6,25 @@ public class FishStateLatchOn : FishState
 {
     public FishStateLatchOn(Fish pFish) : base(pFish) { }
 
-    private FishEnemy _fishEnemy;
+    private Octopus _octo;
 
     public override void Initialize()
     {
-        _fishEnemy = (FishEnemy)fish;
-        fish.transform.SetParent(_fishEnemy.Target.transform);
+        _octo = (Octopus)fish;
+
+        if (_octo.IsChasing)
+            fish.transform.SetParent(_octo.Target.transform);
+
         fish.Body.isKinematic = true;
-        fish.GetComponent<Collider>().enabled = false;
+        _octo.Collider.enabled = false;
     }
 
     public override void Step()
     {
-        //fish.transform.position = _fishEnemy.Target.transform.position + new Vector3(0f, 0f, -1f);
-
-        //if (_fishEnemy.Target.GetComponent<ZBound>().tap)
-        //    fish.SetState<FishStateLatchOff>();
+        if (!_octo.IsChasing)
+        {
+            _octo.transform.position = Vector3.Lerp(_octo.transform.position, _octo.RockPos + (_octo.RockNormal * 5f), _octo.RotationSpeed);
+            _octo.transform.rotation = Quaternion.Lerp(_octo.transform.rotation, _octo.GetLatchOnRot(_octo.RockNormal), _octo.RotationSpeed);
+        }
     }
 }

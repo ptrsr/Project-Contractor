@@ -6,26 +6,27 @@ public class FishStateBurstMove : FishState
 {
     public FishStateBurstMove(Fish pFish) : base(pFish) { }
 
-    private Octopus _octopus;
+    private Octopus _octo;
 
     public override void Initialize()
     {
-        _octopus = (Octopus)fish;
+        _octo = (Octopus)fish;
 
-        if (_octopus.DetectTarget())
-            fish.SetState<FishStateBurstChase>();
-        _octopus.SetRandomDirection();
-        _octopus.DetectWall();
+        //if (_octo.DetectTarget())
+        //    fish.SetState<FishStateBurstChase>();
     }
 
     public override void Step()
     {
-        Debug.DrawRay(fish.transform.position, fish.Direction);
+        Debug.DrawLine(_octo.transform.position, _octo.RockPos);
+        if (_octo.CheckLatchOnRange())
+            _octo.SetState<FishStateLatchOn>();
 
-        if (fish.RotateTowards(_octopus.GetLookRotation(fish.Direction)))
+        Vector3 dir = (_octo.RockPos - _octo.transform.position).normalized;
+        if (_octo.RotateTowards(_octo.GetLookRotation(_octo.Direction)))
         {
-            fish.Body.AddForce(fish.Direction * fish.MoveSpeed, ForceMode.Force);
-            fish.SetState<FishStateBurstIdle>();
+            _octo.Body.AddForce(_octo.Direction * _octo.MoveSpeed);
+            _octo.SetState<FishStateBurstIdle>();
         }
     }
 }

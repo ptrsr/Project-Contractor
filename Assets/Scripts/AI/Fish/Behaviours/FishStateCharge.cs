@@ -8,25 +8,25 @@ public class FishStateCharge : FishState
 
     private ElectricEel _eel;
 
-    private bool _reachedExit = false;
-
     public override void Initialize()
     {
         _eel = (ElectricEel)fish;
-        _reachedExit = false;
     }
 
     public override void Step()
     {
-        if (Vector3.Distance(_eel.HoleExit.position, _eel.transform.position) > 2 && !_reachedExit)
+        if (Vector3.Distance(_eel.HoleExit.position, _eel.Anchor.position) > 0)
         {
-            _eel.Direction = (_eel.HoleExit.position - _eel.transform.position).normalized;
+            Vector3 dir = (_eel.HoleExit.position - _eel.Anchor.position).normalized * _eel.ChargeSpeed;
+            _eel.AnchorBody.AddForce(dir);
         }
         else
         {
-            _reachedExit = true;
-            _eel.Direction = (_eel.Target.position - _eel.transform.position).normalized;
+            _eel.AnchorBody.isKinematic = true;
         }
+
+        if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 4)
+            _eel.Direction = (_eel.Target.position - _eel.transform.position).normalized;
 
         if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) > _eel.DetectionRange)
         {
@@ -34,6 +34,6 @@ public class FishStateCharge : FishState
         }
         
         _eel.RotateTowards(_eel.GetLookRotation(_eel.Direction));
-        _eel.Body.AddForce(_eel.Direction * _eel.MoveSpeed);
+        _eel.Body.AddForce(_eel.Direction * _eel.ChargeSpeed);
     }
 }
