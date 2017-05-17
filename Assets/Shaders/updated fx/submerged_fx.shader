@@ -79,7 +79,7 @@
 
 			
 				//final output blending
-				//scene += caustics;
+				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
 				scene = scene + pulseCol + pulseEdge;
 
