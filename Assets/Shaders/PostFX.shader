@@ -84,6 +84,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 fColor = tex2D(_MainTex, i.uv);
+
 				float dSample = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
 
 				float linearDepth = Linear01Depth(dSample);
@@ -104,17 +105,19 @@
 				}
 
 				float lighting = spot(i) * volumeBoundary(LinearEyeDepth(dSample));
-				float4 fog = max(lighting, 1 - _depth) * i.color;
+				//float4 fog = max(lighting, 1 - _depth) * i.color;
 				float4 volumetric = pow(lighting, 2) * float4(0.1, 0.1, 0.1, 0);
 
 				if (linearDepth == 1)
-					return fog + volumetric;
+					return volumetric;
 
-				float4 finalColor = lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
+				//float4 finalColor = lerp(fColor, fog, pow(linearDepth, _intensity)) * max(lighting, 1) + volumetric;
 
-				finalColor.g += pColor.r * sonarBoundary(linearDepth);
+				return fColor + lighting;
 
-				return finalColor;
+				//finalColor.g += pColor.r * sonarBoundary(linearDepth);
+
+
 			}
 
 			float spot(v2f i)
