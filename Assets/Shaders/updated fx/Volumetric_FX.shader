@@ -3,6 +3,7 @@
 	SubShader
 	{
 		Cull Off ZTest Always
+		Blend SrcAlpha OneMinusSrcAlpha
 		Tags {"RenderType" = "Transparent"}
 
 		Pass
@@ -38,16 +39,21 @@
 			}
 
 
-			uniform float _width;
+			uniform float _height;
+			
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float depth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_LastCameraDepthTexture , float2(0, i.uv.x))));
+				float depth = LinearEyeDepth(tex2D(_LastCameraDepthTexture , float2(0, i.uv.x)));
 				
+				if (depth > i.uv.y)
+					depth = 1;
+
 				float horizontal = 1 - pow(abs(i.uv.x - 0.5f) * 2, 2);
 				float vertical = 1 - pow(i.uv.y, 2);
 
-				return fixed4(depth, depth, depth, horizontal * vertical);
+
+				return fixed4(1, 1, 1, depth * horizontal * vertical);
 			}
 			ENDCG
 		}

@@ -55,7 +55,7 @@ public class Volumetric : MonoBehaviour
         Vector3 toBottom = transform.forward * _height;
 
         _mat.SetPass(0);
-        _mat.SetFloat("_width", _size);
+        _mat.SetFloat("_height", _height);
 
         GL.Begin(GL.QUADS);
         {
