@@ -6,17 +6,22 @@ public class FishStateLatchOff : FishState
 {
     public FishStateLatchOff(Fish pFish) : base(pFish) { }
 
+    private Octopus _octo;
+
     public override void Initialize()
     {
-        fish.transform.SetParent(null);
-        fish.Body.isKinematic = false;
-        fish.GetComponent<Collider>().enabled = true;
-        fish.Body.AddForce(-((FishEnemy)fish).Target.GetComponent<Rigidbody>().velocity, ForceMode.Impulse);
-        //Animation for swimming away
+        _octo = (Octopus)fish;
+        _octo.Body.isKinematic = false;
+
+        if (_octo.IsChasing)
+            fish.transform.SetParent(null);
+
+        _octo.Body.AddForce(_octo.IsChasing ? Vector3.zero : _octo.RockNormal * _octo.MoveSpeed / 2f);
+        _octo.SetState<FishStateFindRock>();
     }
 
     public override void Step()
     {
-        
+        //Empty
     }
 }

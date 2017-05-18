@@ -96,7 +96,7 @@ public class FishEnemy : Fish
             return false;
     }
 
-    public bool DetectTarget()
+    public virtual bool DetectTarget()
     {
         float enemyDis = Vector3.Distance(transform.position, Target.position);
         float targetDis = Vector3.Distance(OriginPos, Target.position);

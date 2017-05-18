@@ -18,6 +18,11 @@ public class Octopus : FishEnemy
     private float _latchOnOffset = 5f;
     public float LatchOnOffset { get { return _latchOnOffset; } }
 
+    [SerializeField]
+    [Tooltip("The time the Octopus stays on a rock before finding a new one")]
+    private int _restTime = 500;
+    public int RestTime { get { return _restTime; } }
+
     private Collider _collider;
     public Collider Collider { get { return _collider; } }
 
@@ -28,6 +33,9 @@ public class Octopus : FishEnemy
     private Vector3 _rockNormal;
     public Vector3 RockNormal { get { return _rockNormal; } set { _rockNormal = value; } }
 
+    private Vector3 _targetNormal;
+    public Vector3 TargetNormal { get { return _targetNormal; } set { _targetNormal = value; } }
+
     private bool _isChasing = false;
     public bool IsChasing { get { return _isChasing; } }
 
@@ -36,6 +44,7 @@ public class Octopus : FishEnemy
         base.Start();
 
         _collider = GetComponent<Collider>();
+        _rockPos = origPos;
 
         stateCache[typeof(FishStateFindRock)] = new FishStateFindRock(this);
         stateCache[typeof(FishStateBurstIdle)] = new FishStateBurstIdle(this);
@@ -52,12 +61,16 @@ public class Octopus : FishEnemy
         base.Update();
     }
 
-    public void OnCollisionEnter(Collision c)
+    public override bool DetectTarget()
     {
-        if (c.transform != Target)
-            return;
+        bool detected = base.DetectTarget();
 
-        SetState<FishStateLatchOn>();
+        if (detected)
+            _isChasing = true;
+        else
+            _isChasing = false;
+
+        return detected;
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)

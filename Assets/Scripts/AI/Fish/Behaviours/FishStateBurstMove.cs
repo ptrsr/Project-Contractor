@@ -12,8 +12,8 @@ public class FishStateBurstMove : FishState
     {
         _octo = (Octopus)fish;
 
-        //if (_octo.DetectTarget())
-        //    fish.SetState<FishStateBurstChase>();
+        if (_octo.DetectTarget())
+            fish.SetState<FishStateBurstChase>();
     }
 
     public override void Step()
@@ -22,7 +22,7 @@ public class FishStateBurstMove : FishState
         if (_octo.CheckLatchOnRange())
             _octo.SetState<FishStateLatchOn>();
 
-        Vector3 dir = (_octo.RockPos - _octo.transform.position).normalized;
+        _octo.Direction = (_octo.RockPos - _octo.transform.position).normalized;
         if (_octo.RotateTowards(_octo.GetLookRotation(_octo.Direction)))
         {
             _octo.Body.AddForce(_octo.Direction * _octo.MoveSpeed);
