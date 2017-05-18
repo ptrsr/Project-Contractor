@@ -23,8 +23,8 @@ class Fog {
 class Caustics {
 	
 	[Range(0f,50f)]
-	public float size, intensity;
-	public float _causticsDepth;
+	public float size, intensity = 20;
+	public float _causticsDepth = -150;
 }
 #endregion
 

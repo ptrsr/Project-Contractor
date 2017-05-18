@@ -85,7 +85,6 @@
 				half4 fog = fogColor(i.uv);
 				float fogDiff = fogBlend(eyeDepth);
 
-			
 				//final output blending
 				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
