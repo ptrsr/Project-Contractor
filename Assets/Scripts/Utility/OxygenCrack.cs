@@ -51,7 +51,7 @@ public class OxygenCrack : MonoBehaviour {
             {
                 GameObject obj = _oxygens[i];
                 obj.transform.Translate(new Vector3(0, _speed, 0));
-                obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, _zero, _smoothnessOfTurningUp);
+                obj.transform.rotation = Quaternion.Slerp(obj.transform.localRotation, _zero, _smoothnessOfTurningUp);
                 _lifetimes[i] -= 1;
                 if(_lifetimes[i] <= 0)
                 {
