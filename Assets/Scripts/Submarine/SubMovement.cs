@@ -40,7 +40,7 @@ public class SubMovement : MonoBehaviour {
     [SerializeField]
     private float _tapIntervalsForCharge = 1;
     [SerializeField]
-    private float _cooldown = 90;
+    private int _cooldown = 90;
     [SerializeField]
     private int _stunSlowTime = 60;
     private int _counter = 0;
@@ -328,4 +328,14 @@ public class SubMovement : MonoBehaviour {
         }
         return counter;
     }
+
+
+    public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
+    public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }
+    public int DistaceForMax { get { return _distanceForMaxSpeed; } set { _distanceForMaxSpeed = value; } }
+    public int ChargeSpeed { get { return _chargeSpeed; } set { _chargeSpeed = value; } }
+    public float TapChargeIntrvl { get { return _tapIntervalsForCharge; } set { _tapIntervalsForCharge = value; } }
+    public int ChargeCooldwn { get { return _cooldown; } set { _cooldown = value; } }
+    public int StunSlowCooldown { get { return _stunSlowTime; } set { _stunSlowTime = value; } }
+
 }
