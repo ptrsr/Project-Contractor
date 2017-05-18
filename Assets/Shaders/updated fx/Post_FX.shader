@@ -1,4 +1,4 @@
-﻿Shader "custom/submerged_fx"
+﻿Shader "custom/post_fx"
 {
 	SubShader
 	{

@@ -2,41 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-#region values
-[System.Serializable]
-class Sonar
+public class FX : MonoBehaviour
 {
-	public int   maxPulses = 5;
-	public float interval = 1;
-	public float width = 2;
-	public float distance = 20;
-	public float speed = 5;
-	public bool  active = false;
-}
+    #region values
+    [System.Serializable]
+    class Sonar
+    {
+        public int maxPulses = 5;
+        public float interval = 1;
+        public float width = 2;
+        public float distance = 20;
+        public float speed = 5;
+        public bool active = false;
+    }
 
-[System.Serializable]
-class Fog
-{
-    public Color startColor, endColor;
+    [System.Serializable]
+    class Fog
+    {
+        public Color startColor, endColor;
 
-    [Range(2, 10)]
-    public int intensity = 2;
+        [Range(2, 10)]
+        public int intensity = 2;
 
-    public float surface;
-	public float maxDepth;
-}
+        public float surface;
+        public float maxDepth;
+    }
 
-[System.Serializable]
-class Caustics
-{
-	public float size, intensity = 200;
-	public float causticsDepth = -150;
+    [System.Serializable]
+    class Caustics
+    {
+        public float size, intensity = 200;
+        public float causticsDepth = -150;
 
-    public Texture texture;
-}
-#endregion
-
-public class FX : MonoBehaviour {
+        public Texture texture;
+    }
+    #endregion
 
     [SerializeField]
     Shader _fxShader;
@@ -61,6 +61,9 @@ public class FX : MonoBehaviour {
 	private bool[] activepulse;
 	private Vector4[] aOrigin;
 	private float _depth;
+
+    [SerializeField]
+    private List<Volumetric> _volumes = new List<Volumetric>();
 
 	void Start()
     {
@@ -168,6 +171,11 @@ public class FX : MonoBehaviour {
     {
         UpdateShader(ref src);
 		RaycastCornerBlit (src, dst, _mat);
+
+        foreach (Volumetric volume in _volumes)
+        {
+            volume.RenderQuad();
+        }
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
