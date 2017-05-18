@@ -116,29 +116,28 @@ public class SubMovement : MonoBehaviour {
             }
             else
             {
-                Vector3 pos = GetMousePosition();
-                Vector3 dir = pos - transform.position;
-                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Force);
+                if (_counter < _cooldown / 5)
+                {
+                    Vector3 pos = GetMousePosition();
+                    Vector3 dir = pos - transform.position;
+                    _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.VelocityChange);
+                }
                 _counter++; }
             return;
         }
         //check for double taps
         if (Input.GetMouseButtonDown(0))
         {
-            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
+            float clickTime = Time.time - _lastTap;
+
+            if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
             {
-               
-
-                
-                _tapping = false;
                 _charged = true;
-                
-
             }
             _lastTap = Time.time;
         }
         //Movement through dragging
-        else if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
 
             Vector3 pos = GetMousePosition();
