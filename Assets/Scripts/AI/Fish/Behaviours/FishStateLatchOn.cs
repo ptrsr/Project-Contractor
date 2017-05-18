@@ -7,6 +7,7 @@ public class FishStateLatchOn : FishState
     public FishStateLatchOn(Fish pFish) : base(pFish) { }
 
     private Octopus _octo;
+    private SubMovement _subMove;
     private int _restCounter = 0;
     private int _rotCounter = 0;
 
@@ -22,6 +23,8 @@ public class FishStateLatchOn : FishState
             RaycastHit hit;
             Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
             _octo.TargetNormal = hit.normal;
+            _subMove = _octo.Target.GetComponent<SubMovement>();
+            _subMove.SlowDownPlayer(true);
         }
 
         _octo.Body.isKinematic = true;
@@ -33,10 +36,10 @@ public class FishStateLatchOn : FishState
         if (!_octo.IsChasing)
         {
             if (_octo.DetectTarget())
-                _octo.SetState<FishStateBurstChase>();
+                _octo.SetState<FishStateLatchOff>();
 
-            SetPos(_octo.Target.position, _octo.TargetNormal);
-            SetRot(_octo.TargetNormal);
+            SetPos(_octo.RockPos, _octo.RockNormal);
+            SetRot(_octo.RockNormal);
 
             if (_restCounter != _octo.RestTime)
                 _restCounter++;
@@ -45,6 +48,12 @@ public class FishStateLatchOn : FishState
         }
         else
         {
+            if (_subMove.Charged)
+                _octo.SetState<FishStateLatchOff>();
+
+            if (_octo.transform.parent == null)
+                return;
+
             SetPos(_octo.Target.position, _octo.TargetNormal);
             SetRot(_octo.TargetNormal);
         }

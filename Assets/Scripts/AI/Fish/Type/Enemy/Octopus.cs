@@ -6,6 +6,13 @@ public class Octopus : FishEnemy
 {
     [Header("Octopus Variables")]
     [SerializeField]
+    private int _attackCooldown = 500;
+    public int AttackCooldown { get { return _attackCooldown; } }
+
+    private int _attackCounter;
+    public int AttackCounter { get { return _attackCounter; } set { _attackCounter = value; } }
+
+    [SerializeField]
     [Tooltip("Used to decrease idle intervals between bursts when chasing the player")]
     private float _idleIntervalChange = 2f;
     public float IdleIntervalChange { get { return _idleIntervalChange; } }
@@ -33,14 +40,11 @@ public class Octopus : FishEnemy
     private Vector3 _rockNormal;
     public Vector3 RockNormal { get { return _rockNormal; } set { _rockNormal = value; } }
 
-    private Vector3 _targetLatchPos;
-    public Vector3 TargetLatchPos { get { return _targetLatchPos; } }
-
     private Vector3 _targetNormal;
     public Vector3 TargetNormal { get { return _targetNormal; } set { _targetNormal = value; } }
 
     private bool _isChasing = false;
-    public bool IsChasing { get { return _isChasing; } }
+    public bool IsChasing { get { return _isChasing; } set { _isChasing = value; } }
 
     public override void Start()
     {
@@ -48,6 +52,7 @@ public class Octopus : FishEnemy
 
         _collider = GetComponent<Collider>();
         _rockPos = origPos;
+        _attackCounter = _attackCooldown;
 
         stateCache[typeof(FishStateFindRock)] = new FishStateFindRock(this);
         stateCache[typeof(FishStateBurstIdle)] = new FishStateBurstIdle(this);
@@ -66,6 +71,12 @@ public class Octopus : FishEnemy
 
     public override bool DetectTarget()
     {
+        if (_attackCounter != _attackCooldown)
+        {
+            _attackCounter++;
+            return false;
+        }
+
         bool detected = base.DetectTarget();
 
         if (detected)

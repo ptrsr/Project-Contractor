@@ -297,7 +297,7 @@ public class SubMovement : MonoBehaviour {
     //For eel or whatever is going to stun the player
     public void StunPlayer(bool value)
     {
-        _stunned = true;
+        _stunned = value;
         _stunSlowCounter = 0;
     }
 
@@ -318,6 +318,7 @@ public class SubMovement : MonoBehaviour {
     }
 
 
+    public bool Charged { get { return _charged; } }
     public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
     public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }
     public int DistaceForMax { get { return _distanceForMaxSpeed; } set { _distanceForMaxSpeed = value; } }

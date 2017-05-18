@@ -26,8 +26,11 @@ public class FishStateBurstIdle : FishState
         }
         else
         {
-            _octo.SetState<FishStateBurstMove>();
             _count = 0;
+            if (_octo.DetectTarget())
+                _octo.SetState<FishStateBurstChase>();
+            else
+                _octo.SetState<FishStateBurstMove>();
         }
     }
 }

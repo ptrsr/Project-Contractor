@@ -11,13 +11,13 @@ public class FishStateBurstMove : FishState
     public override void Initialize()
     {
         _octo = (Octopus)fish;
-
-        if (_octo.DetectTarget())
-            fish.SetState<FishStateBurstChase>();
     }
 
     public override void Step()
     {
+        if (_octo.DetectTarget())
+            fish.SetState<FishStateBurstChase>();
+
         Debug.DrawLine(_octo.transform.position, _octo.RockPos);
         if (_octo.CheckLatchOnRange())
             _octo.SetState<FishStateLatchOn>();
