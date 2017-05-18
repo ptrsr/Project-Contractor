@@ -44,6 +44,4 @@ float causticsMask (float3 worldNormal, float3 inVector) {
 	return diff;
 }
 
-
-
 #endif
