@@ -174,6 +174,7 @@ public class FX : MonoBehaviour
 
         foreach (Volumetric volume in _volumes)
         {
+            RenderTexture.active = dst;
             volume.RenderQuad();
         }
 	}

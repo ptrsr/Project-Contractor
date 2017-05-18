@@ -18,7 +18,7 @@ public class Volumetric : MonoBehaviour
 
     private Vector2 _quadSize;
 
-	void Start ()
+    void Start ()
     {
         _cam = GetComponent<Camera>();
         _mat = new Material(_shader);
@@ -46,21 +46,21 @@ public class Volumetric : MonoBehaviour
 
     public void RenderQuad()
     {
-        Vector3 pos = transform.position;
-        Vector3 toRight = transform.right * _size;
-        Vector3 toTop = transform.up * _height;
+        _cam.Render();
 
-        GL.PushMatrix();
-        GL.LoadIdentity();
+        Vector3 pos = transform.position;
+        Vector3 toRight = transform.up * _size;
+        Vector3 toBottom = transform.forward * _height * 2;
+
         GL.Begin(GL.QUADS);
         {
             _mat.SetPass(0);
-            GL.Vertex(pos + toRight + toTop);
-            GL.Vertex(pos - toRight + toTop);
-            GL.Vertex(pos + toRight - toTop);
-            GL.Vertex(pos - toRight - toTop);
+
+            GL.Vertex(pos - toRight + toBottom);
+            GL.Vertex(pos + toRight + toBottom);
+            GL.Vertex(pos + toRight);
+            GL.Vertex(pos - toRight);
         }
         GL.End();
-        GL.PopMatrix();
     }
 }
