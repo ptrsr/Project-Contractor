@@ -4,31 +4,42 @@ using UnityEngine;
 
 #region values
 [System.Serializable]
-class Sonar {
-	public int maxPulses = 5;
+class Sonar
+{
+	public int   maxPulses = 5;
 	public float interval = 1;
 	public float width = 2;
 	public float distance = 20;
 	public float speed = 5;
-	public bool active = false;
+	public bool  active = false;
 }
+
 [System.Serializable]
-class Fog {
-	public float fogRange = 15f;
-	public Color startColor, endColor;
-	public float _surface;
-	public float _maxDepth;
+class Fog
+{
+    public Color startColor, endColor;
+
+    [Range(2, 10)]
+    public int intensity = 2;
+
+    public float surface;
+	public float maxDepth;
 }
+
 [System.Serializable]
-class Caustics {
-	
-	[Range(0f,50f)]
-	public float size, intensity = 20;
-	public float _causticsDepth = -150;
+class Caustics
+{
+	public float size, intensity = 200;
+	public float causticsDepth = -150;
+
+    public Texture texture;
 }
 #endregion
 
 public class FX : MonoBehaviour {
+
+    [SerializeField]
+    Shader _fxShader;
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
@@ -39,22 +50,32 @@ public class FX : MonoBehaviour {
 	[SerializeField]
 	private Caustics _caustics = new Caustics();
 
-	public Material _mat; 
-	public Transform _origin;
-	private Camera _cam;
+    [SerializeField]
+    private Transform _origin;
 
-	private float[] aPulse;
+	private Camera   _cam;
+    private Material _mat;
+
+
+    private float[] aPulse;
 	private bool[] activepulse;
 	private Vector4[] aOrigin;
 	private float _depth;
 
-	void Start() {
+	void Start()
+    {
+        _mat = new Material(_fxShader);
+
 		activepulse = new bool[_sonar.maxPulses];
 		aPulse = new float[_sonar.maxPulses];
 		aOrigin = new Vector4[_sonar.maxPulses];
+
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
-	}
+
+        SetShaderParams();
+
+    }
 
 	void Update () {
 		PassiveSonar ();
@@ -65,7 +86,7 @@ public class FX : MonoBehaviour {
 
 	float calculateWorldDepth() {
 		float camDepth = Camera.main.transform.position.y;
-		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
+		float depth = (camDepth - _fog.surface) / (_fog.maxDepth - _fog.surface);
 		return depth;
 	}
 
@@ -103,30 +124,49 @@ public class FX : MonoBehaviour {
 		}
 	}
 
-	void updateShader()
+    void UpdateShader(ref RenderTexture src)
+    {
+        // main scene
+        _mat.SetTexture("_sceneTexture", src);
+
+        // sonar
+        _mat.SetInt("_pulselength", _sonar.maxPulses);
+        _mat.SetFloatArray("_pulses", aPulse);
+        _mat.SetVectorArray("_originarray", aOrigin);
+
+        // fog
+        _mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+    }
+
+    void OnValidate()
+    {
+        if (_mat != null && Application.isPlaying)
+            SetShaderParams();
+    }
+
+	void SetShaderParams()
 	{
 		// sonar
-		_mat.SetInt ("_pulselength", _sonar.maxPulses);
-		_mat.SetFloatArray ("_pulses", aPulse);
-		_mat.SetVectorArray ("originarray", aOrigin);
-		_mat.SetFloat ("width", _sonar.width);
+		_mat.SetFloat ("_width", _sonar.width);
 
 		// fog
 		_mat.SetVector("_startColor", _fog.startColor);
 		_mat.SetVector("_endColor", _fog.endColor);
-		_mat.SetFloat ("_fogEnd", _fog.fogRange);
-		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+		_mat.SetInt ("_fogIntensity", _fog.intensity);
 
 		// caustics
-		_mat.SetFloat("causticsSize", _caustics.size);
-		_mat.SetFloat("causticsIntensity", _caustics.intensity);
-		_mat.SetFloat ("causticsDepth", _caustics._causticsDepth);
-		_mat.SetFloat("surface", _fog._surface);
+		_mat.SetFloat("_causticsSize", _caustics.size);
+		_mat.SetFloat("_causticsIntensity", _caustics.intensity);
+		_mat.SetFloat ("_causticsDepth", _caustics.causticsDepth);
+		_mat.SetFloat("_surface", _fog.surface);
+
+        _mat.SetTexture("_causticsTexture", _caustics.texture);
 	}
 
 	[ImageEffectOpaque]
-	void OnRenderImage (RenderTexture src, RenderTexture dst){
-		updateShader ();
+	void OnRenderImage (RenderTexture src, RenderTexture dst)
+    {
+        UpdateShader(ref src);
 		RaycastCornerBlit (src, dst, _mat);
 	}
 
@@ -162,8 +202,6 @@ public class FX : MonoBehaviour {
 
 		// Custom Blit, encoding Frustum Corners as additional Texture Coordinates
 		RenderTexture.active = dest;
-
-		mat.SetTexture("_Scene", source);
 
 		GL.PushMatrix();
 		GL.LoadOrtho();

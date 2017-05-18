@@ -1,10 +1,5 @@
 ﻿Shader "custom/submerged_fx"
 {
-	Properties
-	{
-		_Scene ("Scene", 2D) = "white" {}
-		_Caustics ("Caustics", 2D) = "white" {}
-	}
 	SubShader
 	{
 		Cull Off ZWrite Off ZTest Always
@@ -17,9 +12,9 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-			#include "Caustics.cginc"
-			#include "Fog.cginc"
-			#include "Sonar.cginc"
+			#include "Caustics_CG.cginc"
+			#include "Fog_CG.cginc"
+			#include "Sonar_CG.cginc"
 
 			struct appdata
 			{
@@ -37,7 +32,7 @@
 				float4 ray : TEXCOORD1;
 			};
 
-			uniform sampler2D _Scene;
+			uniform sampler2D _sceneTexture;
 			uniform sampler2D _CameraDepthNormalsTexture;
 
 			v2f vert (appdata v)
@@ -53,7 +48,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scene render
-				fixed4 scene = tex2D(_Scene, i.uv);
+				fixed4 scene = tex2D(_sceneTexture, i.uv);
 
 				// depth sampling
 				float linearDepth;
@@ -83,12 +78,12 @@
 				
 				// fog color
 				half4 fog = fogColor(i.uv);
-				float fogDiff = fogBlend(eyeDepth);
+				float fogDiff = fogBlend(linearDepth);
 
 				//final output blending
 				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
-//				scene = scene + pulseCol + pulseEdge;
+				scene = scene + pulseCol + pulseEdge;
 
 				return scene;
 			}
