@@ -35,26 +35,22 @@ half4 edgeColor (float3 pos) {
 			edgecol = half4(1,1,1,1);
 		}
 	}
-
 	// return edge
 	return edgecol;
 }
 
 float3 xPlanePosition (float4 ray) {
-
 	// vector data
 	float3 camPos = _WorldSpaceCameraPos;
 	float3 fragDir = normalize(ray.xyz);
 	float3 vb = float3(0, 0, -camPos.z);
 	float b = length(vb);
 	vb = normalize(vb);
-
 	// x0 depth calculation
 	float cosalpha = dot(vb, fragDir) / (length(vb) * length(fragDir));
 	float c = b / cosalpha;
 	float3 newDir = c * normalize(fragDir);
 	float3 xPlanePos = camPos + newDir;
-
 	// return fake fragment position
 	return xPlanePos;
 }

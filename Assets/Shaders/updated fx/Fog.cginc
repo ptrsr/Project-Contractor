@@ -3,12 +3,12 @@
 
 uniform half4 _startColor;
 uniform half4 _endColor;
-uniform float  _depth;
+uniform float _depth;
 uniform float _fogEnd;
 
 half4 fogColor (float2 uv) {
 	// blend color from y0 to yDeep
-	half4 fogCol = lerp(_startColor, _endColor, _depth - uv.y / 5);
+	half4 fogCol = lerp(_startColor, _endColor, _depth);
 	return fogCol;
 }
 

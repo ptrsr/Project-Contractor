@@ -15,19 +15,16 @@ class Sonar {
 [System.Serializable]
 class Fog {
 	public float fogRange = 15f;
-	public Color
-		startColor,
-		endColor;
-	public float _minDepth;
+	public Color startColor, endColor;
+	public float _surface;
 	public float _maxDepth;
 }
 [System.Serializable]
 class Caustics {
 	
-	[Range(0f,20f)]
-	public float 
-		size,
-		intensity;
+	[Range(0f,50f)]
+	public float size, intensity = 20;
+	public float _causticsDepth = -150;
 }
 #endregion
 
@@ -52,13 +49,11 @@ public class FX : MonoBehaviour {
 	private float _depth;
 
 	void Start() {
-		
 		activepulse = new bool[_sonar.maxPulses];
 		aPulse = new float[_sonar.maxPulses];
 		aOrigin = new Vector4[_sonar.maxPulses];
-
 		_cam = Camera.main;
-		_cam.depthTextureMode = DepthTextureMode.Depth;
+		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 	}
 
 	void Update () {
@@ -70,7 +65,7 @@ public class FX : MonoBehaviour {
 
 	float calculateWorldDepth() {
 		float camDepth = Camera.main.transform.position.y;
-		float depth = (camDepth - _fog._minDepth) / (_fog._maxDepth - _fog._minDepth);
+		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
 		return depth;
 	}
 
@@ -80,7 +75,6 @@ public class FX : MonoBehaviour {
 				if (!activepulse [i]) {
 					activepulse [i] = true;
 					aOrigin [i] = _origin.position;
-
 					return;
 				}
 			}
@@ -126,6 +120,8 @@ public class FX : MonoBehaviour {
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);
 		_mat.SetFloat("causticsIntensity", _caustics.intensity);
+		_mat.SetFloat ("causticsDepth", _caustics._causticsDepth);
+		_mat.SetFloat("surface", _fog._surface);
 	}
 
 	[ImageEffectOpaque]
