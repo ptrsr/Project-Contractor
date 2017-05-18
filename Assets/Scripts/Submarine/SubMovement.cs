@@ -86,7 +86,6 @@ public class SubMovement : MonoBehaviour {
         rightDown = GetQuaternionFromVector(_possibleRightDownTurn);
         rightUp = GetQuaternionFromVector(_possibleRightUpTurn);
         forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
-        _lastTap = 0;
     }
 
 	void FixedUpdate () {
@@ -114,31 +113,12 @@ public class SubMovement : MonoBehaviour {
                 _charged = false;
                 _counter = 0;
             }
-            else
-            {
-                Vector3 pos = GetMousePosition();
-                Vector3 dir = pos - transform.position;
-                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Force);
-                _counter++; }
+            else { _counter++; }
             return;
         }
-        //check for double taps
-        if (Input.GetMouseButtonDown(0))
-        {
-            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
-            {
-               
 
-                
-                _tapping = false;
-                _charged = true;
-                
-
-            }
-            _lastTap = Time.time;
-        }
         //Movement through dragging
-        else if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
 
             Vector3 pos = GetMousePosition();
@@ -160,9 +140,29 @@ public class SubMovement : MonoBehaviour {
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
         }
-        
-    }
+        //Check for double tapping for charge
+        if (Input.GetMouseButtonDown(0))
+        {
+            //if no taps count one and do coroutine
+            if (!_tapping)
+            {
+                _tapping = true;
+                SingleTap();
+            }
+            //if you tap a second time before _taptime(interval time for second taps) charge
+            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
+            {
+                Vector3 pos = GetMousePosition();
+                Vector3 dir = pos - transform.position;
 
+                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Impulse);
+                _tapping = false;
+                _charged = true;
+
+            }
+            _lastTap = Time.time;
+        }
+    }
 
     //Gets correct direction of mouse
     private void GetCorrectDirection() {
@@ -269,6 +269,17 @@ public class SubMovement : MonoBehaviour {
         Quaternion quat = new Quaternion();
         quat.eulerAngles = vec3;
         return quat;
+    }
+
+    //Coroutine for waiting after first tap
+    IEnumerator SingleTap()
+    {
+        yield return new WaitForSeconds(_tapIntervalsForCharge);
+        if (_tapping)
+        {
+            Debug.Log("SingleTap");
+            _tapping = false;
+        }
     }
 
 
