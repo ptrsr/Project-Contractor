@@ -33,6 +33,9 @@ public class Octopus : FishEnemy
     private Vector3 _rockNormal;
     public Vector3 RockNormal { get { return _rockNormal; } set { _rockNormal = value; } }
 
+    private Vector3 _targetLatchPos;
+    public Vector3 TargetLatchPos { get { return _targetLatchPos; } }
+
     private Vector3 _targetNormal;
     public Vector3 TargetNormal { get { return _targetNormal; } set { _targetNormal = value; } }
 

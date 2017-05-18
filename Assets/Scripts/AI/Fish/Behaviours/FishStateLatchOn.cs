@@ -7,17 +7,24 @@ public class FishStateLatchOn : FishState
     public FishStateLatchOn(Fish pFish) : base(pFish) { }
 
     private Octopus _octo;
-    private int _counter = 0;
+    private int _restCounter = 0;
+    private int _rotCounter = 0;
 
     public override void Initialize()
     {
         _octo = (Octopus)fish;
-        _counter = 0;
+        _restCounter = 0;
+        _rotCounter = 0;
 
         if (_octo.IsChasing)
-            fish.transform.SetParent(_octo.Target.transform);
+        {
+            _octo.transform.SetParent(_octo.Target.transform);
+            RaycastHit hit;
+            Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
+            _octo.TargetNormal = hit.normal;
+        }
 
-        fish.Body.isKinematic = true;
+        _octo.Body.isKinematic = true;
         _octo.Collider.enabled = false;
     }
 
@@ -31,14 +38,15 @@ public class FishStateLatchOn : FishState
             SetPos(_octo.Target.position, _octo.TargetNormal);
             SetRot(_octo.TargetNormal);
 
-            if (_counter != _octo.RestTime)
-                _counter++;
+            if (_restCounter != _octo.RestTime)
+                _restCounter++;
             else
                 _octo.SetState<FishStateLatchOff>();
         }
         else
         {
             SetPos(_octo.Target.position, _octo.TargetNormal);
+            SetRot(_octo.TargetNormal);
         }
     }
 
@@ -49,6 +57,10 @@ public class FishStateLatchOn : FishState
 
     private void SetRot(Vector3 normal)
     {
-        _octo.transform.rotation = Quaternion.Lerp(_octo.transform.rotation, _octo.GetLatchOnRot(normal), _octo.RotationSpeed);
+        if (_rotCounter != _octo.RotationTime)
+        {
+            _octo.transform.rotation = Quaternion.Lerp(_octo.transform.rotation, _octo.GetLatchOnRot(normal), _octo.RotationSpeed);
+            _rotCounter++;
+        }
     }
 }
