@@ -16,14 +16,17 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
+				float2 uv	  : TEXCOORD0;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float2 uv : TEXCOORD0;
+				float2 uv	  : TEXCOORD0;
 			};
+
+
+			uniform sampler2D _LastCameraDepthTexture;
 
 
 			v2f vert (appdata v)
@@ -34,11 +37,17 @@
 				return o;
 			}
 
-			uniform sampler2D _CameraDepthTexture;
+
+			uniform float _width;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				return Linear01Depth(tex2D(_CameraDepthTexture, float2(i.uv.x, 0)));
+				float depth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_LastCameraDepthTexture , float2(0, i.uv.x))));
+				
+				float horizontal = 1 - pow(abs(i.uv.x - 0.5f) * 2, 2);
+				float vertical = 1 - pow(i.uv.y, 2);
+
+				return fixed4(depth, depth, depth, horizontal * vertical);
 			}
 			ENDCG
 		}

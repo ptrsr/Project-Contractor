@@ -22,10 +22,12 @@ public class Volumetric : MonoBehaviour
     {
         _cam = GetComponent<Camera>();
         _mat = new Material(_shader);
+        _cam.depthTextureMode = DepthTextureMode.Depth;
+
         //_quadSize = new Vector2(_cam._cam.farClipPlane);
-	}
-	
-	void Update ()
+    }
+
+    void Update ()
     {
         
     }
@@ -49,17 +51,25 @@ public class Volumetric : MonoBehaviour
         _cam.Render();
 
         Vector3 pos = transform.position;
-        Vector3 toRight = transform.up * _size;
-        Vector3 toBottom = transform.forward * _height * 2;
+        Vector3 toRight = transform.up * _size / 2;
+        Vector3 toBottom = transform.forward * _height;
+
+        _mat.SetPass(0);
+        _mat.SetFloat("_width", _size);
 
         GL.Begin(GL.QUADS);
         {
-            _mat.SetPass(0);
-
-            GL.Vertex(pos - toRight + toBottom);
-            GL.Vertex(pos + toRight + toBottom);
-            GL.Vertex(pos + toRight);
+            GL.TexCoord2(0, 0);
             GL.Vertex(pos - toRight);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex(pos + toRight);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex(pos + toRight + toBottom);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex(pos - toRight + toBottom);
         }
         GL.End();
     }
