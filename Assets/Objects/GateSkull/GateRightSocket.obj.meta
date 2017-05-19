@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 9ad31fad4c7d8b241b687b85b54d9c9d
-timeCreated: 1495113129
+guid: 623cd373ccbae954884bc84b462f4b34
+timeCreated: 1495182176
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: polySurface1_pSphere3
-    100002: //RootNode
-    400000: polySurface1_pSphere3
-    400002: //RootNode
-    2300000: polySurface1_pSphere3
-    3300000: polySurface1_pSphere3
-    4300000: polySurface1_pSphere3
+    100000: //RootNode
+    100002: Treasure2_polySurface2_SkullGateCombined
+    400000: //RootNode
+    400002: Treasure2_polySurface2_SkullGateCombined
+    2300000: Treasure2_polySurface2_SkullGateCombined
+    3300000: Treasure2_polySurface2_SkullGateCombined
+    4300000: Treasure2_polySurface2_SkullGateCombined
   materials:
     importMaterials: 1
     materialName: 0

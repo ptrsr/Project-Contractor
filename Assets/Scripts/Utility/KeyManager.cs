@@ -9,7 +9,15 @@ public class KeyManager : MonoBehaviour {
     private bool _key2PickedUp = false;
     private bool _open = false;
     private Vector3 _newPos;
+    private GameObject _key1;
+    private GameObject _key2;
+    private Transform _keyPos;
+    [SerializeField]
+    private int _id;
+
+    public int ID { get { return _id; } }
 	void Start () {
+        
 		
 	}
 	
@@ -17,7 +25,16 @@ public class KeyManager : MonoBehaviour {
 	void Update () {
         if (_open)
         {
-            transform.parent.position = Vector3.Lerp(transform.parent.position, _newPos, 0.01f);
+            //transform.parent.position = Vector3.Lerp(transform.parent.position, _newPos, 0.01f);
+            if (_key1 != null)
+            {
+
+                _key1.transform.position = Vector3.Lerp(_key1.transform.position, _keyPos.position, 0.01f);
+            }
+            if (_key2 != null)
+            {
+                _key2.transform.position = Vector3.Lerp(_key2.transform.position, _keyPos.position, 0.01f);
+            }
         }
 	}
 
@@ -25,21 +42,29 @@ public class KeyManager : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            if(_key1PickedUp && _key2PickedUp)
+            if(_key1PickedUp || _key2PickedUp)
             {
-                Transform parent = transform.parent;
-                _newPos = new Vector3(parent.position.x - 70.0f, parent.position.y, parent.position.z);
+
+
+               // Transform parent = transform.parent;
+               // _newPos = new Vector3(parent.position.x - 70.0f, parent.position.y, parent.position.z);
                 _open = true;
             }
         }
     }
 
-    public void PickUpKey1()
+    public void PickUpKey1(GameObject key1)
     {
         _key1PickedUp = true;
+        _keyPos = transform;
+        _key1 = key1;
     }
-    public void PickUpKey2()
+    public void PickUpKey2(GameObject key2)
     {
         _key2PickedUp = true;
+        _keyPos = transform;
+        _key2 = key2;
     }
+
+    public bool Open { get { return _open; } }
 }
