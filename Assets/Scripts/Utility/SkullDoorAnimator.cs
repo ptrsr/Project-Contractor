@@ -5,18 +5,31 @@ using UnityEngine;
 public class SkullDoorAnimator : MonoBehaviour {
 
     // Use this for initialization
-    private Animator _animator;
+    private Animator[] _animator;
     private bool _key1InPlace = false;
     private bool _key2InPlace = false;
+    private bool _played = false;
+    private int _lenght = 0;
+    private float _startedAt = 0;
 	void Start () {
-        _animator = GetComponentInChildren<Animator>();
+        _animator = GetComponentsInChildren<Animator>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(_key1InPlace && _key2InPlace)
         {
-            _animator.Play("RotateEyes");
+            if (!_played)
+            {
+                _animator[1].SetBool("Rotate", true);
+                _lenght = _animator[1].GetCurrentAnimatorClipInfo(0).Length;
+                _startedAt = Time.time;
+                _played = true;
+            }
+            if ((_startedAt + _lenght) - Time.time < 0.0f)
+            {
+                _animator[0].SetBool("Open", true);
+            }
             
         }
 	}
