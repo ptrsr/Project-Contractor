@@ -45,7 +45,7 @@ public class FishEnemy : Fish
 
     public void SetRandomDirection()
     {
-        Vector3 difPos = transform.position - OriginPos;
+        Vector3 difPos = (transform.position - OriginPos).normalized;
 
         float xForce;
         float yForce;
@@ -54,6 +54,8 @@ public class FishEnemy : Fish
             xForce = MoveSpeed;
         else if (difPos.x > Range)
             xForce = -MoveSpeed;
+        //if (difPos.x < -Range || difPos.x > Range)
+        //    xForce = difPos.x;
         else
             xForce = Random.Range(-MoveSpeed, MoveSpeed);
 
@@ -94,7 +96,7 @@ public class FishEnemy : Fish
             return false;
     }
 
-    public bool DetectTarget()
+    public virtual bool DetectTarget()
     {
         float enemyDis = Vector3.Distance(transform.position, Target.position);
         float targetDis = Vector3.Distance(OriginPos, Target.position);

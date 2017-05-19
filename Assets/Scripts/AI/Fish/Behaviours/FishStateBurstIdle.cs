@@ -6,27 +6,31 @@ public class FishStateBurstIdle : FishState
 {
     public FishStateBurstIdle(Fish pFish) : base(pFish) { }
 
-    private Octopus _octopus;
+    private Octopus _octo;
     private int _count = 0;
 
     public override void Initialize()
     {
-        _octopus = (Octopus)fish;
+        _octo = (Octopus)fish;
     }
 
     public override void Step()
     {
-        fish.transform.position = new Vector3(fish.transform.position.x, fish.transform.position.y, 0);
+        if (_octo.CheckLatchOnRange())
+            _octo.SetState<FishStateLatchOn>();
 
         //Idle time
-        if (_count < (_octopus.IsChasing ? fish.IdleTime / _octopus.IdleIntervalChange : fish.IdleTime))
+        if (_count < (_octo.IsChasing ? fish.IdleTime / _octo.IdleIntervalChange : fish.IdleTime))
         {
             _count++;
         }
         else
         {
-            fish.SetState<FishStateBurstMove>();
             _count = 0;
+            if (_octo.DetectTarget())
+                _octo.SetState<FishStateBurstChase>();
+            else
+                _octo.SetState<FishStateBurstMove>();
         }
     }
 }

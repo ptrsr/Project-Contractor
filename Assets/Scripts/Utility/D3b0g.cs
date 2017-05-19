@@ -13,6 +13,7 @@ public class D3b0g : MonoBehaviour
     private Fish _current;
     private MeshRenderer[] _tempRenderers = null;
     private List<Color> _tempColors = new List<Color>();
+    private LineRenderer _circle;
 
     public void Start()
     {
@@ -47,6 +48,9 @@ public class D3b0g : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Hide();
+
+                if (!hit.collider.GetComponent<Fish>())
+                    return;
 
                 Fish fish = hit.collider.GetComponent<Fish>();
                 _tempRenderers = hit.collider.gameObject.GetComponentsInChildren<MeshRenderer>();
@@ -85,6 +89,7 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(enemy.Target.position, enemy.transform.position),
                 Vector3.Distance(enemy.Target.position, enemy.OriginPos),
                 enemy.DetectTarget());
+            AddCircle(enemy.gameObject, enemy.OriginPos, enemy.Range);
         }
         else if (_current is FishNeutral)
         {
@@ -104,6 +109,7 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(neutral.transform.position, neutral.OriginPos),
                 Vector3.Distance(neutral.OriginPos, neutral.Target.position),
                 (Vector3.Distance(neutral.OriginPos, neutral.Target.position) < neutral.DetectionRange));
+            AddCircle(neutral.gameObject, neutral.OriginPos, neutral.DetectionRange);
         }
         else if (_current is FishFriendly)
         {
@@ -117,6 +123,8 @@ public class D3b0g : MonoBehaviour
         _text.enabled = false;
         _text.text = "";
         _current = null;
+
+        RemoveCircle();
 
         if (_tempRenderers == null)
             return;
@@ -139,5 +147,39 @@ public class D3b0g : MonoBehaviour
             _tempColors.Add(rend.material.color);
             rend.material.color = _selectColor;
         }
+    }
+
+    private void AddCircle(GameObject obj, Vector3 origin, float radius)
+    {
+        float scale = 0.1f;
+        int size = (int)((2f * Mathf.PI) / scale) + 2;
+
+        if (!obj.GetComponent<LineRenderer>())
+        {
+            _circle = obj.AddComponent<LineRenderer>();
+            _circle.material = new Material(Shader.Find("Particles/Additive"));
+            _circle.startColor = Color.red;
+            _circle.endColor = Color.red;
+            _circle.startWidth = 1f;
+            _circle.endWidth = 1f;
+            _circle.positionCount = size;
+        }
+
+        int i = 0;
+        for (float c = 0; c < 2 * Mathf.PI; c += 0.1f)
+        {
+            float x = radius * Mathf.Cos(c);
+            float y = radius * Mathf.Sin(c);
+
+            Vector3 pos = new Vector3(origin.x + x, origin.y + y, 0);
+            _circle.SetPosition(i, pos);
+            i++;
+        }
+        _circle.SetPosition(i, _circle.GetPosition(0));
+    }
+
+    private void RemoveCircle()
+    {
+        Destroy(_circle);
     }
 }

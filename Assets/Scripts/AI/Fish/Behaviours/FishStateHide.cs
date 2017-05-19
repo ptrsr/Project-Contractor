@@ -12,6 +12,7 @@ public class FishStateHide : FishState
     {
         _eel = (ElectricEel)fish;
         _eel.Body.velocity = Vector3.zero;
+        _eel.Body.angularVelocity = Vector3.zero;
         _eel.Direction = (_eel.HoleExit.position - _eel.Hole.position).normalized;
         _eel.Collider.enabled = true;
     }
@@ -23,7 +24,8 @@ public class FishStateHide : FishState
             _eel.SetState<FishStateCharge>();
         }
 
-        _eel.transform.position = _eel.OriginPos;
-        _eel.transform.rotation = _eel.OriginRot;
+        _eel.Anchor.position = Vector3.Lerp(_eel.Anchor.position, _eel.AnchorOrigPos, _eel.RotationSpeed);
+        _eel.transform.position = Vector3.Lerp(_eel.transform.position, _eel.OriginPos, _eel.RotationSpeed);
+        _eel.transform.rotation = Quaternion.Lerp(_eel.transform.rotation, _eel.OriginRot, _eel.RotationSpeed);
     }
 }

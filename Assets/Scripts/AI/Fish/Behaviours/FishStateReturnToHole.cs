@@ -8,32 +8,32 @@ public class FishStateReturnToHole : FishState
 
     private ElectricEel _eel;
 
-    private bool _isAtExit = false;
-
     public override void Initialize()
     {
         _eel = (ElectricEel)fish;
+        _eel.Body.velocity = Vector3.zero;
+        _eel.Body.angularVelocity = Vector3.zero;
         _eel.Collider.enabled = false;
-        _isAtExit = false;
+        _eel.AnchorBody.isKinematic = false;
     }
 
     public override void Step()
     {
-        if (Vector3.Distance(_eel.HoleExit.position, _eel.transform.position) > 5 && !_isAtExit)
+        if ((_eel.HoleExit.position - _eel.Anchor.position).x < 0)
+            _eel.Anchor.position = new Vector3(_eel.HoleExit.position.x, _eel.Anchor.position.y, 0);
+
+        if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 5)
         {
+            Vector3 dir = (_eel.AnchorOrigPos - _eel.Anchor.position).normalized;
+            _eel.AnchorBody.AddForce(dir * _eel.MoveSpeed);
+
             _eel.Direction = (_eel.HoleExit.position - _eel.transform.position).normalized;
         }
         else
         {
-            _isAtExit = true;
-
-            if (Vector3.Distance(_eel.OriginPos, _eel.transform.position) > 5)
-                _eel.Direction = (_eel.OriginPos - _eel.transform.position).normalized;
-            else
-                _eel.SetState<FishStateHide>();
+            _eel.SetState<FishStateHide>();
         }
         
-        _eel.RotateTowards(_eel.GetLookRotation(_eel.Direction));
-        _eel.Body.AddForce(_eel.Direction * _eel.MoveSpeed);
+        _eel.Body.AddForce(new Vector3(0, _eel.Direction.y, 0) * _eel.MoveSpeed / 2f);
     }
 }
