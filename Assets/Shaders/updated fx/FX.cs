@@ -63,13 +63,13 @@ public class FX : MonoBehaviour {
 
 	void Start() {
 		_light = GameObject.Find ("Directional Light");
-		_light.GetComponent<Light> ().enabled = false;
+		//_light.GetComponent<Light> ().enabled = false;
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
 		aPulse = new float[_sonar.maxPulses];
 		aOrigin = new Vector4[_sonar.maxPulses];
-		setupDarkZones ();
+		//setupDarkZones ();
 	}
 
 	void Update () {
@@ -77,6 +77,7 @@ public class FX : MonoBehaviour {
 		PulseActivate ();
 		PulseControl ();
 		_depth = calculateWorldDepth ();
+        lightUpdate();
 	}
 
 	void setupDarkZones() {
@@ -85,11 +86,11 @@ public class FX : MonoBehaviour {
 			_darkZone.rangeData.Add (range);
 //			float blendWidth = _darkZone.objects [i].GetComponent<darkZone> ().blendWidth;
 //			_darkZone.blendData.Add (blendWidth);
-			Vector3 pos = _darkZone.objects[i].transform.position;
+		    Vector3 pos = _darkZone.objects[i].transform.position;
 			_darkZone.positionData.Add (pos);
 		}
-		_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
-		_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
+		//_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
+//		_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
 //		_mat.SetFloatArray ("_blendData", _darkZone.blendData);
 	}
 
@@ -98,6 +99,11 @@ public class FX : MonoBehaviour {
 		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
 		return depth;
 	}
+
+    void lightUpdate() {
+        float intensity = 1 - calculateWorldDepth();
+        _light.GetComponent<Light>().intensity = intensity;
+    }
 
 	void PulseActivate() {
 		if (_sonar.active) {
