@@ -25,7 +25,7 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float2 uv : TEXCOORD0;
+				float4 uv : TEXCOORD0;
 				float4 ray : TEXCOORD1;
 			};
 
@@ -59,16 +59,16 @@
 				float linearDepth;
 				float3 viewNormal;
 				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
-				float eyeDepth = linearDepth * 350;
+				float eyeDepth = linearDepth * 1000;
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
 				// fragments fake xy plane position
-				float3 xPlanePos = xPlanePosition(i.ray);
+				float3 xyPlanePos = xyPlanePosition(i.ray);
 
 				// pulse colors
 				half4 pulseCol = pulseColor(worldPos);
-				half4 pulseEdge = edgeColor(xPlanePos);
+				half4 pulseEdge = edgeColor(xyPlanePos);
 				if(worldPos.z < 0)
 					pulseEdge = 0;
 				
@@ -82,11 +82,11 @@
 					caustics = 0;
 				
 				// fog color
-				half4 fog = fogColor(i.uv);
+				half4 fog = fogColor(worldPos);
 				float fogDiff = fogBlend(eyeDepth);
 
 				//final output blending
-				scene += caustics;
+//				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
 				scene = scene + pulseCol + pulseEdge;
 
