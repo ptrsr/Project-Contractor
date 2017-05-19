@@ -12,12 +12,13 @@ public class KeyManager : MonoBehaviour {
     private GameObject _key1;
     private GameObject _key2;
     private Transform _keyPos;
+    private SkullDoorAnimator _skullAnimator;
     [SerializeField]
     private int _id;
 
     public int ID { get { return _id; } }
 	void Start () {
-        
+        _skullAnimator = GetComponentInParent<SkullDoorAnimator>();
 		
 	}
 	
@@ -30,10 +31,18 @@ public class KeyManager : MonoBehaviour {
             {
 
                 _key1.transform.position = Vector3.Lerp(_key1.transform.position, _keyPos.position, 0.01f);
+                if(Vector3.Distance(_key1.transform.position,_keyPos.position) < 1)
+                {
+                    _skullAnimator.Key1InPlace();
+                }
             }
             if (_key2 != null)
             {
                 _key2.transform.position = Vector3.Lerp(_key2.transform.position, _keyPos.position, 0.01f);
+                if (Vector3.Distance(_key2.transform.position, _keyPos.position) < 1)
+                {
+                    _skullAnimator.Key2InPlace();
+                }
             }
         }
 	}
