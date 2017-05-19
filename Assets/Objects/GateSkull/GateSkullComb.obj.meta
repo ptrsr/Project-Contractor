@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 97af22ae33d597a478bbd86d5244e2b5
-timeCreated: 1495132513
-licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
@@ -27,6 +25,7 @@ ModelImporter:
     4300002: polySurface3_polySurface2_SkullGateCombined_Treasure1
     4300004: SkullGateCombined_NonActiveTreasure
     4300006: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -53,7 +52,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 10
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -91,7 +90,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

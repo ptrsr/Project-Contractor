@@ -86,21 +86,18 @@ public class SubMovement : MonoBehaviour {
         rightDown = GetQuaternionFromVector(_possibleRightDownTurn);
         rightUp = GetQuaternionFromVector(_possibleRightUpTurn);
         forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
+        _lastTap = 0;
     }
 
 	void FixedUpdate () {
         _oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        //return only if stunned only count when slowed 
+        //return only if stunned
         if(_stunned)
         {
             _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
             return;
-        }
-        else if (_slowed)
-        {
-            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
         }
         //Gets correct direction of mouse and rotates depending on that
         GetCorrectDirection();
@@ -113,10 +110,28 @@ public class SubMovement : MonoBehaviour {
                 _charged = false;
                 _counter = 0;
             }
-            else { _counter++; }
+            else
+            {
+                if (_counter < _cooldown / 5)
+                {
+                    Vector3 pos = GetMousePosition();
+                    Vector3 dir = pos - transform.position;
+                    _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.VelocityChange);
+                }
+                _counter++; }
             return;
         }
+        //check for double taps
+        if (Input.GetMouseButtonDown(0))
+        {
+            float clickTime = Time.time - _lastTap;
 
+            if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
+            {
+                _charged = true;
+            }
+            _lastTap = Time.time;
+        }
         //Movement through dragging
         if (Input.GetMouseButton(0))
         {
@@ -140,29 +155,9 @@ public class SubMovement : MonoBehaviour {
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
         }
-        //Check for double tapping for charge
-        if (Input.GetMouseButtonDown(0))
-        {
-            //if no taps count one and do coroutine
-            if (!_tapping)
-            {
-                _tapping = true;
-                SingleTap();
-            }
-            //if you tap a second time before _taptime(interval time for second taps) charge
-            if ((Time.time - _lastTap) < _tapIntervalsForCharge)
-            {
-                Vector3 pos = GetMousePosition();
-                Vector3 dir = pos - transform.position;
-
-                _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.Impulse);
-                _tapping = false;
-                _charged = true;
-
-            }
-            _lastTap = Time.time;
-        }
+        
     }
+
 
     //Gets correct direction of mouse
     private void GetCorrectDirection() {
@@ -271,17 +266,6 @@ public class SubMovement : MonoBehaviour {
         return quat;
     }
 
-    //Coroutine for waiting after first tap
-    IEnumerator SingleTap()
-    {
-        yield return new WaitForSeconds(_tapIntervalsForCharge);
-        if (_tapping)
-        {
-            Debug.Log("SingleTap");
-            _tapping = false;
-        }
-    }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -307,7 +291,7 @@ public class SubMovement : MonoBehaviour {
     }
 
     //For eel or whatever is going to stun the player
-    public void StunPlayer(bool value)
+    public void StunPlayer()
     {
         _stunned = true;
         _stunSlowCounter = 0;
@@ -319,8 +303,7 @@ public class SubMovement : MonoBehaviour {
     {
         if(counter >= frames)
         {
-            StunPlayer(false);
-            SlowDownPlayer(false);
+            _stunned = false;
         }
         else
         {
@@ -329,6 +312,8 @@ public class SubMovement : MonoBehaviour {
         return counter;
     }
 
+
+    public bool Charged { get { return _charged;  } }
 
     public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
     public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }
