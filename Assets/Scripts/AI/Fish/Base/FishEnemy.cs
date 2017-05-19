@@ -38,8 +38,6 @@ public class FishEnemy : Fish
 
     public override void Update()
     {
-        BindZ();
-
         base.Update();
     }
 
@@ -49,13 +47,12 @@ public class FishEnemy : Fish
 
         float xForce;
         float yForce;
+        float zForce;
 
         if (difPos.x < -Range)
             xForce = MoveSpeed;
         else if (difPos.x > Range)
             xForce = -MoveSpeed;
-        //if (difPos.x < -Range || difPos.x > Range)
-        //    xForce = difPos.x;
         else
             xForce = Random.Range(-MoveSpeed, MoveSpeed);
 
@@ -66,7 +63,14 @@ public class FishEnemy : Fish
         else
             yForce = Random.Range(-MoveSpeed, MoveSpeed);
 
-        Direction = new Vector3(xForce, yForce, 0).normalized;
+        if (difPos.z < -Range)
+            zForce = MoveSpeed;
+        else if (difPos.z > Range)
+            zForce = -MoveSpeed;
+        else
+            zForce = Random.Range(-MoveSpeed, MoveSpeed);
+
+        Direction = new Vector3(xForce, yForce, zForce).normalized;
     }
 
     public bool DetectWall()
@@ -102,9 +106,6 @@ public class FishEnemy : Fish
         float targetDis = Vector3.Distance(OriginPos, Target.position);
         float origDis = Vector3.Distance(transform.position, OriginPos); ;
 
-        if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range)
-            return true;
-        else
-            return false;
+        return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range);
     }
 }

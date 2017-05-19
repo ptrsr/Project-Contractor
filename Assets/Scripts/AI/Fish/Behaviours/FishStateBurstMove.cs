@@ -23,6 +23,7 @@ public class FishStateBurstMove : FishState
             _octo.SetState<FishStateLatchOn>();
 
         _octo.Direction = (_octo.RockPos - _octo.transform.position).normalized;
+
         if (_octo.RotateTowards(_octo.GetLookRotation(_octo.Direction)))
         {
             _octo.Body.AddForce(_octo.Direction * _octo.MoveSpeed);

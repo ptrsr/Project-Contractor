@@ -18,10 +18,10 @@ public class FishStatePatrolChase : FishState
     public override void Step()
     {
         if (!_shark.DetectTarget())
-            fish.SetState<FishStatePatrol>();
+            fish.SetState<FishStatePatrolReturn>();
         
-        Vector3 dir = (_shark.Target.transform.position + (_targetBody.velocity / _shark.Difficulty)) - fish.transform.position;
-        fish.RotateTowards(_shark.GetLookRotation(dir), _shark.RotationModifier);
-        fish.Body.AddForce(dir.normalized * _shark.ChaseSpeed);
+        _shark.Direction = ((_shark.Target.transform.position + (_targetBody.velocity / _shark.Difficulty)) - fish.transform.position).normalized;
+        _shark.RotateTowards(_shark.GetLookRotation(_shark.Direction), _shark.RotationModifier);
+        _shark.Body.AddForce(_shark.Direction * _shark.ChaseSpeed);
     }
 }

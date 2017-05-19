@@ -18,6 +18,7 @@ public class FishStateLatchOff : FishState
             _octo.IsChasing = false;
             _octo.transform.SetParent(null);
             _octo.AttackCounter = 0;
+            _octo.Target.GetComponent<SubMovement>().SlowDownPlayer(false);
         }
 
         _octo.Body.AddForce(_octo.IsChasing ? Vector3.zero : _octo.RockNormal * _octo.MoveSpeed / 2f);

@@ -64,11 +64,6 @@ public class Octopus : FishEnemy
         SetState<FishStateFindRock>();
     }
 
-    public override void Update()
-    {
-        base.Update();
-    }
-
     public override bool DetectTarget()
     {
         if (_attackCounter != _attackCooldown)

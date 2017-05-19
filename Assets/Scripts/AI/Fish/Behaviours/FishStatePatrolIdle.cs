@@ -22,7 +22,7 @@ public class FishStatePatrolIdle : FishState
         else
         {
             _counter = 0;
-            fish.SetState<FishStatePatrol>();
+            fish.SetState<FishStatePatrolReturn>();
         }
     }
 }
