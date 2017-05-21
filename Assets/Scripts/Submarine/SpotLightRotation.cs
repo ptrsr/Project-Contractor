@@ -13,12 +13,19 @@ public class SpotLightRotation : MonoBehaviour
 	
 	void Update ()
     {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition + new Vector3(0,0,1));
+        Vector3 pos = GetMousePosition();
+        Vector3 dir = pos - transform.position;
+        dir = dir.normalized;
+        float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
 
-        Vector3 delta = Vector3.Normalize(mouseWorldPos - transform.position);
-
-        float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-
-        transform.eulerAngles = new Vector3(angle, 90, 0);
+        transform.eulerAngles = new Vector3(angle + 90, 90, 0);
 	}
+
+    private Vector3 GetMousePosition()
+    {
+        Vector3 pos = Input.mousePosition;
+        pos.z = _mainCamera.transform.position.z;
+        pos = _mainCamera.ScreenToWorldPoint(pos);
+        return pos;
+    }
 }

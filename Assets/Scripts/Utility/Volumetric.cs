@@ -18,13 +18,17 @@ public class Volumetric : MonoBehaviour
 
     private Vector2 _quadSize;
 
+    private bool _orth = true;
+
     void Start ()
     {
         _cam = GetComponent<Camera>();
         _mat = new Material(_shader);
         _cam.depthTextureMode = DepthTextureMode.Depth;
 
-        //_quadSize = new Vector2(_cam._cam.farClipPlane);
+        _orth = _cam.orthographic;
+
+        print(_orth);
     }
 
     void Update ()
@@ -39,6 +43,8 @@ public class Volumetric : MonoBehaviour
 
     void SetDimensions(Camera cam)
     {
+        _orth = cam.orthographic;
+
         cam.orthographicSize = _size / 2;
         cam.aspect = 1 / _size;
 
@@ -46,10 +52,25 @@ public class Volumetric : MonoBehaviour
         cam.farClipPlane = _height;
     }
 
-    public void RenderQuad()
+    void RenderTriangle()
+    {
+        Vector3 pos = transform.position;
+        Vector3 toRight = transform.up * Mathf.Asin(_height) / _size;
+
+    }
+
+    public void Render()
     {
         _cam.Render();
 
+        if (_orth)
+            RenderQuad();
+        else
+            RenderTriangle();
+    }
+
+    void RenderQuad()
+    {
         Vector3 pos = transform.position;
         Vector3 toRight = transform.up * _size / 2;
         Vector3 toBottom = transform.forward * _height;
