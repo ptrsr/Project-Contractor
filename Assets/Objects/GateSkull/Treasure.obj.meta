@@ -1,7 +1,5 @@
 fileFormatVersion: 2
-guid: 9ad31fad4c7d8b241b687b85b54d9c9d
-timeCreated: 1495113129
-licenseType: Free
+guid: aff395ec99c43774fb253a8657074135
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
@@ -12,6 +10,7 @@ ModelImporter:
     2300000: polySurface1_pSphere3
     3300000: polySurface1_pSphere3
     4300000: polySurface1_pSphere3
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -76,7 +75,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

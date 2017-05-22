@@ -24,24 +24,27 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
+				float3 normal : NORMAL;
+				float4 uv : TEXCOORD0;
 				float4 ray : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
+				float3 normal : NORMAL;
 				float2 uv : TEXCOORD0;
 				float4 ray : TEXCOORD1;
 			};
 
 			uniform sampler2D _Scene;
-			uniform sampler2D _CameraDepthTexture;
+			uniform sampler2D _CameraDepthNormalsTexture;
 
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.normal = v.normal;
 				o.uv = v.uv;
 				o.ray = v.ray;
 				return o;
@@ -53,31 +56,35 @@
 				fixed4 scene = tex2D(_Scene, i.uv);
 
 				// depth sampling
-				float rawDepth = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
-				float linearDepth = Linear01Depth(rawDepth);
-				float eyeDepth = LinearEyeDepth(rawDepth);
+				float linearDepth;
+				float3 viewNormal;
+				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
+				float eyeDepth = linearDepth * 1000;
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
 				// fragments fake xy plane position
-				float3 xPlanePos = xPlanePosition(i.ray);
+				float3 xyPlanePos = xyPlanePosition(i.ray);
 
 				// pulse colors
 				half4 pulseCol = pulseColor(worldPos);
-				half4 pulseEdge = edgeColor(xPlanePos);
+				half4 pulseEdge = edgeColor(xyPlanePos);
 				if(worldPos.z < 0)
 					pulseEdge = 0;
 				
 				// caustics color
 				half4 caustics = Caustics(worldPos);
+				float cDiff = causticsDepthBlend(worldPos);
+				float cMask = causticsMask(viewNormal, float3(0,1,0));
+				caustics *= cDiff;
+				caustics *= cMask;
 				if(linearDepth > 0.9)
 					caustics = 0;
 				
 				// fog color
-				half4 fog = fogColor(i.uv);
+				half4 fog = fogColor(worldPos);
 				float fogDiff = fogBlend(eyeDepth);
 
-			
 				//final output blending
 				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);

@@ -4,6 +4,9 @@
 uniform sampler2D _Caustics;
 uniform float causticsSize;
 uniform float causticsIntensity;
+uniform float causticsDepth;
+uniform float surface;
+uniform half4 causticsColor;
 
 float3 worldPosition (float depth, float4 ray) {
 	// calculating fragments world position
@@ -23,7 +26,23 @@ half4 Caustics (float3 worldPos) {
 	half4 c2 = tex2D(_Caustics, fragUV + shift2);
 	half4 c = (c1 * causticsIntensity) * (c2 * causticsIntensity);
 	// return caustics
-	return c;
+	return causticsColor * c;
+}
+
+float causticsDepthBlend (float3 worldPos) {
+	float fragDepth = worldPos.y;
+	float depthBlend = 1 - ((fragDepth - surface) / (causticsDepth - surface));
+	if(fragDepth < causticsDepth)
+		depthBlend = 0;
+	if(fragDepth > surface)
+		depthBlend = 1;
+	// return blend diff
+	return pow(depthBlend, 5);
+}
+
+float causticsMask (float3 worldNormal, float3 inVector) {
+	float diff = pow(max(0, dot(worldNormal, inVector)), 2);
+	return diff;
 }
 
 #endif

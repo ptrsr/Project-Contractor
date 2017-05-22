@@ -4,6 +4,13 @@ using UnityEngine;
 
 #region values
 [System.Serializable]
+class DarkZone {
+	public List<GameObject> objects;
+	public List<Vector4> positionData;
+	public List<float> rangeData;
+//	public List<float> blendData;
+}
+[System.Serializable]
 class Sonar {
 	public int maxPulses = 5;
 	public float interval = 1;
@@ -15,23 +22,22 @@ class Sonar {
 [System.Serializable]
 class Fog {
 	public float fogRange = 15f;
-	public Color
-		startColor,
-		endColor;
-	public float _minDepth;
+	public Color startColor, endColor;
+	public float _surface;
 	public float _maxDepth;
 }
 [System.Serializable]
 class Caustics {
-	
-	[Range(0f,20f)]
-	public float 
-		size,
-		intensity;
+	public Color causticsColor;
+	[Range(0f,50f)]
+	public float size, intensity = 20;
+	public float _causticsDepth = -150;
 }
 #endregion
 
 public class FX : MonoBehaviour {
+	[SerializeField]
+	private DarkZone _darkZone = new DarkZone ();
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
@@ -45,20 +51,25 @@ public class FX : MonoBehaviour {
 	public Material _mat; 
 	public Transform _origin;
 	private Camera _cam;
+	private GameObject _light;
 
 	private float[] aPulse;
 	private bool[] activepulse;
 	private Vector4[] aOrigin;
+
+
+
 	private float _depth;
 
 	void Start() {
-		
+		_light = GameObject.Find ("Directional Light");
+		//_light.GetComponent<Light> ().enabled = false;
+		_cam = Camera.main;
+		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
 		aPulse = new float[_sonar.maxPulses];
 		aOrigin = new Vector4[_sonar.maxPulses];
-
-		_cam = Camera.main;
-		_cam.depthTextureMode = DepthTextureMode.Depth;
+		//setupDarkZones ();
 	}
 
 	void Update () {
@@ -66,13 +77,33 @@ public class FX : MonoBehaviour {
 		PulseActivate ();
 		PulseControl ();
 		_depth = calculateWorldDepth ();
+        lightUpdate();
+	}
+
+	void setupDarkZones() {
+		for (int i = 0; i < _darkZone.objects.Count; i++) {
+			float range = _darkZone.objects [i].GetComponent<darkZone> ().range;
+			_darkZone.rangeData.Add (range);
+//			float blendWidth = _darkZone.objects [i].GetComponent<darkZone> ().blendWidth;
+//			_darkZone.blendData.Add (blendWidth);
+		    Vector3 pos = _darkZone.objects[i].transform.position;
+			_darkZone.positionData.Add (pos);
+		}
+		//_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
+//		_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
+//		_mat.SetFloatArray ("_blendData", _darkZone.blendData);
 	}
 
 	float calculateWorldDepth() {
 		float camDepth = Camera.main.transform.position.y;
-		float depth = (camDepth - _fog._minDepth) / (_fog._maxDepth - _fog._minDepth);
+		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
 		return depth;
 	}
+
+    void lightUpdate() {
+        float intensity = 1 - calculateWorldDepth();
+        _light.GetComponent<Light>().intensity = intensity;
+    }
 
 	void PulseActivate() {
 		if (_sonar.active) {
@@ -80,7 +111,6 @@ public class FX : MonoBehaviour {
 				if (!activepulse [i]) {
 					activepulse [i] = true;
 					aOrigin [i] = _origin.position;
-
 					return;
 				}
 			}
@@ -118,14 +148,18 @@ public class FX : MonoBehaviour {
 		_mat.SetFloat ("width", _sonar.width);
 
 		// fog
-		_mat.SetVector("_startColor", _fog.startColor);
-		_mat.SetVector("_endColor", _fog.endColor);
+		_mat.SetColor("_startColor", _fog.startColor);
+		_mat.SetColor("_endColor", _fog.endColor);
 		_mat.SetFloat ("_fogEnd", _fog.fogRange);
+		_mat.SetFloat("surface", _fog._surface);
+		_mat.SetFloat("_fogDepth", _fog._maxDepth);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
 
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);
 		_mat.SetFloat("causticsIntensity", _caustics.intensity);
+		_mat.SetFloat ("causticsDepth", _caustics._causticsDepth);
+		_mat.SetColor ("causticsColor", _caustics.causticsColor);
 	}
 
 	[ImageEffectOpaque]
