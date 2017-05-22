@@ -33,14 +33,14 @@ public class FishStateFindRock : FishState
             Debug.DrawRay(_octo.transform.position, _octo.Direction * _octo.Range, Color.yellow, 2f);
             Physics.Raycast(_octo.transform.position, _octo.Direction, out hit, _octo.Range * 2f, ~_octo.IgnoreDetection);
             i++;
-            if (i >= 50)
+            if (i >= 100)
             {
                 Debug.Log("Failed to find a rock");
                 break;
             }
         } while
         (Vector3.Distance(_octo.OriginPos, hit.point) > _octo.Range ||
-        Vector3.Distance(_octo.transform.position, hit.point) < 10);
+        Vector3.Distance(_octo.transform.position, hit.point) < 20);
 
         _octo.RockPos = hit.point;
         _octo.RockNormal = hit.normal;
