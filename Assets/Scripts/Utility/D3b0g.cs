@@ -94,6 +94,8 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(shark.Target.position, nearest.position),
                 shark.WayId,
                 shark.DetectTarget());
+            if (shark.DetectTarget())
+                Debug.DrawLine(shark.transform.position, shark.Target.position, Color.red);
             AddCircle(shark.gameObject, shark.transform.position, shark.Range);
         }
         else if (_current is FishEnemy)
@@ -172,7 +174,7 @@ public class D3b0g : MonoBehaviour
         }
     }
 
-    private void AddCircle(GameObject obj, Vector3 origin, float radius)
+    private void AddCircle(GameObject obj, Vector3 center, float radius)
     {
         float scale = 0.1f;
         int size = (int)((2f * Mathf.PI) / scale) + 2;
@@ -194,7 +196,7 @@ public class D3b0g : MonoBehaviour
             float x = radius * Mathf.Cos(c);
             float y = radius * Mathf.Sin(c);
 
-            Vector3 pos = new Vector3(origin.x + x, origin.y + y, 0);
+            Vector3 pos = new Vector3(center.x + x, center.y + y, 0);
             _circle.SetPosition(i, pos);
             i++;
         }

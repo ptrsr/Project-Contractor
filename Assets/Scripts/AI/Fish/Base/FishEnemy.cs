@@ -104,7 +104,7 @@ public class FishEnemy : Fish
     {
         float enemyDis = Vector3.Distance(transform.position, Target.position);
         float targetDis = Vector3.Distance(OriginPos, Target.position);
-        float origDis = Vector3.Distance(transform.position, OriginPos); ;
+        float origDis = Vector3.Distance(transform.position, OriginPos);
 
         return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range);
     }

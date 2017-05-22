@@ -18,6 +18,10 @@ public class Shark : FishEnemy
     private Transform _path = null;
 
     [SerializeField]
+    private int _detectionAngle = 45;
+    public int DetectionAngle { get { return _detectionAngle; } }
+
+    [SerializeField]
     private int _pointRange = 4;
     public int PointRange { get { return _pointRange; } }
 
@@ -92,7 +96,9 @@ public class Shark : FishEnemy
         float pointDis = Vector3.Distance(transform.position, nearest.position);
         float targetPointDis = Vector3.Distance(nearest.position, Target.position);
 
-        return (!Physics.Raycast(transform.position, Target.position, ~IgnoreDetection) && targetDis < Range && pointDis < Range && targetPointDis < Range);
+        return (Vector3.Angle(-transform.right, Target.position - transform.position) < _detectionAngle &&
+            !Physics.Raycast(transform.position, Target.position, ~IgnoreDetection) &&
+            targetDis < Range && pointDis < Range && targetPointDis < Range);
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)
