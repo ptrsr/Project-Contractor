@@ -93,15 +93,11 @@ public class SubMovement : MonoBehaviour {
         _oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        //return only if stunned only count when slowed 
+        //return only if stunned
         if(_stunned)
         {
             _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
             return;
-        }
-        else if (_slowed)
-        {
-            _stunSlowCounter = StunSlowDelay(_stunSlowTime, _stunSlowCounter);
         }
         //Gets correct direction of mouse and rotates depending on that
         GetCorrectDirection();
@@ -295,9 +291,9 @@ public class SubMovement : MonoBehaviour {
     }
 
     //For eel or whatever is going to stun the player
-    public void StunPlayer(bool value)
+    public void StunPlayer()
     {
-        _stunned = value;
+        _stunned = true;
         _stunSlowCounter = 0;
     }
 
@@ -307,8 +303,7 @@ public class SubMovement : MonoBehaviour {
     {
         if(counter >= frames)
         {
-            StunPlayer(false);
-            SlowDownPlayer(false);
+            _stunned = false;
         }
         else
         {
@@ -318,7 +313,8 @@ public class SubMovement : MonoBehaviour {
     }
 
 
-    public bool Charged { get { return _charged; } }
+    public bool Charged { get { return _charged;  } }
+
     public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
     public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }
     public int DistaceForMax { get { return _distanceForMaxSpeed; } set { _distanceForMaxSpeed = value; } }
