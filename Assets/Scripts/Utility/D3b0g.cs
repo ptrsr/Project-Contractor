@@ -196,7 +196,7 @@ public class D3b0g : MonoBehaviour
             float x = radius * Mathf.Cos(c);
             float y = radius * Mathf.Sin(c);
 
-            Vector3 pos = new Vector3(center.x + x, center.y + y, 0);
+            Vector3 pos = new Vector3(center.x + x, center.y + y, center.z);
             _circle.SetPosition(i, pos);
             i++;
         }
