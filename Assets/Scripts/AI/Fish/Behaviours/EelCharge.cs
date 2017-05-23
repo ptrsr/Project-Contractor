@@ -24,8 +24,9 @@ public class EelCharge : FishState
         else
             _eel.AnchorBody.isKinematic = true;
 
+        //Set direction for the head
         if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 4)
-            _eel.Direction = (_eel.Target.position - _eel.transform.position).normalized;
+            _eel.Direction = ((_eel.Target.position + (_eel.TargetBody.velocity / _eel.Difficulty)) - _eel.transform.position).normalized;
 
         if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) > _eel.DetectionRange)
             _eel.SetState<EelReturnToHole>();

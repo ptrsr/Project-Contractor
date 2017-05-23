@@ -16,6 +16,9 @@ public class FishEnemy : Fish
     private Transform _target = null;
     public Transform Target { get { return _target; } }
 
+    private Rigidbody _targetBody;
+    public Rigidbody TargetBody { get { return _targetBody; } }
+
     [SerializeField]
     [Tooltip("Lower is harder\nNo 0 allowed")]
     private float _difficulty = 5;
@@ -34,6 +37,7 @@ public class FishEnemy : Fish
         base.Start();
 
         _target = FindObjectOfType<SubMovement>().transform;
+        _targetBody = _target.GetComponent<Rigidbody>();
     }
 
     public override void Update()

@@ -41,7 +41,8 @@ public class ElectricEel : FishNeutral
         _anchorOrigPos = _anchor.position;
         _anchorBody = _anchor.GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        _target = FindObjectOfType<SubMovement>().transform;
+        target = FindObjectOfType<SubMovement>().transform;
+        targetBody = target.GetComponent<Rigidbody>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
