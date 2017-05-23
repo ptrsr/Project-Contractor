@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateReturnToHole : FishState
+public class EelReturnToHole : FishState
 {
-    public FishStateReturnToHole(Fish pFish) : base(pFish) { }
+    public EelReturnToHole(Fish pFish) : base(pFish) { }
 
     private ElectricEel _eel;
 
@@ -32,7 +32,7 @@ public class FishStateReturnToHole : FishState
             _eel.Direction = (_eel.HoleExit.position - _eel.transform.position).normalized;
         }
         else
-            _eel.SetState<FishStateHide>();
+            _eel.SetState<EelHide>();
         
         //Only move the y force to prevent curling up behaviour
         _eel.Body.AddForce(new Vector3(0, _eel.Direction.y, 0) * _eel.MoveSpeed / 2f);

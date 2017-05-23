@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStatePatrolPoint : FishState
+public class SharkWayPoint : FishState
 {
-    public FishStatePatrolPoint(Fish pFish) : base(pFish) { }
+    public SharkWayPoint(Fish pFish) : base(pFish) { }
 
     private Shark _shark;
     private Transform _curPoint;
@@ -18,7 +18,7 @@ public class FishStatePatrolPoint : FishState
     public override void Step()
     {
         if (_shark.DetectTarget())
-            _shark.SetState<FishStatePatrolChase>();
+            _shark.SetState<SharkChase>();
 
         //Check if shark is in range for next waypoint
         if (Vector3.Distance(_shark.transform.position, _curPoint.position) < _shark.PointRange)

@@ -54,14 +54,16 @@ public class Octopus : FishEnemy
         _rockPos = origPos;
         _attackCounter = _attackCooldown;
 
-        stateCache[typeof(FishStateFindRock)] = new FishStateFindRock(this);
-        stateCache[typeof(FishStateBurstIdle)] = new FishStateBurstIdle(this);
-        stateCache[typeof(FishStateBurstMove)] = new FishStateBurstMove(this);
-        stateCache[typeof(FishStateBurstChase)] = new FishStateBurstChase(this);
-        stateCache[typeof(FishStateLatchOn)] = new FishStateLatchOn(this);
-        stateCache[typeof(FishStateLatchOff)] = new FishStateLatchOff(this);
+        stateCache[typeof(OctopusFindRock)] = new OctopusFindRock(this);
+        stateCache[typeof(OctopusBurstIdle)] = new OctopusBurstIdle(this);
+        stateCache[typeof(OctopusBurstMove)] = new OctopusBurstMove(this);
+        stateCache[typeof(OctopusBurstChase)] = new OctopusBurstChase(this);
+        stateCache[typeof(OctopusLatchOnRock)] = new OctopusLatchOnRock(this);
+        stateCache[typeof(OctopusLatchOnPlayer)] = new OctopusLatchOnPlayer(this);
+        stateCache[typeof(OctopusLatchOffRock)] = new OctopusLatchOffRock(this);
+        stateCache[typeof(OctopusLatchOffPlayer)] = new OctopusLatchOffPlayer(this);
 
-        SetState<FishStateFindRock>();
+        SetState<OctopusFindRock>();
     }
 
     public override bool DetectTarget()

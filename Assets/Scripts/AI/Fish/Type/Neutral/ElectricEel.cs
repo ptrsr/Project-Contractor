@@ -46,11 +46,11 @@ public class ElectricEel : FishNeutral
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
 
-        stateCache[typeof(FishStateHide)] = new FishStateHide(this);
-        stateCache[typeof(FishStateCharge)] = new FishStateCharge(this);
-        stateCache[typeof(FishStateReturnToHole)] = new FishStateReturnToHole(this);
+        stateCache[typeof(EelHide)] = new EelHide(this);
+        stateCache[typeof(EelCharge)] = new EelCharge(this);
+        stateCache[typeof(EelReturnToHole)] = new EelReturnToHole(this);
 
-        SetState<FishStateHide>();
+        SetState<EelHide>();
     }
 
     public override void Update()
@@ -69,7 +69,7 @@ public class ElectricEel : FishNeutral
         Target.GetComponent<SubMovement>().StunPlayer();
 
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
-        SetState<FishStateReturnToHole>();
+        SetState<EelReturnToHole>();
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)

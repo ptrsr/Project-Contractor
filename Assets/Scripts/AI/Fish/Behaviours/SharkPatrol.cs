@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStatePatrol : FishState
+public class SharkPatrol : FishState
 {
-    public FishStatePatrol(Fish pFish) : base(pFish) { }
+    public SharkPatrol(Fish pFish) : base(pFish) { }
 
     private Shark _shark;
     private int _counter;
@@ -20,7 +20,7 @@ public class FishStatePatrol : FishState
     {
         fish.RotateTowards(_shark.GetLookRotation(fish.Direction));
         if (_shark.DetectTarget())
-            fish.SetState<FishStatePatrolChase>();
+            fish.SetState<SharkChase>();
 
         //Check for walls and solve collision issues
         if (_shark.DetectWall())

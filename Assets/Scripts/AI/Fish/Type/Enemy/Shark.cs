@@ -40,12 +40,12 @@ public class Shark : FishEnemy
         temp.RemoveAt(0);
         _waypoints = temp.ToArray();
 
-        stateCache[typeof(FishStatePatrolIdle)] = new FishStatePatrolIdle(this);
-        stateCache[typeof(FishStatePatrolPoint)] = new FishStatePatrolPoint(this);
-        stateCache[typeof(FishStatePatrolChase)] = new FishStatePatrolChase(this);
-        stateCache[typeof(FishStatePatrolReturn)] = new FishStatePatrolReturn(this);
+        stateCache[typeof(SharkIdle)] = new SharkIdle(this);
+        stateCache[typeof(SharkWayPoint)] = new SharkWayPoint(this);
+        stateCache[typeof(SharkChase)] = new SharkChase(this);
+        stateCache[typeof(SharkReturn)] = new SharkReturn(this);
 
-        SetState<FishStatePatrolPoint>();
+        SetState<SharkWayPoint>();
     }
 
     public void OnCollisionEnter(Collision c)
@@ -56,7 +56,7 @@ public class Shark : FishEnemy
         c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
         c.gameObject.GetComponent<SubMovement>().StunPlayer();
 
-        SetState<FishStatePatrolIdle>();
+        SetState<SharkIdle>();
     }
 
     public Transform GetNearestWayPoint()

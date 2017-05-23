@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateFindRock : FishState
+public class OctopusFindRock : FishState
 {
-    public FishStateFindRock(Fish pFish) : base(pFish) { }
+    public OctopusFindRock(Fish pFish) : base(pFish) { }
 
     private Octopus _octo;
     private int i = 0;
@@ -15,7 +15,7 @@ public class FishStateFindRock : FishState
         _octo = (Octopus)fish;
         _octo.Collider.enabled = true;
         FindRock();
-        _octo.SetState<FishStateBurstMove>();
+        _octo.SetState<OctopusBurstMove>();
     }
 
     public override void Step()
@@ -36,7 +36,7 @@ public class FishStateFindRock : FishState
             i++;
             if (i >= 100)
             {
-                Debug.Log("Failed to find a rock");
+                Debug.Log("Failed to find a rock\nOctopus id: " + _octo.gameObject.name);
                 break;
             }
             //Keep trying until the point is in range of origin and is not right next to the Octopus

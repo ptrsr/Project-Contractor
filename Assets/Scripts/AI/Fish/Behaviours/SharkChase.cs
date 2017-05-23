@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStatePatrolChase : FishState
+public class SharkChase : FishState
 {
-    public FishStatePatrolChase(Fish pFish) : base(pFish) { }
+    public SharkChase(Fish pFish) : base(pFish) { }
 
     private Shark _shark;
     private Rigidbody _targetBody;
@@ -18,7 +18,7 @@ public class FishStatePatrolChase : FishState
     public override void Step()
     {
         if (!_shark.DetectTarget())
-            fish.SetState<FishStatePatrolReturn>();
+            fish.SetState<SharkReturn>();
         
         //Move and rotate towards the tharget
         _shark.Direction = ((_shark.Target.transform.position + (_targetBody.velocity / _shark.Difficulty)) - fish.transform.position).normalized;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStatePatrolReturn : FishState
+public class SharkReturn : FishState
 {
-    public FishStatePatrolReturn(Fish pFish) : base(pFish) { }
+    public SharkReturn(Fish pFish) : base(pFish) { }
 
     private Shark _shark;
 
@@ -12,7 +12,7 @@ public class FishStatePatrolReturn : FishState
     {
         _shark = (Shark)fish;
         FindWayPoint();
-        _shark.SetState<FishStatePatrolPoint>();
+        _shark.SetState<SharkWayPoint>();
     }
 
     public override void Step()

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateCharge : FishState
+public class EelCharge : FishState
 {
-    public FishStateCharge(Fish pFish) : base(pFish) { }
+    public EelCharge(Fish pFish) : base(pFish) { }
 
     private ElectricEel _eel;
 
@@ -28,7 +28,7 @@ public class FishStateCharge : FishState
             _eel.Direction = (_eel.Target.position - _eel.transform.position).normalized;
 
         if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) > _eel.DetectionRange)
-            _eel.SetState<FishStateReturnToHole>();
+            _eel.SetState<EelReturnToHole>();
         
         //Move and rotate the head towards target
         _eel.RotateTowards(_eel.GetLookRotation(_eel.Direction));

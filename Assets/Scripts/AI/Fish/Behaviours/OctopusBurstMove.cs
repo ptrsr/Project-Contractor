@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateBurstMove : FishState
+public class OctopusBurstMove : FishState
 {
-    public FishStateBurstMove(Fish pFish) : base(pFish) { }
+    public OctopusBurstMove(Fish pFish) : base(pFish) { }
 
     private Octopus _octo;
 
@@ -16,11 +16,11 @@ public class FishStateBurstMove : FishState
     public override void Step()
     {
         if (_octo.DetectTarget())
-            fish.SetState<FishStateBurstChase>();
+            fish.SetState<OctopusBurstChase>();
 
         Debug.DrawLine(_octo.transform.position, _octo.RockPos);
         if (_octo.CheckLatchOnRange())
-            _octo.SetState<FishStateLatchOn>();
+            _octo.SetState<OctopusLatchOnRock>();
 
         _octo.Direction = (_octo.RockPos - _octo.transform.position).normalized;
 
@@ -29,7 +29,7 @@ public class FishStateBurstMove : FishState
         {
             //Move towards direction
             _octo.Body.AddForce(_octo.Direction * _octo.MoveSpeed);
-            _octo.SetState<FishStateBurstIdle>();
+            _octo.SetState<OctopusBurstIdle>();
         }
     }
 }
