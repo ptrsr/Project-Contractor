@@ -96,6 +96,12 @@ public class Shark : FishEnemy
         float pointDis = Vector3.Distance(transform.position, nearest.position);
         float targetPointDis = Vector3.Distance(nearest.position, Target.position);
 
+        /*Check if:
+         * target is in an angle in front
+         * is not obstructed by walls
+         * target is in range to the shark
+         * shark is in range to a waypoint
+         * target is in range to a waypoint*/
         return (Vector3.Angle(-transform.right, Target.position - transform.position) < _detectionAngle &&
             !Physics.Raycast(transform.position, Target.position, ~IgnoreDetection) &&
             targetDis < Range && pointDis < Range && targetPointDis < Range);
@@ -103,6 +109,7 @@ public class Shark : FishEnemy
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model for rotating towards points
         Quaternion lookRot = base.GetLookRotation(direction);
         lookRot.eulerAngles = new Vector3(0, lookRot.eulerAngles.y + 90f, lookRot.eulerAngles.x);
         return lookRot;

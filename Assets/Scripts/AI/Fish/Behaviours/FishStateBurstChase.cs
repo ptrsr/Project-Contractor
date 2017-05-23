@@ -23,8 +23,10 @@ public class FishStateBurstChase : FishState
 
         _octo.Direction = (_octo.Target.position - _octo.transform.position).normalized;
 
+        //Wait for rotation to be done
         if (_octo.RotateTowards(_octo.GetLookRotation(_octo.Direction), _octo.RotationModifier))
         {
+            //Move towards target
             _octo.Body.AddForce(_octo.Direction * _octo.ChaseSpeed);
             _octo.SetState<FishStateBurstIdle>();
         }

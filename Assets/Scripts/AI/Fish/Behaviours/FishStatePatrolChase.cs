@@ -20,6 +20,7 @@ public class FishStatePatrolChase : FishState
         if (!_shark.DetectTarget())
             fish.SetState<FishStatePatrolReturn>();
         
+        //Move and rotate towards the tharget
         _shark.Direction = ((_shark.Target.transform.position + (_targetBody.velocity / _shark.Difficulty)) - fish.transform.position).normalized;
         _shark.RotateTowards(_shark.GetLookRotation(_shark.Direction), _shark.RotationModifier);
         _shark.Body.AddForce(_shark.Direction * _shark.ChaseSpeed);

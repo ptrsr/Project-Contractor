@@ -10,7 +10,7 @@ public class FishStatePatrolIdle : FishState
 
     public override void Initialize()
     {
-        
+        //Empty
     }
 
     public override void Step()

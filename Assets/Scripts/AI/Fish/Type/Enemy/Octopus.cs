@@ -66,6 +66,7 @@ public class Octopus : FishEnemy
 
     public override bool DetectTarget()
     {
+        //Wait for cooldown
         if (_attackCounter != _attackCooldown)
         {
             _attackCounter++;
@@ -84,6 +85,7 @@ public class Octopus : FishEnemy
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
         lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
         return lookRot;
@@ -91,6 +93,7 @@ public class Octopus : FishEnemy
 
     public Quaternion GetLatchOnRot(Vector3 direction)
     {
+        //Proper rotation for the model while latching on
         Quaternion lookRot = Quaternion.LookRotation(direction);
         lookRot.eulerAngles -= new Vector3(90f, 0f, 180f);
         return lookRot;

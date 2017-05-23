@@ -20,10 +20,9 @@ public class FishStateHide : FishState
     public override void Step()
     {
         if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) < _eel.DetectionRange)
-        {
             _eel.SetState<FishStateCharge>();
-        }
 
+        //Move anchor and head back to start positions
         _eel.Anchor.position = Vector3.Lerp(_eel.Anchor.position, _eel.AnchorOrigPos, _eel.RotationSpeed);
         _eel.transform.position = Vector3.Lerp(_eel.transform.position, _eel.OriginPos, _eel.RotationSpeed);
         _eel.transform.rotation = Quaternion.Lerp(_eel.transform.rotation, _eel.OriginRot, _eel.RotationSpeed);

@@ -41,6 +41,7 @@ public class FishEnemy : Fish
         base.Update();
     }
 
+    //Get a random direction within target range
     public void SetRandomDirection()
     {
         Vector3 difPos = (transform.position - OriginPos).normalized;
@@ -75,6 +76,7 @@ public class FishEnemy : Fish
 
     public bool DetectWall()
     {
+        //Raycast towards direction
         RaycastHit hit;
         Debug.DrawRay(transform.position, Direction.normalized * WallDetectionRange);
         if (Physics.Raycast(transform.position, Direction, out hit, WallDetectionRange, ~IgnoreDetection))
@@ -106,6 +108,11 @@ public class FishEnemy : Fish
         float targetDis = Vector3.Distance(OriginPos, Target.position);
         float origDis = Vector3.Distance(transform.position, OriginPos);
 
+        /*Check if:
+         * target is not obstructed by a wall
+         * target is in range of the enemy
+         * target is in range of the origin
+         * enemy is in range of the origin*/
         return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range);
     }
 }

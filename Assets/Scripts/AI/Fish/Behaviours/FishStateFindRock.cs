@@ -27,6 +27,7 @@ public class FishStateFindRock : FishState
     {
         RaycastHit hit;
 
+        //Attempt to find a rock within range
         do
         {
             _octo.SetRandomDirection();
@@ -38,6 +39,7 @@ public class FishStateFindRock : FishState
                 Debug.Log("Failed to find a rock");
                 break;
             }
+            //Keep trying until the point is in range of origin and is not right next to the Octopus
         } while
         (Vector3.Distance(_octo.OriginPos, hit.point) > _octo.Range ||
         Vector3.Distance(_octo.transform.position, hit.point) < 20);

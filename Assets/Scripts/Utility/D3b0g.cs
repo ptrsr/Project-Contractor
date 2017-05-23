@@ -94,9 +94,8 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(shark.Target.position, nearest.position),
                 shark.WayId,
                 shark.DetectTarget());
-            if (shark.DetectTarget())
-                Debug.DrawLine(shark.transform.position, shark.Target.position, Color.red);
             AddCircle(shark.gameObject, shark.transform.position, shark.Range);
+            if (shark.DetectTarget()) AddDetectionLine(shark.transform, shark.Target);
         }
         else if (_current is FishEnemy)
         {
@@ -187,8 +186,9 @@ public class D3b0g : MonoBehaviour
             _circle.endColor = Color.red;
             _circle.startWidth = 1f;
             _circle.endWidth = 1f;
-            _circle.positionCount = size;
         }
+
+        _circle.positionCount = size;
 
         int i = 0;
         for (float c = 0; c < 2 * Mathf.PI; c += 0.1f)
@@ -201,6 +201,13 @@ public class D3b0g : MonoBehaviour
             i++;
         }
         _circle.SetPosition(i, _circle.GetPosition(0));
+    }
+
+    private void AddDetectionLine(Transform obj, Transform target)
+    {
+        _circle.positionCount += 2;
+        _circle.SetPosition(_circle.positionCount - 2, obj.transform.position);
+        _circle.SetPosition(_circle.positionCount - 1, target.transform.position);
     }
 
     private void RemoveCircle()

@@ -19,11 +19,13 @@ public class FishStateLatchOn : FishState
 
         if (_octo.IsChasing)
         {
+            //Parent the player to keep equal positions
             _octo.transform.SetParent(_octo.Target.transform);
             RaycastHit hit;
             Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
             _octo.TargetNormal = hit.normal;
             _subMove = _octo.Target.GetComponent<SubMovement>();
+            //Slow down the player
             _subMove.SlowDownPlayer(true);
         }
 

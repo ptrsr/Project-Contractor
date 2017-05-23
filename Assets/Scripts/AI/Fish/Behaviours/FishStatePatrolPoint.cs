@@ -20,9 +20,11 @@ public class FishStatePatrolPoint : FishState
         if (_shark.DetectTarget())
             _shark.SetState<FishStatePatrolChase>();
 
+        //Check if shark is in range for next waypoint
         if (Vector3.Distance(_shark.transform.position, _curPoint.position) < _shark.PointRange)
             _curPoint = NextWaypoint();
 
+        //Move and rotate towards the next waypoint
         _shark.Direction = (_shark.GetCurrentWayPoint().position - _shark.transform.position).normalized;
         _shark.RotateTowards(_shark.GetLookRotation(_shark.Direction));
         _shark.Body.AddForce(_shark.Direction * _shark.MoveSpeed);
@@ -30,11 +32,7 @@ public class FishStatePatrolPoint : FishState
 
     private Transform NextWaypoint()
     {
-        _shark.WayId++;
-
-        if (_shark.WayId == _shark.WayPoints.Length - 1)
-            _shark.WayId = 0;
-
+        _shark.WayId = _shark.WayId + 1 == _shark.WayPoints.Length ? 0 : _shark.WayId + 1;
         return _shark.WayPoints[_shark.WayId];
     }
 }

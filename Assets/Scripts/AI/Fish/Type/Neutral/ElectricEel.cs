@@ -40,11 +40,8 @@ public class ElectricEel : FishNeutral
 
         _anchorOrigPos = _anchor.position;
         _anchorBody = _anchor.GetComponent<Rigidbody>();
-
         _collider = GetComponent<Collider>();
-
         _target = FindObjectOfType<SubMovement>().transform;
-
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
@@ -77,6 +74,7 @@ public class ElectricEel : FishNeutral
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
         return lookRot;
     }

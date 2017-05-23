@@ -24,8 +24,10 @@ public class FishStateBurstMove : FishState
 
         _octo.Direction = (_octo.RockPos - _octo.transform.position).normalized;
 
+        //Wait for rotation to be done
         if (_octo.RotateTowards(_octo.GetLookRotation(_octo.Direction)))
         {
+            //Move towards direction
             _octo.Body.AddForce(_octo.Direction * _octo.MoveSpeed);
             _octo.SetState<FishStateBurstIdle>();
         }
