@@ -7,7 +7,6 @@ public class FishStatePatrolReturn : FishState
     public FishStatePatrolReturn(Fish pFish) : base(pFish) { }
 
     private Shark _shark;
-    private Transform _point;
 
     public override void Initialize()
     {
@@ -23,14 +22,15 @@ public class FishStatePatrolReturn : FishState
 
     private void FindWayPoint()
     {
-        int id = _shark.GetWayPointId(_point);
-        int startId = _shark.GetWayPointId(_point);
+        Transform point = _shark.GetNearestWayPoint();
+        int id = _shark.GetWayPointId(point);
+        int startId = _shark.GetWayPointId(point);
 
         //Try to find a waypoint in front of the shark to prevent back tracking
         do
         {
             _shark.WayId = id + 1 >= _shark.WayPoints.Length - 1 ? 0 : id + 1;
-            _point = _shark.WayPoints[_shark.WayId];
+            point = _shark.WayPoints[_shark.WayId];
 
             id++;
             id = id == _shark.WayPoints.Length - 1 ? 0 : id;
@@ -41,6 +41,6 @@ public class FishStatePatrolReturn : FishState
                 break;
             }
             //Check if a waypoint is in front of the shark
-        } while (Vector3.Angle(-_shark.transform.right, _point.position - _shark.transform.position) > 45f);
+        } while (Vector3.Angle(-_shark.transform.right, point.position - _shark.transform.position) > 45f);
     }
 }

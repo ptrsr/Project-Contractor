@@ -54,6 +54,7 @@ public class Shark : FishEnemy
             return;
 
         c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
+        c.gameObject.GetComponent<SubMovement>().StunPlayer();
 
         SetState<FishStatePatrolIdle>();
     }
