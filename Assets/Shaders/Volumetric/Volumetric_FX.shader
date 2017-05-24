@@ -27,7 +27,6 @@
 			};
 
 
-			uniform sampler2D _LastCameraDepthTexture;
 
 
 			v2f vert (appdata v)
@@ -38,7 +37,7 @@
 				return o;
 			}
 
-
+			uniform sampler2D _LastCameraDepthTexture;
 			uniform float _height;
 			
 
@@ -62,13 +61,15 @@
 
 		Pass
 			{
-				Cull Off ZTest Off
+				Cull Off ZTest On
 				Blend SrcAlpha OneMinusSrcAlpha
 				Tags{ "RenderType" = "Transparent" }
 
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
+
+				static const float PI = 3.14159265f;
 
 				#include "UnityCG.cginc"
 
@@ -85,7 +86,6 @@
 			};
 
 
-			uniform sampler2D _LastCameraDepthTexture;
 
 
 			v2f vert(appdata v)
@@ -96,26 +96,31 @@
 				return o;
 			}
 
-
+			uniform sampler2D _LastCameraDepthTexture;
 			uniform float _height;
-
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				float depth = 1 - tex2D(_LastCameraDepthTexture , float2(0, i.uv.x));
+				float uvCoord = ((1 / i.uv.x) * i.uv.y + 1) / 2;
 
-			if (depth > i.uv.y)
-				depth = 1;
-			else
-				depth = 0;
+				float depth = 1 - tex2D(_LastCameraDepthTexture, float2(0.0f, uvCoord)) * 1100;
 
-			float horizontal = 1 - pow(abs(i.uv.x - 0.5f) * 2, 2);
-			float vertical = 1 - pow(i.uv.y, 2);
+				if (i.uv.x > depth * _height)
+					depth = 0;
+				else
+					depth = 1;
 
+				return depth;
 
-			return fixed4(1, 1, 1, depth * horizontal * vertical);
+				//return float4(uvCoord, 0, 0, 1);
+				//return float4(1, 1, 1, tex2D(_LastCameraDepthTexture, float2(0, i.uv.x)));
+
+				float fallOff = pow(clamp(1 - length(i.uv) / 50, 0, 1), 2);
+				float sides = pow(dot(float2(1, 0), normalize(float2(i.uv.x, i.uv.y * 2))), 2);
+
+				return float4(1, 1, 1, sides * fallOff);
 			}
-				ENDCG
-			}
+			ENDCG
+		}
 	}
 }

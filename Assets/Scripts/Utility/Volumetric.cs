@@ -20,6 +20,8 @@ public class Volumetric : MonoBehaviour
 
     private bool _orth = true;
 
+    public float temp = 1.5f;
+
     void Start ()
     {
         _cam = GetComponent<Camera>();
@@ -27,8 +29,6 @@ public class Volumetric : MonoBehaviour
         _cam.depthTextureMode = DepthTextureMode.Depth;
 
         _orth = _cam.orthographic;
-
-        print(_orth);
     }
 
     void Update ()
@@ -45,17 +45,49 @@ public class Volumetric : MonoBehaviour
     {
         _orth = cam.orthographic;
 
-        cam.orthographicSize = _size / 2;
-        cam.aspect = 1 / _size;
 
-        cam.rect = new Rect(new Vector2(), new Vector2(_quality, 1));
-        cam.farClipPlane = _height;
+        
+        if (_orth)
+        {
+            cam.orthographicSize = _size / 2;
+            cam.aspect = 1 / _size;
+
+            cam.rect = new Rect(new Vector2(), new Vector2(_quality, 1));
+            cam.farClipPlane = _height;
+        }
+        else
+        {
+            cam.fieldOfView = (_size * temp);
+            cam.aspect = 1 / (_size * temp);
+
+
+            cam.rect = new Rect(new Vector2(), new Vector2(_quality, 0.1f));
+            cam.farClipPlane = _height;
+        }
     }
 
     void RenderTriangle()
     {
         Vector3 pos = transform.position;
-        Vector3 toRight = transform.up * Mathf.Asin(_height) / _size;
+        Vector3 forward = transform.forward * _height;
+        float temp = _height * Mathf.Asin((_size / 2) * Mathf.Deg2Rad);
+        Vector3 toTop = transform.up * _height * Mathf.Asin((_size / 2) * Mathf.Deg2Rad);
+
+        _mat.SetPass(1);
+        _mat.SetFloat("_height", _height);
+
+        GL.Begin(GL.TRIANGLES);
+        {
+            GL.TexCoord2(0, 0);
+            GL.Vertex(pos);
+
+            GL.TexCoord2(_height, -temp);
+            GL.Vertex(pos - toTop + forward);
+
+            GL.TexCoord2(_height, temp);
+            GL.Vertex(pos + toTop + forward);
+        }
+        GL.End();
 
     }
 
