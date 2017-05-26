@@ -173,10 +173,7 @@ public class FX : MonoBehaviour
 		RaycastCornerBlit (src, dst, _mat);
 
         foreach (Volumetric volume in _volumes)
-        {
-            RenderTexture.active = dst;
-            volume.Render();
-        }
+            volume.Render(ref dst);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
