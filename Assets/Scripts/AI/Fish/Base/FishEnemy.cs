@@ -16,6 +16,9 @@ public class FishEnemy : Fish
     private Transform _target = null;
     public Transform Target { get { return _target; } }
 
+    private Rigidbody _targetBody;
+    public Rigidbody TargetBody { get { return _targetBody; } }
+
     [SerializeField]
     [Tooltip("Lower is harder\nNo 0 allowed")]
     private float _difficulty = 5;
@@ -34,28 +37,27 @@ public class FishEnemy : Fish
         base.Start();
 
         _target = FindObjectOfType<SubMovement>().transform;
+        _targetBody = _target.GetComponent<Rigidbody>();
     }
 
     public override void Update()
     {
-        BindZ();
-
         base.Update();
     }
 
+    //Get a random direction within target range
     public void SetRandomDirection()
     {
         Vector3 difPos = (transform.position - OriginPos).normalized;
 
         float xForce;
         float yForce;
+        float zForce;
 
         if (difPos.x < -Range)
             xForce = MoveSpeed;
         else if (difPos.x > Range)
             xForce = -MoveSpeed;
-        //if (difPos.x < -Range || difPos.x > Range)
-        //    xForce = difPos.x;
         else
             xForce = Random.Range(-MoveSpeed, MoveSpeed);
 
@@ -66,11 +68,19 @@ public class FishEnemy : Fish
         else
             yForce = Random.Range(-MoveSpeed, MoveSpeed);
 
-        Direction = new Vector3(xForce, yForce, 0).normalized;
+        if (difPos.z < -Range)
+            zForce = MoveSpeed;
+        else if (difPos.z > Range)
+            zForce = -MoveSpeed;
+        else
+            zForce = Random.Range(-MoveSpeed, MoveSpeed);
+
+        Direction = new Vector3(xForce, yForce, zForce).normalized;
     }
 
     public bool DetectWall()
     {
+        //Raycast towards direction
         RaycastHit hit;
         Debug.DrawRay(transform.position, Direction.normalized * WallDetectionRange);
         if (Physics.Raycast(transform.position, Direction, out hit, WallDetectionRange, ~IgnoreDetection))
@@ -100,11 +110,13 @@ public class FishEnemy : Fish
     {
         float enemyDis = Vector3.Distance(transform.position, Target.position);
         float targetDis = Vector3.Distance(OriginPos, Target.position);
-        float origDis = Vector3.Distance(transform.position, OriginPos); ;
+        float origDis = Vector3.Distance(transform.position, OriginPos);
 
-        if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range)
-            return true;
-        else
-            return false;
+        /*Check if:
+         * target is not obstructed by a wall
+         * target is in range of the enemy
+         * target is in range of the origin
+         * enemy is in range of the origin*/
+        return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && enemyDis < Range && targetDis < Range && origDis < Range);
     }
 }

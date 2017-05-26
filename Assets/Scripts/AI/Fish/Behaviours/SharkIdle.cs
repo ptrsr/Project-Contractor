@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStatePatrolIdle : FishState
+public class SharkIdle : FishState
 {
-    public FishStatePatrolIdle(Fish pFish) : base(pFish) { }
+    public SharkIdle(Fish pFish) : base(pFish) { }
 
     private int _counter = 0;
 
     public override void Initialize()
     {
-        
+        //Empty
     }
 
     public override void Step()
@@ -22,7 +22,7 @@ public class FishStatePatrolIdle : FishState
         else
         {
             _counter = 0;
-            fish.SetState<FishStatePatrol>();
+            fish.SetState<SharkReturn>();
         }
     }
 }

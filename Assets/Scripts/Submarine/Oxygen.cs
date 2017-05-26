@@ -11,7 +11,7 @@ public class Oxygen : MonoBehaviour {
     private Color _currentColor;
     private SubMovement _submarine;
     [SerializeField]
-    private Image _sliderImage;
+    private Image _sliderImage = null;
     private bool _surface = false;
     private float _alpha = 0;
 	private void Start () {
@@ -19,8 +19,7 @@ public class Oxygen : MonoBehaviour {
         _image = GetComponentInParent<Image>();
         _currentColor = _image.color;
         _submarine = FindObjectOfType<SubMovement>();
-
-
+        AudioSource s = FindObjectOfType<AudioSource>();
     }
 
     private void Update()

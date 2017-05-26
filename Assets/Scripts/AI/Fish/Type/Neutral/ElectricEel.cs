@@ -40,20 +40,18 @@ public class ElectricEel : FishNeutral
 
         _anchorOrigPos = _anchor.position;
         _anchorBody = _anchor.GetComponent<Rigidbody>();
-
         _collider = GetComponent<Collider>();
-
-        _target = FindObjectOfType<SubMovement>().transform;
-
+        target = FindObjectOfType<SubMovement>().transform;
+        targetBody = target.GetComponent<Rigidbody>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
 
-        stateCache[typeof(FishStateHide)] = new FishStateHide(this);
-        stateCache[typeof(FishStateCharge)] = new FishStateCharge(this);
-        stateCache[typeof(FishStateReturnToHole)] = new FishStateReturnToHole(this);
+        stateCache[typeof(EelHide)] = new EelHide(this);
+        stateCache[typeof(EelCharge)] = new EelCharge(this);
+        stateCache[typeof(EelReturnToHole)] = new EelReturnToHole(this);
 
-        SetState<FishStateHide>();
+        SetState<EelHide>();
     }
 
     public override void Update()
@@ -69,13 +67,15 @@ public class ElectricEel : FishNeutral
             return;
 
         //Stun player
+        Target.GetComponent<SubMovement>().StunPlayer();
 
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
-        SetState<FishStateReturnToHole>();
+        SetState<EelReturnToHole>();
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
         return lookRot;
     }

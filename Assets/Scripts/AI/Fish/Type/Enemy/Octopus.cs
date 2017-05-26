@@ -54,23 +54,21 @@ public class Octopus : FishEnemy
         _rockPos = origPos;
         _attackCounter = _attackCooldown;
 
-        stateCache[typeof(FishStateFindRock)] = new FishStateFindRock(this);
-        stateCache[typeof(FishStateBurstIdle)] = new FishStateBurstIdle(this);
-        stateCache[typeof(FishStateBurstMove)] = new FishStateBurstMove(this);
-        stateCache[typeof(FishStateBurstChase)] = new FishStateBurstChase(this);
-        stateCache[typeof(FishStateLatchOn)] = new FishStateLatchOn(this);
-        stateCache[typeof(FishStateLatchOff)] = new FishStateLatchOff(this);
+        stateCache[typeof(OctopusFindRock)] = new OctopusFindRock(this);
+        stateCache[typeof(OctopusBurstIdle)] = new OctopusBurstIdle(this);
+        stateCache[typeof(OctopusBurstMove)] = new OctopusBurstMove(this);
+        stateCache[typeof(OctopusBurstChase)] = new OctopusBurstChase(this);
+        stateCache[typeof(OctopusLatchOnRock)] = new OctopusLatchOnRock(this);
+        stateCache[typeof(OctopusLatchOnPlayer)] = new OctopusLatchOnPlayer(this);
+        stateCache[typeof(OctopusLatchOffRock)] = new OctopusLatchOffRock(this);
+        stateCache[typeof(OctopusLatchOffPlayer)] = new OctopusLatchOffPlayer(this);
 
-        SetState<FishStateFindRock>();
-    }
-
-    public override void Update()
-    {
-        base.Update();
+        SetState<OctopusFindRock>();
     }
 
     public override bool DetectTarget()
     {
+        //Wait for cooldown
         if (_attackCounter != _attackCooldown)
         {
             _attackCounter++;
@@ -89,6 +87,7 @@ public class Octopus : FishEnemy
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
         lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
         return lookRot;
@@ -96,6 +95,7 @@ public class Octopus : FishEnemy
 
     public Quaternion GetLatchOnRot(Vector3 direction)
     {
+        //Proper rotation for the model while latching on
         Quaternion lookRot = Quaternion.LookRotation(direction);
         lookRot.eulerAngles -= new Vector3(90f, 0f, 180f);
         return lookRot;

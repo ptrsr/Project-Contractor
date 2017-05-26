@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FishStateBurstIdle : FishState
+public class OctopusBurstIdle : FishState
 {
-    public FishStateBurstIdle(Fish pFish) : base(pFish) { }
+    public OctopusBurstIdle(Fish pFish) : base(pFish) { }
 
     private Octopus _octo;
     private int _count = 0;
@@ -16,8 +16,10 @@ public class FishStateBurstIdle : FishState
 
     public override void Step()
     {
-        if (_octo.CheckLatchOnRange())
-            _octo.SetState<FishStateLatchOn>();
+        if (_octo.IsChasing && _octo.CheckLatchOnRange())
+            _octo.SetState<OctopusLatchOnPlayer>();
+        else if (!_octo.IsChasing && _octo.CheckLatchOnRange())
+            _octo.SetState<OctopusLatchOnRock>();
 
         //Idle time
         if (_count < (_octo.IsChasing ? fish.IdleTime / _octo.IdleIntervalChange : fish.IdleTime))
@@ -28,9 +30,9 @@ public class FishStateBurstIdle : FishState
         {
             _count = 0;
             if (_octo.DetectTarget())
-                _octo.SetState<FishStateBurstChase>();
+                _octo.SetState<OctopusBurstChase>();
             else
-                _octo.SetState<FishStateBurstMove>();
+                _octo.SetState<OctopusBurstMove>();
         }
     }
 }

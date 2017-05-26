@@ -47,10 +47,10 @@ public class D3b0g : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                Hide();
-
                 if (!hit.collider.GetComponent<Fish>())
                     return;
+
+                Hide();
 
                 Fish fish = hit.collider.GetComponent<Fish>();
                 _tempRenderers = hit.collider.gameObject.GetComponentsInChildren<MeshRenderer>();
@@ -69,7 +69,35 @@ public class D3b0g : MonoBehaviour
         if (_current == null)
             return;
 
-        if (_current is FishEnemy)
+        if (_current is Shark)
+        {
+            Shark shark = (Shark)_current;
+            Transform nearest = shark.GetNearestWayPoint();
+            _text.text = string.Format(
+                "State: {0}\n" +
+                "Range: {1}\n" +
+                "Direction: {2}\n" +
+                "Speed: {3}\n" +
+                "Range to waypoint: {4:0.000}\n" +
+                "Range to nearest waypoint: {5:0.000}\n" +
+                "Range to target: {6:0.000}\n" +
+                "Target to nearest waypoint: {7:0.000}\n" +
+                "Current waypoint: {8}\n" +
+                "Can chase target: {9}",
+                shark.GetState,
+                shark.Range,
+                shark.Direction,
+                shark.Body.velocity,
+                Vector3.Distance(shark.transform.position, shark.GetCurrentWayPoint().position),
+                Vector3.Distance(shark.transform.position, nearest.position),
+                Vector3.Distance(shark.Target.position, shark.transform.position),
+                Vector3.Distance(shark.Target.position, nearest.position),
+                shark.WayId,
+                shark.DetectTarget());
+            AddCircle(shark.gameObject, shark.transform.position, shark.Range);
+            if (shark.DetectTarget()) AddDetectionLine(shark.transform, shark.Target);
+        }
+        else if (_current is FishEnemy)
         {
             FishEnemy enemy = (FishEnemy)_current;
             _text.text = string.Format(
@@ -77,9 +105,9 @@ public class D3b0g : MonoBehaviour
                 "Range: {1}\n" +
                 "Direction: {2}\n" +
                 "Speed: {3}\n" +
-                "Range to origin: {4}\n" +
-                "Range to target: {5}\n" +
-                "Target from origin: {6}\n" +
+                "Range to origin: {4:0.000}\n" +
+                "Range to target: {5:0.000}\n" +
+                "Target from origin: {6:0.000}\n" +
                 "Can chase target: {7}",
                 enemy.GetState,
                 enemy.Range,
@@ -99,8 +127,8 @@ public class D3b0g : MonoBehaviour
                 "Range: {1}\n" +
                 "Direction: {2}\n" +
                 "Speed: {3}\n" +
-                "Range to origin: {4}\n" +
-                "Target from origin: {5}\n" +
+                "Range to origin: {4:0.000}\n" +
+                "Target from origin: {5:0.000}\n" +
                 "Can chase target: {6}",
                 neutral.GetState,
                 neutral.DetectionRange,
@@ -110,10 +138,6 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(neutral.OriginPos, neutral.Target.position),
                 (Vector3.Distance(neutral.OriginPos, neutral.Target.position) < neutral.DetectionRange));
             AddCircle(neutral.gameObject, neutral.OriginPos, neutral.DetectionRange);
-        }
-        else if (_current is FishFriendly)
-        {
-
         }
     }
 
@@ -149,7 +173,7 @@ public class D3b0g : MonoBehaviour
         }
     }
 
-    private void AddCircle(GameObject obj, Vector3 origin, float radius)
+    private void AddCircle(GameObject obj, Vector3 center, float radius)
     {
         float scale = 0.1f;
         int size = (int)((2f * Mathf.PI) / scale) + 2;
@@ -162,8 +186,9 @@ public class D3b0g : MonoBehaviour
             _circle.endColor = Color.red;
             _circle.startWidth = 1f;
             _circle.endWidth = 1f;
-            _circle.positionCount = size;
         }
+
+        _circle.positionCount = size;
 
         int i = 0;
         for (float c = 0; c < 2 * Mathf.PI; c += 0.1f)
@@ -171,11 +196,18 @@ public class D3b0g : MonoBehaviour
             float x = radius * Mathf.Cos(c);
             float y = radius * Mathf.Sin(c);
 
-            Vector3 pos = new Vector3(origin.x + x, origin.y + y, 0);
+            Vector3 pos = new Vector3(center.x + x, center.y + y, center.z);
             _circle.SetPosition(i, pos);
             i++;
         }
         _circle.SetPosition(i, _circle.GetPosition(0));
+    }
+
+    private void AddDetectionLine(Transform obj, Transform target)
+    {
+        _circle.positionCount += 2;
+        _circle.SetPosition(_circle.positionCount - 2, obj.transform.position);
+        _circle.SetPosition(_circle.positionCount - 1, target.transform.position);
     }
 
     private void RemoveCircle()
