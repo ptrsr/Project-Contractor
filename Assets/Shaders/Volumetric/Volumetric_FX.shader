@@ -19,14 +19,27 @@
 			
 			uniform int _layers = 1;
 
+			uniform float _time;
+
+			float Rand(float x)
+			{
+				return frac(sin(x));
+			}
+
 			fixed4 frag (v2f_img i) : SV_Target
 			{
 				float final = 0;
 
+				float rI = floor(i.uv.x + sin(_time));  // integer
+				float rF = frac(i.uv.x + + _time);  // fraction
+				float y = lerp(Rand(rI), Rand(rI + 1.0), smoothstep(0., 1., rF));
+				
+				y = pow(y, 12);
+
 				for (int j = 0; j < _layers; j++)
 				{
 					float depth = 1 - tex2D(_LastCameraDepthTexture , float2(j, i.uv.x));
-				
+
 					if (depth > i.uv.y)
 						depth = 1;
 					else
@@ -41,7 +54,7 @@
 				float vertical = 1 - pow(i.uv.y, 2);
 
 
-				return fixed4(1, 1, 1, final * horizontal * vertical);
+				return fixed4(1, 1, 1, final * horizontal * vertical * y);
 			}
 			ENDCG
 		}

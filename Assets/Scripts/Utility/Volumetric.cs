@@ -12,6 +12,7 @@ public class Volumetric : MonoBehaviour
     float
         _size = 2,
         _height = 2,
+        _thick = 1,
         _quality = 1;
 
     [SerializeField]
@@ -52,7 +53,7 @@ public class Volumetric : MonoBehaviour
             if (i % 2 == 0)
                 divide++;
 
-            Vector2 size = new Vector2(_size, _height) * (_quality / divide);
+            Vector2 size = new Vector2(_size * 2, _height) * (_quality / divide);
 
             _pingPong[i] = new RenderTexture((int)size.x, (int)size.y, 0);
             _pingPong[i].Create();
@@ -62,6 +63,7 @@ public class Volumetric : MonoBehaviour
     void OnValidate()
     {
         SetDimensions(GetComponent<Camera>());
+        CreateTextures();
     }
 
     void SetDimensions(Camera cam)
@@ -73,7 +75,7 @@ public class Volumetric : MonoBehaviour
             cam.orthographicSize = _size / 2;
             cam.aspect = _layers / _size;
 
-            cam.rect = new Rect(new Vector2(), new Vector2(1, 1));
+            cam.pixelRect = new Rect(0, 0, _layers, _size * _quality * 2);
             cam.farClipPlane = _height;
         }
         else
@@ -127,22 +129,11 @@ public class Volumetric : MonoBehaviour
 
     void RenderQuad(ref RenderTexture src)
     {
-        Vector3 pos = transform.position;
-        Vector3 toRight = transform.up * _size / 2;
-        Vector3 toBottom = transform.forward * _height;
-
-
-        Vector3 topLeft     = pos - toRight;
-        Vector3 topRight    = pos + toRight;
-        Vector3 bottomRight = pos + toRight + toBottom;
-        Vector3 bottomLeft  = pos - toRight + toBottom;
-
-        Vector3 p1 = Camera.main.WorldToScreenPoint(topLeft);
-        Vector3 p2 = Camera.main.WorldToScreenPoint(topRight);
-
-
         _mat.SetFloat("_height", _height);
         _mat.SetInt("_layers", _layers);
+        _mat.SetFloat("_time", Time.time);
+
+        print(_cam.pixelRect);
 
         Graphics.Blit(_pingPong[0], _pingPong[0], _mat, 0);
 
@@ -163,15 +154,19 @@ public class Volumetric : MonoBehaviour
                 Graphics.Blit(_pingPong[currentTexture], _pingPong[nextTexture], _mat, 1);
 
                 currentTexture = nextTexture;
-                nextTexture = j * 2 + ((i + 1) % 2);
+                nextTexture = j * 2 + (i % 2);
             }
-            nextTexture = (j - 1) * 2;
+            nextTexture = (j - 1) * 2 + 1;
         }
 
         RenderTexture.active = src;
 
         _mat.SetPass(2);
         _mat.SetTexture("_texture", _pingPong[0]);
+
+        Vector3 pos = transform.position;
+        Vector3 toRight = transform.up * _size / 2;
+        Vector3 toBottom = transform.forward * _height;
 
         GL.Begin(GL.QUADS);
         {
