@@ -146,39 +146,32 @@ public class Volumetric : MonoBehaviour
 
         Graphics.Blit(_pingPong[0], _pingPong[0], _mat, 0);
 
-        bool first = !(_blurLayers == 1);
+        int nextTexture = _pingPong.Length - 1;
+        int currentTexture = 0;
 
         for (int j = _blurLayers - 1; j >= 0; j--)
         {
             for (int i = 0; i < _passes * 2; i++)
             {
                 int pass = i % 2;
-                int currentPass = j * 2 + pass;
-
-                int nextTexture = currentPass + (i + 1) % 2 - pass;
-
-                //if (pass == 1 && i == _passes * 2 - 1)
-                //    nextTexture -= 2;
 
                 _mat.SetInt("_horizontal", pass);
-                _mat.SetVector("_size", new Vector2(1 / _pingPong[nextTexture].width, 1 / _pingPong[nextTexture].height));
+                _mat.SetVector("_size", new Vector2(1.0f / _pingPong[nextTexture].width, 1.0f / _pingPong[nextTexture].height));
 
-                if (first)
-                {
-                    _mat.SetTexture("_blur", _pingPong[0]);
-                    first = false;
-                }
-                else
-                    _mat.SetTexture("_blur", _pingPong[currentPass]);
+                _mat.SetTexture("_blur", _pingPong[currentTexture]);
 
-                Graphics.Blit(_pingPong[pass], _pingPong[(pass + 1) % 2], _mat, 1);
+                Graphics.Blit(_pingPong[currentTexture], _pingPong[nextTexture], _mat, 1);
+
+                currentTexture = nextTexture;
+                nextTexture = j * 2 + ((i + 1) % 2);
             }
+            nextTexture = (j - 1) * 2;
         }
 
         RenderTexture.active = src;
 
         _mat.SetPass(2);
-        _mat.SetTexture("_texture", _pingPong[1]);
+        _mat.SetTexture("_texture", _pingPong[0]);
 
         GL.Begin(GL.QUADS);
         {
