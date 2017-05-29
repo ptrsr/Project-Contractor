@@ -2,12 +2,10 @@
 {
 	SubShader
 	{
+		//------------------PASS----------------------
+		// Used for making the light rays (orthogonal)
 		Pass
 		{
-			//Cull Off ZTest On
-			//Blend SrcAlpha OneMinusSrcAlpha
-			//Tags{ "RenderType" = "Transparent" }
-
 			CGPROGRAM
 			#pragma vertex vert_img
 			#pragma fragment frag
@@ -21,21 +19,29 @@
 
 			uniform float _time;
 
-			float Rand(float x)
+			float rand(float x)
 			{
 				return frac(sin(x));
+			}
+
+			float noiseX(float x, float multi)
+			{
+				float rI = floor(x * (30.0 * multi) + sin(_time));  // integer
+				float rF = frac(x * (10.0 * multi) + _time / 3.0);  // fraction
+				return pow(lerp(rand(rI), rand(rI + (2 * multi)), smoothstep(0., 1., rF)), 3);
+			}
+
+			float noiseY(float y)
+			{
+				float rI = floor(y * 2 + sin(_time / 3.0));  // integer
+				float rF = frac(y * 3  + _time / 3.0);  // fraction
+				return pow(lerp(rand(rI), rand(rI + 4.5), smoothstep(0., 1., rF)), 2);
 			}
 
 			fixed4 frag (v2f_img i) : SV_Target
 			{
 				float final = 0;
-
-				float rI = floor(i.uv.x + sin(_time));  // integer
-				float rF = frac(i.uv.x + + _time);  // fraction
-				float y = lerp(Rand(rI), Rand(rI + 1.0), smoothstep(0., 1., rF));
 				
-				y = pow(y, 12);
-
 				for (int j = 0; j < _layers; j++)
 				{
 					float depth = 1 - tex2D(_LastCameraDepthTexture , float2(j, i.uv.x));
@@ -53,18 +59,23 @@
 				float horizontal = 1 - pow(abs(i.uv.x - 0.5f) * 2, 2);
 				float vertical = 1 - pow(i.uv.y, 2);
 
+				float cutOff = noiseY(i.uv.x);
 
-				return fixed4(1, 1, 1, final * horizontal * vertical * y);
+				if (i.uv.y > cutOff)
+					cutOff = cutOff / (i.uv.y);
+				else
+					cutOff = 1;
+
+				float noise = clamp(noiseX(i.uv.x, 0.3f) + noiseX(i.uv.x, 1.0f), 0, 1);
+
+				return fixed4(1, 1, 1, final * horizontal * vertical * cutOff * noise);
 			}
 			ENDCG
 		}
-
+		//-----------------PASS--------------------
+		// Used for blurring (with multiple passes)
 		Pass
 		{
-			//Cull Off ZTest On
-			//Blend SrcAlpha OneMinusSrcAlpha
-			//Tags{ "RenderType" = "Transparent" }
-
 			CGPROGRAM
 			#pragma vertex vert_img
 			#pragma fragment frag
@@ -104,7 +115,8 @@
 			}
 			ENDCG
 		}
-
+		//----------------------PASS------------------------
+		// Used for putting the blurred texture in the world
 		Pass
 			{
 				Cull Off ZTest On
@@ -146,76 +158,65 @@
 			ENDCG
 		}
 
+	//	Pass
+	//		{
+	//			Cull Off ZTest On
+	//			Blend SrcAlpha OneMinusSrcAlpha
+	//			Tags{ "RenderType" = "Transparent" }
 
+	//			CGPROGRAM
+	//			#pragma vertex vert
+	//			#pragma fragment frag
 
+	//			static const float PI = 3.14159265f;
 
+	//			#include "UnityCG.cginc"
 
+	//			struct appdata
+	//		{
+	//			float4 vertex : POSITION;
+	//			float2 uv	  : TEXCOORD0;
+	//		};
 
+	//		struct v2f
+	//		{
+	//			float4 vertex : SV_POSITION;
+	//			float2 uv	  : TEXCOORD0;
+	//		};
 
+	//		v2f vert(appdata v)
+	//		{
+	//			v2f o;
+	//			o.vertex = UnityObjectToClipPos(v.vertex);
+	//			o.uv = v.uv;
+	//			return o;
+	//		}
 
+	//		uniform sampler2D _LastCameraDepthTexture;
+	//		uniform float _height;
 
-		Pass
-			{
-				Cull Off ZTest On
-				Blend SrcAlpha OneMinusSrcAlpha
-				Tags{ "RenderType" = "Transparent" }
+	//		fixed4 frag(v2f i) : SV_Target
+	//		{
+	//			float uvCoord = ((1 / i.uv.x) * i.uv.y + 1) / 2;
 
-				CGPROGRAM
-				#pragma vertex vert
-				#pragma fragment frag
+	//			float depth = 1 - tex2D(_LastCameraDepthTexture, float2(0.0f, uvCoord)) * 1100;
 
-				static const float PI = 3.14159265f;
+	//			if (i.uv.x > depth * _height)
+	//				depth = 0;
+	//			else
+	//				depth = 1;
 
-				#include "UnityCG.cginc"
+	//			return depth;
 
-				struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv	  : TEXCOORD0;
-			};
+	//			//return float4(uvCoord, 0, 0, 1);
+	//			//return float4(1, 1, 1, tex2D(_LastCameraDepthTexture, float2(0, i.uv.x)));
 
-			struct v2f
-			{
-				float4 vertex : SV_POSITION;
-				float2 uv	  : TEXCOORD0;
-			};
+	//			float fallOff = pow(clamp(1 - length(i.uv) / 50, 0, 1), 2);
+	//			float sides = pow(dot(float2(1, 0), normalize(float2(i.uv.x, i.uv.y * 2))), 2);
 
-
-
-
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-				return o;
-			}
-
-			uniform sampler2D _LastCameraDepthTexture;
-			uniform float _height;
-
-			fixed4 frag(v2f i) : SV_Target
-			{
-				float uvCoord = ((1 / i.uv.x) * i.uv.y + 1) / 2;
-
-				float depth = 1 - tex2D(_LastCameraDepthTexture, float2(0.0f, uvCoord)) * 1100;
-
-				if (i.uv.x > depth * _height)
-					depth = 0;
-				else
-					depth = 1;
-
-				return depth;
-
-				//return float4(uvCoord, 0, 0, 1);
-				//return float4(1, 1, 1, tex2D(_LastCameraDepthTexture, float2(0, i.uv.x)));
-
-				float fallOff = pow(clamp(1 - length(i.uv) / 50, 0, 1), 2);
-				float sides = pow(dot(float2(1, 0), normalize(float2(i.uv.x, i.uv.y * 2))), 2);
-
-				return float4(1, 1, 1, sides * fallOff);
-			}
-			ENDCG
-		}
+	//			return float4(1, 1, 1, sides * fallOff);
+	//		}
+	//		ENDCG
+	//	}
 	}
 }

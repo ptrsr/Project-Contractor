@@ -133,8 +133,6 @@ public class Volumetric : MonoBehaviour
         _mat.SetInt("_layers", _layers);
         _mat.SetFloat("_time", Time.time);
 
-        print(_cam.pixelRect);
-
         Graphics.Blit(_pingPong[0], _pingPong[0], _mat, 0);
 
         int nextTexture = _pingPong.Length - 1;
