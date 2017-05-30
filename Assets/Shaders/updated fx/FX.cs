@@ -57,7 +57,7 @@ public class FX : MonoBehaviour {
 	private bool[] activepulse;
 	private Vector4[] aOrigin;
 
-    public List<Volumetric> _volumes = new List<Volumetric>();
+
 
 	private float _depth;
 
@@ -166,9 +166,6 @@ public class FX : MonoBehaviour {
 	void OnRenderImage (RenderTexture src, RenderTexture dst){
 		updateShader ();
 		RaycastCornerBlit (src, dst, _mat);
-		
-		foreach (Volumetric volume in _volumes)
-			volume.Render(ref dst);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
