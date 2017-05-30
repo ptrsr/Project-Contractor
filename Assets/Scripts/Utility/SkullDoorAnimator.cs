@@ -6,16 +6,19 @@ public class SkullDoorAnimator : MonoBehaviour {
 
     // Use this for initialization
     private Animator _animator;
+    private SubMovement _subMov;
     private bool _key1InPlace = false;
     private bool _key2InPlace = false;
 	void Start () {
         _animator = GetComponentInChildren<Animator>();
+        _subMov = FindObjectOfType<SubMovement>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(_key1InPlace && _key2InPlace)
         {
+            
             _animator.Play("RotateEyes");
             
         }

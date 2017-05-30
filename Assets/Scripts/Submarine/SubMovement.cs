@@ -20,6 +20,7 @@ public class SubMovement : MonoBehaviour {
     private int _distanceForMaxSpeed = 20;
     [SerializeField]
     private int _chargeSpeed = 50;
+    
 
 
     //----------------------------------Checks for submarine states----------------------------
@@ -27,15 +28,10 @@ public class SubMovement : MonoBehaviour {
     private bool _charged = false;
     private bool _slowed = false;
     private bool _stunned = false;
-    private bool _goingLeft = false;
-    private bool _goingRight = false;
-    private bool _goingDownLeft = false;
-    private bool _goingDownRight = false;
-    private bool _goingUpLeft = false;
-    private bool _goingUpRight = false;
+    private bool _frozen = false;
 
 
-    //---------------------------------Charging date--------------------------------------------
+    //---------------------------------Charging data--------------------------------------------
     private float _lastTap;
     [SerializeField]
     private float _tapIntervalsForCharge = 1;
@@ -43,6 +39,8 @@ public class SubMovement : MonoBehaviour {
     private int _cooldown = 90;
     [SerializeField]
     private int _stunSlowTime = 60;
+    [SerializeField]
+    private int _oxygenLossOnHit = 10;
     private int _counter = 0;
     private int _stunSlowCounter = 0;
 
@@ -58,6 +56,7 @@ public class SubMovement : MonoBehaviour {
     }
 
 	void FixedUpdate () {
+        if (_frozen) return;
         _oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
@@ -150,6 +149,14 @@ public class SubMovement : MonoBehaviour {
             _oxygen.Add(value.OxygenVal());
             other.gameObject.SetActive(false);
         }
+        if(other.gameObject.tag == "Wall")
+        {
+            _oxygen.Remove(_oxygenLossOnHit);
+        }
+        if(other.gameObject.tag == "Shark")
+        {
+            _oxygen.Remove(_oxygenLossOnHit);
+        }
     }
 
     //Using a position provided at start to move the submarine to surface
@@ -185,6 +192,11 @@ public class SubMovement : MonoBehaviour {
             counter++;
         }
         return counter;
+    }
+
+    public void Freeze(bool value)
+    {
+        _frozen = value;
     }
 
 
