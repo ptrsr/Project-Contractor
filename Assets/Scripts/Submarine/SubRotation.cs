@@ -25,7 +25,27 @@ public class SubRotation : MonoBehaviour {
         _rotationY = Mathf.Clamp(_rotationY, -minMaxRotationX, minMaxRotationX);
         _rotationX += Input.GetAxis("Mouse Y") * rotationSpeedX;
         _rotationX = Mathf.Clamp(_rotationX, -minMaxRotationY, minMaxRotationY);
-        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, -_rotationY , transform.localEulerAngles.z);
-        transform.localEulerAngles = new Vector3(_rotationX, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        RotateDependingOnDistance(new Vector3(_rotationX, -_rotationY , 0));
+    }
+    private void RotateDependingOnDistance(Vector3 vec3)
+    {
+        Quaternion quat = GetQuaternionFromVector(vec3);
+        //Vector3 pos = GetMousePosition();
+        // distance = Vector3.Distance(pos, transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, quat, 0.1f);
+    }
+    private Vector3 GetMousePosition()
+    {
+        Vector3 pos = Input.mousePosition;
+        pos.z = -Camera.main.transform.position.z;
+        pos = Camera.main.ScreenToWorldPoint(pos);
+        return pos;
+    }
+    private Quaternion GetQuaternionFromVector(Vector3 vec3)
+    {
+        Quaternion quat = new Quaternion();
+        quat.eulerAngles = vec3;
+        return quat;
     }
 }
+
