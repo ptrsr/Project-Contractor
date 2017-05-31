@@ -2,7 +2,7 @@
 {
 	SubShader
 	{
-		//------------------PASS----------------------
+		//------------------PASS 0--------------------
 		// Used for making the light rays (orthogonal)
 		Pass
 		{
@@ -72,7 +72,7 @@
 			}
 			ENDCG
 		}
-		//-----------------PASS--------------------
+		//-----------------PASS 1------------------
 		// Used for blurring (with multiple passes)
 		Pass
 		{
@@ -115,7 +115,7 @@
 			}
 			ENDCG
 		}
-		//----------------------PASS------------------------
+		//----------------------PASS 2----------------------
 		// Used for putting the blurred texture in the world
 		Pass
 			{
@@ -158,65 +158,73 @@
 			ENDCG
 		}
 
-	//	Pass
-	//		{
-	//			Cull Off ZTest On
-	//			Blend SrcAlpha OneMinusSrcAlpha
-	//			Tags{ "RenderType" = "Transparent" }
 
-	//			CGPROGRAM
-	//			#pragma vertex vert
-	//			#pragma fragment frag
+		//----------------------PASS 3----------------------
+		// TEMP
+		Pass
+			{
+				Cull Off ZTest On
+				Blend SrcAlpha OneMinusSrcAlpha
+				Tags{ "RenderType" = "Transparent" }
 
-	//			static const float PI = 3.14159265f;
+				CGPROGRAM
+				#pragma vertex vert
+				#pragma fragment frag
 
-	//			#include "UnityCG.cginc"
+				#include "UnityCG.cginc"
 
-	//			struct appdata
-	//		{
-	//			float4 vertex : POSITION;
-	//			float2 uv	  : TEXCOORD0;
-	//		};
+				struct appdata
+			{
+				float4 vertex : POSITION;
+				float2 uv	  : TEXCOORD0;
+			};
 
-	//		struct v2f
-	//		{
-	//			float4 vertex : SV_POSITION;
-	//			float2 uv	  : TEXCOORD0;
-	//		};
+			struct v2f
+			{
+				float4 vertex : SV_POSITION;
+				float2 uv	  : TEXCOORD0;
+			};
 
-	//		v2f vert(appdata v)
-	//		{
-	//			v2f o;
-	//			o.vertex = UnityObjectToClipPos(v.vertex);
-	//			o.uv = v.uv;
-	//			return o;
-	//		}
+			v2f vert(appdata v)
+			{
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.uv;
+				return o;
+			}
 
-	//		uniform sampler2D _LastCameraDepthTexture;
-	//		uniform float _height;
+			uniform sampler2D _LastCameraDepthTexture;
+			uniform float2 _nCorner;
+			uniform float _far;
+			uniform float _cDir;
+			uniform float _dist;
 
-	//		fixed4 frag(v2f i) : SV_Target
-	//		{
-	//			float uvCoord = ((1 / i.uv.x) * i.uv.y + 1) / 2;
+			fixed4 frag(v2f i) : SV_Target
+			{
+				float height = (i.uv.x - _nCorner.x) * _cDir + _nCorner.y;
+				
+				if (i.uv.y < 0)
+					height = -height;
+				
+				float dif = i.uv.y / height;
 
-	//			float depth = 1 - tex2D(_LastCameraDepthTexture, float2(0.0f, uvCoord)) * 1100;
+				if (i.uv.y < 0)
+					dif = -dif;
 
-	//			if (i.uv.x > depth * _height)
-	//				depth = 0;
-	//			else
-	//				depth = 1;
+				float2 nPos = float2(_nCorner.x, _nCorner.y * dif);
+				float nDist = distance(nPos, i.uv);
 
-	//			return depth;
+				dif = (dif / 2.0f) + 0.5f;
 
-	//			//return float4(uvCoord, 0, 0, 1);
-	//			//return float4(1, 1, 1, tex2D(_LastCameraDepthTexture, float2(0, i.uv.x)));
+				float depth = LinearEyeDepth(tex2D(_LastCameraDepthTexture, float2(0, dif))) * 25;
 
-	//			float fallOff = pow(clamp(1 - length(i.uv) / 50, 0, 1), 2);
-	//			float sides = pow(dot(float2(1, 0), normalize(float2(i.uv.x, i.uv.y * 2))), 2);
+				if (depth > nDist)
+					return 1;
+				else
+					return 0;
 
-	//			return float4(1, 1, 1, sides * fallOff);
-	//		}
-	//		ENDCG
-	//	}
+			}
+			ENDCG
+		}
 	}
 }
