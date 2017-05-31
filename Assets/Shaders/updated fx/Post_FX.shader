@@ -37,7 +37,7 @@
 				float4 ray : TEXCOORD1;
 			};
 
-			uniform sampler2D _CameraTexture;
+			uniform sampler2D _scene;
 			uniform sampler2D _CameraDepthNormalsTexture;
 
 			v2f vert (appdata v)
@@ -53,7 +53,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scene render
-				fixed4 scene = tex2D(_CameraTexture, i.uv);
+				fixed4 scene = tex2D(_scene, i.uv);
 
 				// depth sampling
 				float linearDepth;

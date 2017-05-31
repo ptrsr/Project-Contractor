@@ -21,7 +21,8 @@ class Sonar {
 }
 [System.Serializable]
 class Fog {
-	public int fallOff = 10;
+    [Range(0f, 10f)]
+    public float fallOff = 10;
 	public Color startColor, endColor;
 	public float surface;
 	public float maxDepth;
@@ -69,6 +70,8 @@ public class FX : MonoBehaviour
 	void Start()
     {
         _mat = new Material(_shader);
+        SetShaderValues();
+
 
         _cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
@@ -166,7 +169,7 @@ public class FX : MonoBehaviour
 		// fog
 		_mat.SetColor("_startColor", _fog.startColor);
 		_mat.SetColor("_endColor", _fog.endColor);
-		_mat.SetInt ("_fogFallOff", _fog.fallOff);
+		_mat.SetFloat ("_fogFallOff", _fog.fallOff);
 		_mat.SetFloat("_surface", _fog.surface);
 		_mat.SetFloat("_fogDepth", _fog.maxDepth);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
@@ -179,8 +182,11 @@ public class FX : MonoBehaviour
 	}
 
     // used for updating shader values at runtime
-    void UpdateShader()
+    void UpdateShader(ref RenderTexture src)
     {
+        //scene
+        _mat.SetTexture("_scene", src);
+
         //sonar
         _mat.SetInt("_pulselength", _sonar.maxPulses);
         _mat.SetFloatArray("_pulses", _pulses);
@@ -190,11 +196,11 @@ public class FX : MonoBehaviour
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst)
     {
-        UpdateShader();
+        UpdateShader(ref src);
 		RaycastCornerBlit(src, dst, _mat);
 	}
 
-	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
+	void RaycastCornerBlit(RenderTexture src, RenderTexture dst, Material mat)
 	{
 		// Compute Frustum Corners
 		float camFar = _cam.farClipPlane;
@@ -225,9 +231,7 @@ public class FX : MonoBehaviour
 		bottomLeft *= camScale;
 
 		// Custom Blit, encoding Frustum Corners as additional Texture Coordinates
-		RenderTexture.active = dest;
-
-		mat.SetTexture("_Scene", source);
+		RenderTexture.active = dst;
 
 		GL.PushMatrix();
 		GL.LoadOrtho();
