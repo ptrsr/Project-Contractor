@@ -16,6 +16,7 @@ public class OctopusFindRock : FishState
         _octo.Collider.enabled = true;
         FindRock();
         _octo.SetState<OctopusBurstMove>();
+        _octo.TentacleControl.SetState<TentacleFollow>();
     }
 
     public override void Step()

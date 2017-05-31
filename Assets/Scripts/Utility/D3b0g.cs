@@ -97,6 +97,30 @@ public class D3b0g : MonoBehaviour
             AddCircle(shark.gameObject, shark.transform.position, shark.Range);
             if (shark.DetectTarget()) AddDetectionLine(shark.transform, shark.Target);
         }
+        else if (_current is Octopus)
+        {
+            Octopus octo = (Octopus)_current;
+            _text.text = string.Format(
+                "State: {0}\n" +
+                "Tentacle sttate: {1}\n" +
+                "Range: {2}\n" +
+                "Direction: {3}\n" +
+                "Speed: {4}\n" +
+                "Range to origin: {5:0.000}\n" +
+                "Range to target: {6:0.000}\n" +
+                "Target from origin: {7:0.000}\n" +
+                "Can chase target: {8}",
+                octo.GetState,
+                octo.TentacleControl.GetState,
+                octo.Range,
+                octo.Direction,
+                octo.Body.velocity,
+                Vector3.Distance(octo.transform.position, octo.OriginPos),
+                Vector3.Distance(octo.Target.position, octo.transform.position),
+                Vector3.Distance(octo.Target.position, octo.OriginPos),
+                octo.DetectTarget());
+            AddCircle(octo.gameObject, octo.OriginPos, octo.Range);
+        }
         else if (_current is FishEnemy)
         {
             FishEnemy enemy = (FishEnemy)_current;
