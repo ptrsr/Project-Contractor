@@ -88,8 +88,8 @@ public class FX : MonoBehaviour {
 			Vector3 pos = _darkZone.objects[i].transform.position;
 			_darkZone.positionData.Add (pos);
 		}
-		_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
-		_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
+		//_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
+		//_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
 //		_mat.SetFloatArray ("_blendData", _darkZone.blendData);
 	}
 
