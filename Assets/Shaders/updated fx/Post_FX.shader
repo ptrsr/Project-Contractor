@@ -37,7 +37,7 @@
 				float4 ray : TEXCOORD1;
 			};
 
-			uniform sampler2D _Scene;
+			uniform sampler2D _CameraTexture;
 			uniform sampler2D _CameraDepthNormalsTexture;
 
 			v2f vert (appdata v)
@@ -53,7 +53,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scene render
-				fixed4 scene = tex2D(_Scene, i.uv);
+				fixed4 scene = tex2D(_CameraTexture, i.uv);
 
 				// depth sampling
 				float linearDepth;
@@ -83,12 +83,12 @@
 				
 				// fog color
 				half4 fog = fogColor(worldPos);
-				float fogDiff = fogBlend(eyeDepth);
+				float fogDiff = fogBlend(linearDepth);
 
 				//final output blending
 //				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
-//				scene = scene + pulseCol + pulseEdge;
+				scene = scene + pulseCol + pulseEdge;
 
 				return scene;
 			}

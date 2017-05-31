@@ -3,16 +3,16 @@
 
 int _pulselength;
 float _pulses[10];
-float4 originarray[10];
-float width;
+float4 _originarray[10];
+float _width;
 
 half4 pulseColor (float3 pos) {
 	// calculating each pulse draw
 	half4 pulsecol = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] && dist > _pulses[i] - width) {
-			float diff = 1 - (_pulses[i] - dist) / (width);
+		float dist = distance(pos, _originarray[i]);
+		if (dist < _pulses[i] && dist > _pulses[i] - _width) {
+			float diff = 1 - (_pulses[i] - dist) / (_width);
 			pulsecol = half4(1,0,0,1);
 			pulsecol *= diff;
 		}
@@ -30,7 +30,7 @@ half4 edgeColor (float3 pos) {
 	// white pulse edge
 	half4 edgecol = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]);
+		float dist = distance(pos, _originarray[i]);
 		if (dist < _pulses[i] + 0.5 && dist > _pulses[i] - 0.5) {
 			edgecol = half4(1,1,1,1);
 		}
