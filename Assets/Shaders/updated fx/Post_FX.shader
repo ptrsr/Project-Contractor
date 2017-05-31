@@ -17,9 +17,9 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-			#include "Caustics.cginc"
-			#include "Fog.cginc"
-			#include "Sonar.cginc"
+			#include "Caustics_CG.cginc"
+			#include "Fog_CG.cginc"
+			#include "Sonar_CG.cginc"
 
 			struct appdata
 			{
