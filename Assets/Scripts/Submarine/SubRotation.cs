@@ -5,33 +5,43 @@ using UnityEngine;
 public class SubRotation : MonoBehaviour {
 
     [SerializeField]
-    private float rotationSpeedY = 5;
-    [SerializeField]
-    private float rotationSpeedX = 5;
+    private float rotationSpeed = 3;
     [SerializeField]
     private float minMaxRotationX = 60;
     [SerializeField]
     private float minMaxRotationY = 60;
-    private Rigidbody _rigidbody;
     private float _rotationY = 0;
     private float _rotationX = 0;
 	void Start () {
-        _rigidbody = GetComponent<Rigidbody>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        _rotationY += Input.GetAxis("Mouse X") * rotationSpeedY;
-        _rotationY = Mathf.Clamp(_rotationY, -minMaxRotationX, minMaxRotationX);
-        _rotationX += Input.GetAxis("Mouse Y") * rotationSpeedX;
-        _rotationX = Mathf.Clamp(_rotationX, -minMaxRotationY, minMaxRotationY);
-        RotateDependingOnDistance(new Vector3(_rotationX, -_rotationY , 0));
+
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+        {
+            Vector3 mouse_pos = Input.mousePosition;
+            Vector3 object_pos = Camera.main.WorldToScreenPoint(transform.position);
+            Vector3 dir = mouse_pos - object_pos;
+            dir.x = Mathf.Clamp(dir.x, -minMaxRotationX, minMaxRotationX);
+            dir.y = Mathf.Clamp(dir.y, -minMaxRotationY, minMaxRotationY);
+            Quaternion newRot = new Quaternion();
+            newRot.eulerAngles = (new Vector3(dir.y, -dir.x, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation,newRot,rotationSpeed * Time.deltaTime);
+
+        }
+        else
+        {
+            Quaternion newRot = new Quaternion();
+            newRot.eulerAngles = (new Vector3(0, 0, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRot, rotationSpeed * Time.deltaTime);
+        }
     }
+
+
     private void RotateDependingOnDistance(Vector3 vec3)
     {
         Quaternion quat = GetQuaternionFromVector(vec3);
-        //Vector3 pos = GetMousePosition();
-        // distance = Vector3.Distance(pos, transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, quat, 0.1f);
     }
     private Vector3 GetMousePosition()
