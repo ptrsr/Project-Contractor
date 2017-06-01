@@ -56,6 +56,9 @@ public class FX : MonoBehaviour
     [SerializeField]
     Light _sceneLight;
 
+    [SerializeField]
+    List<Volumetric> _volumes = new List<Volumetric>();
+
 	private Material _mat; 
 	public Transform _origin;
 	private Camera _cam;
@@ -73,7 +76,6 @@ public class FX : MonoBehaviour
         SetShaderValues();
 
         _cam = Camera.main;
-		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 
         _activePulses = new bool[_sonar.maxPulses];
 		_pulses = new float[_sonar.maxPulses];
@@ -184,6 +186,7 @@ public class FX : MonoBehaviour
     void UpdateShader(ref RenderTexture src)
     {
         //scene
+        _cam.depthTextureMode = DepthTextureMode.DepthNormals;
         _mat.SetTexture("_scene", src);
 
         //sonar
@@ -197,6 +200,9 @@ public class FX : MonoBehaviour
     {
         UpdateShader(ref src);
 		RaycastCornerBlit(src, dst, _mat);
+
+        foreach (var volume in _volumes)
+            volume.Render(ref dst);
 	}
 
 	void RaycastCornerBlit(RenderTexture src, RenderTexture dst, Material mat)

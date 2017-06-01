@@ -49,9 +49,9 @@ public class VolumeOrtho : Volumetric
         cam.farClipPlane = _height;
     }
 
-    public override void Render(ref RenderTexture src)
+    public override void Render(ref RenderTexture dst)
     {
-        base.Render(ref src);
+        base.Render(ref dst);
 
         _mat.SetFloat("_height", _height);
         _mat.SetInt("_layers", _layers);
@@ -81,7 +81,7 @@ public class VolumeOrtho : Volumetric
             nextTexture = (j - 1) * 2 + 1;
         }
 
-        RenderTexture.active = src;
+        RenderTexture.active = dst;
 
         _mat.SetPass(2);
         _mat.SetTexture("_texture", _pingPong[0]);
