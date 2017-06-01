@@ -40,6 +40,12 @@ public class TutorialManager : MonoBehaviour {
 
     public void TutorialEvent(Case type)
     {
+        if (!_tutorialOn)
+        {
+            _tutorialImage.InitImage(true);
+            _tutorialOn = true;
+            StartCoroutine(Delay());
+        }
         switch (type)
         {
             case Case.BumbWall:
@@ -47,12 +53,6 @@ public class TutorialManager : MonoBehaviour {
                 break;
             default:
                 break;
-        }
-        if (!_tutorialOn)
-        {
-            _tutorialImage.InitImage(true);
-            _tutorialOn = true;
-            StartCoroutine(Delay());
         }
     }
 

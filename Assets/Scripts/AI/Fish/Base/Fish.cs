@@ -31,14 +31,14 @@ public abstract class Fish : MonoBehaviour
     [NonSerialized]
     public Vector3 Direction;
 
-    private Vector3 _originPos;
-    public Vector3 OriginPos { get { return _originPos; } }
+    protected Vector3 origPos;
+    public Vector3 OriginPos { get { return origPos; } }
 
-    private Quaternion _originRot;
-    public Quaternion OriginRot { get { return _originRot; } }
+    protected Quaternion origRot;
+    public Quaternion OriginRot { get { return origRot; } }
 
-    private Rigidbody _body;
-    public Rigidbody Body { get { return _body; } }
+    protected Rigidbody body;
+    public Rigidbody Body { get { return body; } }
 
     //State tracking
     protected Dictionary<Type, FishState> stateCache = new Dictionary<Type, FishState>();
@@ -47,9 +47,9 @@ public abstract class Fish : MonoBehaviour
 
     public virtual void Start()
     {
-        _originPos = transform.position;
-        _originRot = transform.rotation;
-        _body = GetComponent<Rigidbody>();
+        origPos = transform.position;
+        origRot = transform.rotation;
+        body = GetComponent<Rigidbody>();
     }
 
     public virtual void Update()
