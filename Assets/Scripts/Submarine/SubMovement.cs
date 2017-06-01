@@ -87,7 +87,7 @@ public class SubMovement : MonoBehaviour {
             return;
         }
         //check for double taps
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             float clickTime = Time.time - _lastTap;
 
@@ -98,7 +98,7 @@ public class SubMovement : MonoBehaviour {
             _lastTap = Time.time;
         }
         //Movement through dragging
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
 
             Vector3 pos = GetMousePosition();
