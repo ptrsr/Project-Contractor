@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class VolumeProj : Volumetric
 {
+    public float test;
+
     [SerializeField]
     float
         _angle = 2,
-        _distance = 2,
+        _farPlane = 2,
         _thick = 1,
         _quality = 1;
 
@@ -33,7 +35,7 @@ public class VolumeProj : Volumetric
             if (i % 2 == 0)
                 divide++;
 
-            Vector2 size = new Vector2(_angle * 2, _distance) * (_quality / divide);
+            Vector2 size = new Vector2(_angle * 2, _farPlane) * (_quality / divide);
 
             _pingPong[i] = new RenderTexture((int)size.x, (int)size.y, 0);
             _pingPong[i].Create();
@@ -46,7 +48,7 @@ public class VolumeProj : Volumetric
         cam.aspect = 1 / (_angle);
 
         cam.rect = new Rect(new Vector2(), new Vector2(_quality, 0.1f));
-        cam.farClipPlane = _distance;
+        cam.farClipPlane = _farPlane;
     }
 
     public override void Render(ref RenderTexture src)
@@ -63,13 +65,22 @@ public class VolumeProj : Volumetric
         float near = _cam.nearClipPlane;
         float far  = _cam.farClipPlane;
 
+        print(_cam.projectionMatrix);
+
         Vector2 texCoord = new Vector2(0, 1) * angle * near + new Vector2(near, 0);
-        Vector2 fTexCoord = new Vector2(0, -1) * angle * far + new Vector2(far, 0);
+        Vector2 fTexCoord = new Vector2(0, 1) * angle * far + new Vector2(far, 0);
 
         _mat.SetVector("_nCorner", texCoord);
-        _mat.SetFloat("_far", Vector2.Distance(texCoord, fTexCoord));
+        _mat.SetVector("_fCorner", fTexCoord);
+
         _mat.SetFloat("_cDir", angle);
-        _mat.SetFloat("_dist", _distance - near);
+        _mat.SetFloat("_dist", _farPlane - near);
+
+        float a = far / (far - near);
+        float b = far * near / (near - far);
+
+        _mat.SetFloat("_a", a);
+        _mat.SetFloat("_b", b);
 
         GL.Begin(GL.QUADS);
         {
@@ -80,11 +91,11 @@ public class VolumeProj : Volumetric
             GL.TexCoord2(texCoord.x, texCoord.y);
             GL.Vertex(pos + forward * near - toTop * near);
 
-            GL.TexCoord2(fTexCoord.x, fTexCoord.y);
+            texCoord = new Vector2(0, -1) * angle * far + new Vector2(far, 0);
+            GL.TexCoord2(texCoord.x, texCoord.y);
             GL.Vertex(pos + forward * far - toTop * far);
 
-            texCoord = new Vector2(0, 1) * angle * far + new Vector2(far, 0);
-            GL.TexCoord2(texCoord.x, texCoord.y);
+            GL.TexCoord2(fTexCoord.x, fTexCoord.y);
             GL.Vertex(pos + forward * far + toTop * far);
         }
         GL.End();

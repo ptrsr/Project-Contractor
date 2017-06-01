@@ -195,9 +195,11 @@
 
 			uniform sampler2D _LastCameraDepthTexture;
 			uniform float2 _nCorner;
-			uniform float _far;
 			uniform float _cDir;
 			uniform float _dist;
+
+			uniform float _a;
+			uniform float _b;
 
 			fixed4 frag(v2f i) : SV_Target
 			{
@@ -206,19 +208,18 @@
 				if (i.uv.y < 0)
 					height = -height;
 				
-				float dif = i.uv.y / height;
+				float depthTexturePos = i.uv.y / height; // coordinate of depth texture (between -1 and 1)
 
 				if (i.uv.y < 0)
-					dif = -dif;
+					depthTexturePos = -depthTexturePos;
 
-				float2 nPos = float2(_nCorner.x, _nCorner.y * dif);
-				float nDist = distance(nPos, i.uv);
+				float2 nearPlanePos = float2(_nCorner.x, _nCorner.y * depthTexturePos); // frag projected onto nearplane
+				float nDist = distance(nearPlanePos, i.uv);
 
-				dif = (dif / 2.0f) + 0.5f;
+				float textureDepthValue = 1 - tex2D(_LastCameraDepthTexture, float2(0, (depthTexturePos / 2.0f) + 0.5f));
+				float depth = _b / (textureDepthValue - _a);
 
-				float depth = LinearEyeDepth(tex2D(_LastCameraDepthTexture, float2(0, dif))) * 25;
-
-				if (depth > nDist)
+				if (depth - nearPlanePos.x + 3.0f > nDist)
 					return 1;
 				else
 					return 0;
