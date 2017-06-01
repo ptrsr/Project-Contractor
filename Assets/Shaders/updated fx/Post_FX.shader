@@ -59,7 +59,8 @@
 				float linearDepth;
 				float3 viewNormal;
 				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
-				float eyeDepth = linearDepth * 1000;
+
+				return float4(linearDepth, linearDepth, linearDepth, 1);
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);

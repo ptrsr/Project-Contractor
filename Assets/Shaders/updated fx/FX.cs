@@ -72,7 +72,6 @@ public class FX : MonoBehaviour
         _mat = new Material(_shader);
         SetShaderValues();
 
-
         _cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 
