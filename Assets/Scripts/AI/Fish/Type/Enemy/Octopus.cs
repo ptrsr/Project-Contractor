@@ -72,6 +72,14 @@ public class Octopus : FishEnemy
         SetState<OctopusFindRock>();
     }
 
+    public void OnTriggerEnter(Collider c)
+    {
+        if (c.tag == "Pulse")
+        {
+            Debug.Log("Pulse detected!");
+        }
+    }
+
     public override bool DetectTarget()
     {
         //Wait for cooldown
