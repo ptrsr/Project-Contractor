@@ -13,8 +13,16 @@ public class FishNeutral : Fish
     private int _wallDetectionRange = 4;
     public int WallDetectionRange { get { return _wallDetectionRange; } }
 
-    protected Transform _target;
-    public Transform Target { get { return _target; } }
+    protected Transform target;
+    public Transform Target { get { return target; } }
+
+    protected Rigidbody targetBody;
+    public Rigidbody TargetBody { get { return targetBody; } }
+
+    [SerializeField]
+    [Tooltip("Lower is harder\nNo 0 allowed")]
+    private float _difficulty = 5;
+    public float Difficulty { get { return _difficulty; } }
 
     //Ignores the player for wall detection
     private LayerMask _ignoreDetection = 1 << 8;
@@ -23,6 +31,9 @@ public class FishNeutral : Fish
     public override void Start()
     {
         base.Start();
+
+        target = FindObjectOfType<SubMovement>().transform;
+        targetBody = target.GetComponent<Rigidbody>();
     }
 
     public override void Update()

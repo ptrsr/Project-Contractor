@@ -12,14 +12,16 @@ public class SubRotation : MonoBehaviour {
     private float minMaxRotationY = 60;
     private float _rotationY = 0;
     private float _rotationX = 0;
+    private SubMovement _sub;
 	void Start () {
+        _sub = GetComponent<SubMovement>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
+            if (_sub.Frozen) return;
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(transform.position);
             Vector3 dir = mouse_pos - object_pos;

@@ -30,7 +30,7 @@ public class KeyManager : MonoBehaviour {
             if (_key1 != null)
             {
 
-                _key1.transform.position = Vector3.Lerp(_key1.transform.position, _keyPos.position, 0.01f);
+                _key1.transform.position = Vector3.Lerp(_key1.transform.position, _keyPos.position, 0.05f);
                 if(Vector3.Distance(_key1.transform.position,_keyPos.position) < 1)
                 {
                     _skullAnimator.Key1InPlace();
@@ -38,7 +38,7 @@ public class KeyManager : MonoBehaviour {
             }
             if (_key2 != null)
             {
-                _key2.transform.position = Vector3.Lerp(_key2.transform.position, _keyPos.position, 0.01f);
+                _key2.transform.position = Vector3.Lerp(_key2.transform.position, _keyPos.position, 0.05f);
                 if (Vector3.Distance(_key2.transform.position, _keyPos.position) < 1)
                 {
                     _skullAnimator.Key2InPlace();

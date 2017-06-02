@@ -1,7 +1,5 @@
 fileFormatVersion: 2
-guid: b477e5c761678e045affc6d13b1a6b1c
-timeCreated: 1495182176
-licenseType: Free
+guid: 16ac726a5b65acc439e9ce84bf45754f
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
@@ -12,6 +10,7 @@ ModelImporter:
     2300000: Treasure1_polySurface3_polySurface2_SkullGateCombined
     3300000: Treasure1_polySurface3_polySurface2_SkullGateCombined
     4300000: Treasure1_polySurface3_polySurface2_SkullGateCombined
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -76,7 +75,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

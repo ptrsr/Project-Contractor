@@ -55,7 +55,8 @@ public class SubMovement : MonoBehaviour {
         _lastTap = 0;
     }
 
-	void FixedUpdate () {
+	void FixedUpdate ()
+    {
         if (_frozen) return;
         _oxygen.Remove(1);
         //keeps the player on the correct plane
@@ -201,6 +202,7 @@ public class SubMovement : MonoBehaviour {
 
 
     public bool Charged { get { return _charged;  } }
+    public bool Frozen { get { return _frozen; } }
 
     public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
     public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }

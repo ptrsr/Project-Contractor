@@ -30,7 +30,7 @@ public class KeyPickup : MonoBehaviour {
             {
                 _keyManager = km[0];
             }
-            else if (km[1].ID == 1)
+            else if (km[1].ID == 2)
             {
                 _keyManager = km[1];
             }

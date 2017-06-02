@@ -1,52 +1,31 @@
 fileFormatVersion: 2
-guid: e453804b2ead02f41bb2774112d6d358
-timeCreated: 1495113558
-licenseType: Free
+guid: 97af22ae33d597a478bbd86d5244e2b5
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: polySurface1_pSphere3
-    100004: pSphere3_polySurface2_polySurface4
-    100006: pSphere3_polySurface3_polySurface2_polySurface6
-    100008: pSphere3_polySurface5_polySurface3_polySurface2
-    100010: polySurface2_SkullGateCombined_Treasure2
-    100012: polySurface3_polySurface2_SkullGateCombined_Treasure1
-    100014: SkullGateCombined_NonActiveTreasure
-    100016: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    100002: polySurface2_SkullGateCombined_Treasure2
+    100004: polySurface3_polySurface2_SkullGateCombined_Treasure1
+    100006: SkullGateCombined_NonActiveTreasure
+    100008: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
     400000: //RootNode
-    400002: polySurface1_pSphere3
-    400004: pSphere3_polySurface2_polySurface4
-    400006: pSphere3_polySurface3_polySurface2_polySurface6
-    400008: pSphere3_polySurface5_polySurface3_polySurface2
-    400010: polySurface2_SkullGateCombined_Treasure2
-    400012: polySurface3_polySurface2_SkullGateCombined_Treasure1
-    400014: SkullGateCombined_NonActiveTreasure
-    400016: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
-    2300000: polySurface1_pSphere3
-    2300002: pSphere3_polySurface2_polySurface4
-    2300004: pSphere3_polySurface3_polySurface2_polySurface6
-    2300006: pSphere3_polySurface5_polySurface3_polySurface2
-    2300008: polySurface2_SkullGateCombined_Treasure2
-    2300010: polySurface3_polySurface2_SkullGateCombined_Treasure1
-    2300012: SkullGateCombined_NonActiveTreasure
-    2300014: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
-    3300000: polySurface1_pSphere3
-    3300002: pSphere3_polySurface2_polySurface4
-    3300004: pSphere3_polySurface3_polySurface2_polySurface6
-    3300006: pSphere3_polySurface5_polySurface3_polySurface2
-    3300008: polySurface2_SkullGateCombined_Treasure2
-    3300010: polySurface3_polySurface2_SkullGateCombined_Treasure1
-    3300012: SkullGateCombined_NonActiveTreasure
-    3300014: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
-    4300000: polySurface1_pSphere3
-    4300002: pSphere3_polySurface2_polySurface4
-    4300004: pSphere3_polySurface3_polySurface2_polySurface6
-    4300006: pSphere3_polySurface5_polySurface3_polySurface2
-    4300008: polySurface2_SkullGateCombined_Treasure2
-    4300010: polySurface3_polySurface2_SkullGateCombined_Treasure1
-    4300012: SkullGateCombined_NonActiveTreasure
-    4300014: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    400002: polySurface2_SkullGateCombined_Treasure2
+    400004: polySurface3_polySurface2_SkullGateCombined_Treasure1
+    400006: SkullGateCombined_NonActiveTreasure
+    400008: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    2300000: polySurface2_SkullGateCombined_Treasure2
+    2300002: polySurface3_polySurface2_SkullGateCombined_Treasure1
+    2300004: SkullGateCombined_NonActiveTreasure
+    2300006: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    3300000: polySurface2_SkullGateCombined_Treasure2
+    3300002: polySurface3_polySurface2_SkullGateCombined_Treasure1
+    3300004: SkullGateCombined_NonActiveTreasure
+    3300006: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    4300000: polySurface2_SkullGateCombined_Treasure2
+    4300002: polySurface3_polySurface2_SkullGateCombined_Treasure1
+    4300004: SkullGateCombined_NonActiveTreasure
+    4300006: SkullWithoutTreasures_polySurface3_polySurface2_SkullGateCombined
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -111,7 +90,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
