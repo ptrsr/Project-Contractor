@@ -6,46 +6,103 @@ public class Octopus : FishEnemy
 {
     [Header("Octopus Variables")]
     [SerializeField]
+    private int _attackCooldown = 500;
+    public int AttackCooldown { get { return _attackCooldown; } }
+
+    private int _attackCounter;
+    public int AttackCounter { get { return _attackCounter; } set { _attackCounter = value; } }
+
+    [SerializeField]
+    [Tooltip("Used to decrease idle intervals between bursts when chasing the player")]
     private float _idleIntervalChange = 2f;
     public float IdleIntervalChange { get { return _idleIntervalChange; } }
 
-    //Resting location
-    private Transform _rock;
-    public Transform Rock { get { return _rock; } }
+    [SerializeField]
+    private float _latchOnRange = 10f;
+    public float LatchOnRange { get { return _latchOnRange; } }
+
+    [SerializeField]
+    private float _latchOnOffset = 5f;
+    public float LatchOnOffset { get { return _latchOnOffset; } }
+
+    [SerializeField]
+    [Tooltip("The time the Octopus stays on a rock before finding a new one")]
+    private int _restTime = 500;
+    public int RestTime { get { return _restTime; } }
+
+    private Collider _collider;
+    public Collider Collider { get { return _collider; } }
+
+    //Resting pos
+    private Vector3 _rockPos;
+    public Vector3 RockPos { get { return _rockPos; } set { _rockPos = value; } }
+
+    private Vector3 _rockNormal;
+    public Vector3 RockNormal { get { return _rockNormal; } set { _rockNormal = value; } }
+
+    private Vector3 _targetNormal;
+    public Vector3 TargetNormal { get { return _targetNormal; } set { _targetNormal = value; } }
 
     private bool _isChasing = false;
-    public bool IsChasing { get { return _isChasing; } }
+    public bool IsChasing { get { return _isChasing; } set { _isChasing = value; } }
 
     public override void Start()
     {
         base.Start();
 
-        stateCache[typeof(FishStateBurstIdle)] = new FishStateBurstIdle(this);
-        stateCache[typeof(FishStateBurstMove)] = new FishStateBurstMove(this);
-        stateCache[typeof(FishStateBurstChase)] = new FishStateBurstChase(this);
-        stateCache[typeof(FishStateLatchOn)] = new FishStateLatchOn(this);
-        stateCache[typeof(FishStateLatchOff)] = new FishStateLatchOff(this);
+        _collider = GetComponent<Collider>();
+        _rockPos = origPos;
+        _attackCounter = _attackCooldown;
 
-        SetState<FishStateBurstIdle>();
+        stateCache[typeof(OctopusFindRock)] = new OctopusFindRock(this);
+        stateCache[typeof(OctopusBurstIdle)] = new OctopusBurstIdle(this);
+        stateCache[typeof(OctopusBurstMove)] = new OctopusBurstMove(this);
+        stateCache[typeof(OctopusBurstChase)] = new OctopusBurstChase(this);
+        stateCache[typeof(OctopusLatchOnRock)] = new OctopusLatchOnRock(this);
+        stateCache[typeof(OctopusLatchOnPlayer)] = new OctopusLatchOnPlayer(this);
+        stateCache[typeof(OctopusLatchOffRock)] = new OctopusLatchOffRock(this);
+        stateCache[typeof(OctopusLatchOffPlayer)] = new OctopusLatchOffPlayer(this);
+
+        SetState<OctopusFindRock>();
     }
 
-    public override void Update()
+    public override bool DetectTarget()
     {
-        base.Update();
-    }
+        //Wait for cooldown
+        if (_attackCounter != _attackCooldown)
+        {
+            _attackCounter++;
+            return false;
+        }
 
-    public void OnCollisionEnter(Collision c)
-    {
-        if (c.transform != Target)
-            return;
+        bool detected = base.DetectTarget();
 
-        SetState<FishStateLatchOn>();
+        if (detected)
+            _isChasing = true;
+        else
+            _isChasing = false;
+
+        return detected;
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
+        //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
         lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
         return lookRot;
+    }
+
+    public Quaternion GetLatchOnRot(Vector3 direction)
+    {
+        //Proper rotation for the model while latching on
+        Quaternion lookRot = Quaternion.LookRotation(direction);
+        lookRot.eulerAngles -= new Vector3(90f, 0f, 180f);
+        return lookRot;
+    }
+
+    public bool CheckLatchOnRange()
+    {
+        return (Vector3.Distance(transform.position, IsChasing ? Target.position : _rockPos) < _latchOnRange);
     }
 }

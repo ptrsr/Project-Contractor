@@ -1,12 +1,12 @@
 #ifndef CAUSTICS_INCLUDED
 #define CAUSTICS_INCLUDED
 
-uniform sampler2D _causticsTexture;
-
+uniform sampler2D _Caustics;
 uniform float _causticsSize;
 uniform float _causticsIntensity;
 uniform float _causticsDepth;
 uniform float _surface;
+uniform half4 _causticsColor;
 
 float3 worldPosition (float depth, float4 ray) {
 	// calculating fragments world position
@@ -22,11 +22,11 @@ half4 Caustics (float3 worldPos) {
 	float2 shift2 = float2(0.5, time);
 	// texture overlay in world space
 	float2 fragUV = float2(worldPos.x, worldPos.z) / _causticsSize;
-	half4 c1 = tex2D(_causticsTexture, fragUV + shift1);
-	half4 c2 = tex2D(_causticsTexture, fragUV + shift2);
+	half4 c1 = tex2D(_Caustics, fragUV + shift1);
+	half4 c2 = tex2D(_Caustics, fragUV + shift2);
 	half4 c = (c1 * _causticsIntensity) * (c2 * _causticsIntensity);
 	// return caustics
-	return c;
+	return _causticsColor * c;
 }
 
 float causticsDepthBlend (float3 worldPos) {
@@ -41,7 +41,8 @@ float causticsDepthBlend (float3 worldPos) {
 }
 
 float causticsMask (float3 worldNormal, float3 inVector) {
-	return pow(max(0, dot(worldNormal, inVector)), 2);
+	float diff = pow(max(0, dot(worldNormal, inVector)), 2);
+	return diff;
 }
 
 #endif

@@ -49,7 +49,7 @@ public class camMove : MonoBehaviour {
 		o.GetComponent<SphereCollider> ().enabled = false;
 		o.transform.localScale = new Vector3 (size, size, size);
 		o.name = name;
-		o.GetComponent<MeshRenderer> ().material.color = color;
+		o.GetComponent<MeshRenderer> ().enabled = false;
 //		o.GetComponent<MeshRenderer> ().enabled = false;
 	}
 }

@@ -2,24 +2,24 @@
 #define SONAR_INCLUDED
 
 int _pulselength;
-float _pulses[20];
-float4 originarray[20];
-float width;
+float _pulses[10];
+float4 _originarray[10];
+float _width;
 
 half4 pulseColor (float3 pos) {
 	// calculating each pulse draw
 	half4 pulsecol = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]) +.5;
-		if (dist < _pulses[i] && dist > _pulses[i] - width) {
-			float diff = 1 - (_pulses[i] - dist) / (width);
+		float dist = distance(pos, _originarray[i]);
+		if (dist < _pulses[i] && dist > _pulses[i] - _width) {
+			float diff = 1 - (_pulses[i] - dist) / (_width);
 			pulsecol = half4(1,0,0,1);
 			pulsecol *= diff;
 		}
 	}
 	// masking pulse highlight
 	float depthMask = 0;
-	if (pos.z > 0 && pos.z < 1)
+	if (pos.z > -1 && pos.z < 1)
 		depthMask = 1;
 	pulsecol *= depthMask;
 	// return pulse
@@ -30,8 +30,8 @@ half4 edgeColor (float3 pos) {
 	// white pulse edge
 	half4 edgecol = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] && dist > _pulses[i] - 0.5) {
+		float dist = distance(pos, _originarray[i]);
+		if (dist < _pulses[i] + 0.5 && dist > _pulses[i] - 0.5) {
 			edgecol = half4(1,1,1,1);
 		}
 	}
@@ -39,7 +39,7 @@ half4 edgeColor (float3 pos) {
 	return edgecol;
 }
 
-float3 xPlanePosition (float4 ray) {
+float3 xyPlanePosition (float4 ray) {
 	// vector data
 	float3 camPos = _WorldSpaceCameraPos;
 	float3 fragDir = normalize(ray.xyz);

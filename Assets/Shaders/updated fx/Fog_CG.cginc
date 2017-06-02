@@ -4,17 +4,23 @@
 uniform half4 _startColor;
 uniform half4 _endColor;
 uniform float _depth;
-uniform int   _fogIntensity;
+uniform float _fogFallOff;
+uniform float _fogDepth;
+uniform float4 _darkZones[10];
+uniform float _rangeData[10];
 
-half4 fogColor (float2 uv) {
+half4 fogColor (float3 worldPos) {
+	float fragDepth = worldPos.y;
+	float depthBlend = ((fragDepth - _surface) / (_fogDepth - _surface));
+	depthBlend = saturate(depthBlend);
 	// blend color from y0 to yDeep
-	half4 fogCol = lerp(_startColor, _endColor, _depth);
+	half4 fogCol = lerp(_startColor, _endColor, pow(depthBlend, 1));
+	// return fog color
 	return fogCol;
 }
 
-float fogBlend (float linearDepth)
-{
-	return pow(linearDepth, _fogIntensity);
+float fogBlend (float linearDepth) {
+	return pow(linearDepth, _fogFallOff);
 }
 
 #endif
