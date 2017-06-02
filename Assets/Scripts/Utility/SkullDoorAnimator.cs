@@ -21,7 +21,7 @@ public class SkullDoorAnimator : MonoBehaviour {
 	void Start () {
         _animator = GetComponentsInChildren<Animator>();
 		_subMov = FindObjectOfType<SubMovement>();
-        _sceneManager = FindObjectOfType<AdditiveSceneManager>();
+        //_sceneManager = FindObjectOfType<AdditiveSceneManager>();
 	}
 	
 	// Update is called once per frame
@@ -46,7 +46,7 @@ public class SkullDoorAnimator : MonoBehaviour {
         {
             if (!_played)
             {
-                _sceneManager.LoadScene(Random.Range(0, 2));
+                //_sceneManager.LoadScene(Random.Range(0, 2));
                 _subMov.Freeze(true);
                 _animator[1].SetBool("Rotate", true);
                 _lenght = _animator[1].GetCurrentAnimatorClipInfo(0).Length;
