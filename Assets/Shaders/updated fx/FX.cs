@@ -21,26 +21,21 @@ class Sonar {
 }
 [System.Serializable]
 class Fog {
-    [Range(0f, 10f)]
-    public float fallOff = 10;
+	public float fogRange = 15f;
 	public Color startColor, endColor;
-	public float surface;
-	public float maxDepth;
+	public float _surface;
+	public float _maxDepth;
 }
 [System.Serializable]
 class Caustics {
 	public Color causticsColor;
 	[Range(0f,50f)]
 	public float size, intensity = 20;
-	public float causticsDepth = -150;
+	public float _causticsDepth = -150;
 }
 #endregion
 
-public class FX : MonoBehaviour
-{
-    [SerializeField]
-    Shader _shader;
-
+public class FX : MonoBehaviour {
 	[SerializeField]
 	private DarkZone _darkZone = new DarkZone ();
 
@@ -53,93 +48,83 @@ public class FX : MonoBehaviour
 	[SerializeField]
 	private Caustics _caustics = new Caustics();
 
-    [SerializeField]
-    Light _sceneLight;
-
-	private Material _mat; 
+	public Material _mat; 
 	public Transform _origin;
 	private Camera _cam;
 	private GameObject _light;
 
-	private float[] _pulses;
-	private bool[] _activePulses;
-	private Vector4[] _origins;
+	private float[] aPulse;
+	private bool[] activepulse;
+	private Vector4[] aOrigin;
+
+
 
 	private float _depth;
 
-	void Start()
-    {
-        _mat = new Material(_shader);
-        SetShaderValues();
-
-
-        _cam = Camera.main;
+	void Start() {
+		_light = GameObject.Find ("Directional Light");
+		//_light.GetComponent<Light> ().enabled = false;
+		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
-
-        _activePulses = new bool[_sonar.maxPulses];
-		_pulses = new float[_sonar.maxPulses];
-		_origins = new Vector4[_sonar.maxPulses];
-
-        SetupDarkZones ();
+		activepulse = new bool[_sonar.maxPulses];
+		aPulse = new float[_sonar.maxPulses];
+		aOrigin = new Vector4[_sonar.maxPulses];
+		//setupDarkZones ();
 	}
 
 	void Update () {
 		PassiveSonar ();
 		PulseActivate ();
 		PulseControl ();
-		_depth = CalculateWorldDepth ();
+		_depth = calculateWorldDepth ();
+        lightUpdate();
 	}
 
-	void SetupDarkZones() {
+	void setupDarkZones() {
 		for (int i = 0; i < _darkZone.objects.Count; i++) {
 			float range = _darkZone.objects [i].GetComponent<darkZone> ().range;
 			_darkZone.rangeData.Add (range);
 //			float blendWidth = _darkZone.objects [i].GetComponent<darkZone> ().blendWidth;
 //			_darkZone.blendData.Add (blendWidth);
-			Vector3 pos = _darkZone.objects[i].transform.position;
+		    Vector3 pos = _darkZone.objects[i].transform.position;
 			_darkZone.positionData.Add (pos);
 		}
 		//_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
-		//_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
+//		_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
 //		_mat.SetFloatArray ("_blendData", _darkZone.blendData);
 	}
 
-	float CalculateWorldDepth()
-    {
+	float calculateWorldDepth() {
 		float camDepth = Camera.main.transform.position.y;
-		float depth = (camDepth - _fog.surface) / (_fog.maxDepth - _fog.surface);
+		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
 		return depth;
 	}
 
-	void PulseActivate()
-    {
-        if (!_sonar.active)
-            return;
+    void lightUpdate() {
+        float intensity = 1 - calculateWorldDepth();
+        _light.GetComponent<Light>().intensity = intensity;
+    }
 
-		for (int i = 0; i < _sonar.maxPulses; i++)
-        {
-            if (_activePulses[i])
-                continue;
-
-            _activePulses [i] = true;
-			_origins [i] = _origin.position;
-			return;
+	void PulseActivate() {
+		if (_sonar.active) {
+			for (int i = 0; i < _sonar.maxPulses; i++) {
+				if (!activepulse [i]) {
+					activepulse [i] = true;
+					aOrigin [i] = _origin.position;
+					return;
+				}
+			}
 		}
 	}
 
-	void PulseControl()
-    {
-		for (int i = 0; i < _sonar.maxPulses; i++)
-        {
-            if (!_activePulses[i])
-                continue;
-
-			_pulses [i] += Time.deltaTime * _sonar.speed;
-
-			if (_pulses [i] > _sonar.distance)
-            {
-				_activePulses [i] = false;
-				_pulses [i] = 0;
+	void PulseControl() {
+		for (int i = 0; i < _sonar.maxPulses; i++) {
+			if (activepulse [i]) {
+				aPulse [i] += Time.deltaTime * _sonar.speed;
+				if (aPulse [i] > _sonar.distance) {
+					activepulse [i] = false;
+					aPulse [i] = 0;
+				}
 			}
 		}
 	}
@@ -154,63 +139,46 @@ public class FX : MonoBehaviour
 		}
 	}
 
-    private void OnValidate()
-    {
-        if (_mat != null)
-            SetShaderValues();
-    }
-
-    // used for applying settings, only has to be called once
-    void SetShaderValues()
+	void updateShader()
 	{
 		// sonar
-		_mat.SetFloat ("_width", _sonar.width);
+		_mat.SetInt ("_pulselength", _sonar.maxPulses);
+		_mat.SetFloatArray ("_pulses", aPulse);
+		_mat.SetVectorArray ("originarray", aOrigin);
+		_mat.SetFloat ("width", _sonar.width);
 
 		// fog
 		_mat.SetColor("_startColor", _fog.startColor);
 		_mat.SetColor("_endColor", _fog.endColor);
-		_mat.SetFloat ("_fogFallOff", _fog.fallOff);
-		_mat.SetFloat("_surface", _fog.surface);
-		_mat.SetFloat("_fogDepth", _fog.maxDepth);
+		_mat.SetFloat ("_fogEnd", _fog.fogRange);
+		_mat.SetFloat("surface", _fog._surface);
+		_mat.SetFloat("_fogDepth", _fog._maxDepth);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
 
 		// caustics
-		_mat.SetFloat("_causticsSize", _caustics.size);
-		_mat.SetFloat("_causticsIntensity", _caustics.intensity);
-		_mat.SetFloat ("_causticsDepth", _caustics.causticsDepth);
-		_mat.SetColor ("_causticsColor", _caustics.causticsColor);
+		_mat.SetFloat("causticsSize", _caustics.size);
+		_mat.SetFloat("causticsIntensity", _caustics.intensity);
+		_mat.SetFloat ("causticsDepth", _caustics._causticsDepth);
+		_mat.SetColor ("causticsColor", _caustics.causticsColor);
 	}
-
-    // used for updating shader values at runtime
-    void UpdateShader(ref RenderTexture src)
-    {
-        //scene
-        _mat.SetTexture("_scene", src);
-
-        //sonar
-        _mat.SetInt("_pulselength", _sonar.maxPulses);
-        _mat.SetFloatArray("_pulses", _pulses);
-        _mat.SetVectorArray("_originarray", _origins);
-    }
 
 	[ImageEffectOpaque]
-	void OnRenderImage (RenderTexture src, RenderTexture dst)
-    {
-        UpdateShader(ref src);
-		RaycastCornerBlit(src, dst, _mat);
+	void OnRenderImage (RenderTexture src, RenderTexture dst){
+		updateShader ();
+		RaycastCornerBlit (src, dst, _mat);
 	}
 
-	void RaycastCornerBlit(RenderTexture src, RenderTexture dst, Material mat)
+	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
 	{
 		// Compute Frustum Corners
 		float camFar = _cam.farClipPlane;
 		float camFov = _cam.fieldOfView;
 		float camAspect = _cam.aspect;
 
-		float fovWHalf = Mathf.Tan(camFov * 0.5f * Mathf.Deg2Rad);
+		float fovWHalf = camFov * 0.5f;
 
-		Vector3 toRight = _cam.transform.right * fovWHalf * camAspect;
-		Vector3 toTop = _cam.transform.up * fovWHalf;
+		Vector3 toRight = _cam.transform.right * Mathf.Tan(fovWHalf * Mathf.Deg2Rad) * camAspect;
+		Vector3 toTop = _cam.transform.up * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
 
 		Vector3 topLeft = (_cam.transform.forward - toRight + toTop);
 		float camScale = topLeft.magnitude * camFar;
@@ -231,7 +199,9 @@ public class FX : MonoBehaviour
 		bottomLeft *= camScale;
 
 		// Custom Blit, encoding Frustum Corners as additional Texture Coordinates
-		RenderTexture.active = dst;
+		RenderTexture.active = dest;
+
+		mat.SetTexture("_Scene", source);
 
 		GL.PushMatrix();
 		GL.LoadOrtho();
