@@ -75,7 +75,7 @@ public class FishEnemy : Fish
         else
             zForce = Random.Range(-MoveSpeed, MoveSpeed);
 
-        Direction = new Vector3(xForce, yForce, zForce).normalized;
+        Direction = new Vector3(xForce, yForce, 0).normalized;
     }
 
     public bool DetectWall()
