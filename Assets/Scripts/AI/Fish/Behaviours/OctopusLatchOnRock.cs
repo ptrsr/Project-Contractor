@@ -36,7 +36,7 @@ public class OctopusLatchOnRock : FishState
 
     private void SetPos(Vector3 target, Vector3 normal)
     {
-        _octo.transform.position = Vector3.Lerp(_octo.transform.position, target + (normal * _octo.LatchOnOffset), _octo.RotationSpeed);
+        _octo.transform.position = Vector3.Lerp(_octo.transform.position, target + (normal * _octo.LatchOnOffset), _octo.RotationSpeed / 2f);
     }
 
     private void SetRot(Vector3 normal)
@@ -45,6 +45,7 @@ public class OctopusLatchOnRock : FishState
         {
             _octo.transform.rotation = Quaternion.Lerp(_octo.transform.rotation, _octo.GetLatchOnRot(normal), _octo.RotationSpeed);
             _rotCounter++;
+            _octo.TentacleControl.SetState<TentacleLatchOn>();
         }
     }
 }
