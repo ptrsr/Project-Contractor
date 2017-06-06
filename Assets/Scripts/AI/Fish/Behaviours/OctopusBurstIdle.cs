@@ -29,7 +29,7 @@ public class OctopusBurstIdle : FishState
         else
         {
             _count = 0;
-            if (_octo.DetectTarget())
+            if (_octo.IsChasing)//_octo.DetectTarget())
                 _octo.SetState<OctopusBurstChase>();
             else
                 _octo.SetState<OctopusBurstMove>();

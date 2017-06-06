@@ -4,34 +4,42 @@ using UnityEngine;
 
 public class SonarCollider : MonoBehaviour
 {
-    private GameObject _pulseObj;
+    private Sonar _sonar;
     private float _time = 0;
     private List<SphereCollider> _pulses = new List<SphereCollider>();
+    private bool _enabled = true;
 
     public void Start()
     {
+        _sonar = FindObjectOfType<FX>().SonarVals;
         SpawnPulse();
     }
 
     public void Update()
     {
-        _time += Time.deltaTime;
+        CheckSubTap();
+        UpdatePulses();
+    }
 
-        for (int i = 0; i < _pulses.Count; i++)
+    private void SetSonarActive(bool val)
+    {
+        _enabled = val;
+        _sonar.enabled = val;
+    }
+
+    private void CheckSubTap()
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            if (_time > 1.5f)
-            {
-                _time = 0f;
-                SpawnPulse();
-            }
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = -Camera.main.transform.position.z;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-            if (_pulses[i].radius > 200)
+            if (Vector3.Distance(transform.position, mousePos) < 2.5f)
             {
-                Destroy(_pulses[i].gameObject);
-                _pulses.RemoveAt(i);
+                Debug.DrawLine(transform.position, Input.mousePosition, Color.cyan, 1f);
+                SetSonarActive(!_enabled);
             }
-            else
-                _pulses[i].radius += Time.deltaTime * 70f;
         }
     }
 
@@ -46,5 +54,28 @@ public class SonarCollider : MonoBehaviour
         pulse.radius = 2;
 
         _pulses.Add(pulse);
+    }
+
+    private void UpdatePulses()
+    {
+        _time += Time.deltaTime;
+
+        //Time till a new pulse spawns
+        if (_time > _sonar.interval && _enabled)
+        {
+            _time = 0f;
+            SpawnPulse();
+        }
+
+        for (int i = 0; i < _pulses.Count; i++)
+        {
+            if (_pulses[i].radius > _sonar.distance)
+            {
+                Destroy(_pulses[i].gameObject);
+                _pulses.RemoveAt(i);
+            }
+            else
+                _pulses[i].radius += Time.deltaTime * _sonar.speed;
+        }
     }
 }
