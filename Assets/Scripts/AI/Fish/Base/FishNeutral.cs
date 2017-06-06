@@ -36,10 +36,10 @@ public class FishNeutral : Fish
         targetBody = target.GetComponent<Rigidbody>();
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         BindZ();
 
-        base.Update();
+        base.FixedUpdate();
     }
 }
