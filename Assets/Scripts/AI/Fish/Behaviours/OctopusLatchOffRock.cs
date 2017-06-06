@@ -13,7 +13,8 @@ public class OctopusLatchOffRock : FishState
         _octo = (Octopus)fish;
         _octo.Body.isKinematic = false;
 
-        _octo.Body.AddForce(_octo.IsChasing ? Vector3.zero : _octo.RockNormal * _octo.MoveSpeed / 2f);
+        _octo.Body.AddForce(_octo.RockNormal * _octo.MoveSpeed);
+        _octo.TentacleControl.SetState<TentacleLatchOff>();
         _octo.SetState<OctopusFindRock>();
     }
 

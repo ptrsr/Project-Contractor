@@ -37,6 +37,7 @@ public class Octopus : FishEnemy
     private Vector3 _rockPos;
     public Vector3 RockPos { get { return _rockPos; } set { _rockPos = value; } }
 
+    //Resting upside
     private Vector3 _rockNormal;
     public Vector3 RockNormal { get { return _rockNormal; } set { _rockNormal = value; } }
 
@@ -46,6 +47,9 @@ public class Octopus : FishEnemy
     private bool _isChasing = false;
     public bool IsChasing { get { return _isChasing; } set { _isChasing = value; } }
 
+    private Tentacles _tentacleControl;
+    public Tentacles TentacleControl { get { return _tentacleControl; } }
+
     public override void Start()
     {
         base.Start();
@@ -53,6 +57,8 @@ public class Octopus : FishEnemy
         _collider = GetComponent<Collider>();
         _rockPos = origPos;
         _attackCounter = _attackCooldown;
+        _tentacleControl = GetComponent<Tentacles>();
+        _tentacleControl.Start();
 
         stateCache[typeof(OctopusFindRock)] = new OctopusFindRock(this);
         stateCache[typeof(OctopusBurstIdle)] = new OctopusBurstIdle(this);

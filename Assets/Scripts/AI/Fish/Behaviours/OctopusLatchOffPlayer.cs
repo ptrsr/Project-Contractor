@@ -19,6 +19,7 @@ public class OctopusLatchOffPlayer : FishState
         _octo.Target.GetComponent<SubMovement>().SlowDownPlayer(false);
 
         _octo.Body.AddForce(_octo.IsChasing ? Vector3.zero : _octo.RockNormal * _octo.MoveSpeed / 2f);
+        _octo.TentacleControl.SetState<TentacleLatchOff>();
         _octo.SetState<OctopusFindRock>();
     }
 
