@@ -68,7 +68,7 @@
 
 				// pulse colors
 				half4 pulseCol = pulseColor(worldPos);
-				half4 pulseEdge = edgeColor(xyPlanePos);
+				half4 pulseEdge = edgeCol(xyPlanePos);
 				if(worldPos.z < 0)
 					pulseEdge = 0;
 				

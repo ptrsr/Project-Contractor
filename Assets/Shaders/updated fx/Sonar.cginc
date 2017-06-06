@@ -1,43 +1,61 @@
 #ifndef SONAR_INCLUDED
 #define SONAR_INCLUDED
 
-int _pulselength;
-float _pulses[10];
-float4 originarray[10];
-float width;
+uniform int _pulselength;
+uniform float _pulses[10];
+uniform float4 originarray[10];
+uniform float width;
+uniform float fade;
+uniform float edgeWidth;
+uniform float _start;
 
 half4 pulseColor (float3 pos) {
 	// calculating each pulse draw
 	half4 pulsecol = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
 		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] && dist > _pulses[i] - width) {
-			float diff = 1 - (_pulses[i] - dist) / (width);
+		if (dist < _pulses[i] && dist > _pulses[i] - fade) {
+			float diff = 1 - (_pulses[i] - dist) / (fade);
 			pulsecol = half4(1,0,0,1);
 			pulsecol *= diff;
 		}
+		if (dist < _start)
+			pulsecol *= 0;
 	}
 	// masking pulse highlight
 	float depthMask = 0;
-	if (pos.z > -1 && pos.z < 1)
+
+	float fadeDiff = (width/2) / abs(pos.z); 
+
+	if (pos.z > -width/2 && pos.z < width/2)
 		depthMask = 1;
+	
+	pulsecol *= fadeDiff;
 	pulsecol *= depthMask;
 	// return pulse
 	return pulsecol;
 }
 
-half4 edgeColor (float3 pos) {
-	// white pulse edge
-	half4 edgecol = half4(0,0,0,0);
+// UPDATED ———————————————————————————————
+half4 edgeCol (float3 pos) {
+	// calculating each pulse draw
+	half4 col = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
 		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] + 0.5 && dist > _pulses[i] - 0.5) {
-			edgecol = half4(1,1,1,1);
+		if (dist < _pulses[i] + edgeWidth/2 && dist > _pulses[i] - edgeWidth/2 && dist > _start) {
+			col = half4(1,1,1,1);
 		}
 	}
-	// return edge
-	return edgecol;
+	// return color
+	return col;
+} 
+// UPDATED ———————————————————————————————
+
+
+float4 horizBars(float2 p) {
+	return 1 - saturate(round(abs(frac(p.y * 100) * 2)));
 }
+
 
 float3 xyPlanePosition (float4 ray) {
 	// vector data
