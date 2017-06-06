@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 #region values
 [System.Serializable]
@@ -55,9 +56,6 @@ public class FX : MonoBehaviour
 
     [SerializeField]
     Light _sceneLight;
-
-    [SerializeField]
-    List<Volumetric> _volumes = new List<Volumetric>();
 
 	private Material _mat; 
 	public Transform _origin;
@@ -201,7 +199,7 @@ public class FX : MonoBehaviour
         UpdateShader(ref src);
 		RaycastCornerBlit(src, dst, _mat);
 
-        foreach (var volume in _volumes)
+        foreach (var volume in Volumes.Get())
             volume.Render(ref dst);
 	}
 

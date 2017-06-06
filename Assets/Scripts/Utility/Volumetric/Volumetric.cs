@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 public abstract class Volumetric : MonoBehaviour
 {
@@ -18,17 +19,22 @@ public abstract class Volumetric : MonoBehaviour
         _cam = GetComponent<Camera>();
         _mat = new Material(_shader);
         _cam.depthTextureMode = DepthTextureMode.Depth;
+
+        Volumes.Add(this);
+
+        applySettings(GetComponent<Camera>());
+
     }
 
     void OnValidate()
     {
-        SetDimensions(GetComponent<Camera>());
+        applySettings(GetComponent<Camera>());
         CreateTextures();
     }
 
     abstract protected void CreateTextures();
 
-    abstract protected void SetDimensions(Camera cam);
+    abstract protected void applySettings(Camera cam);
 
     virtual public void Render(ref RenderTexture src)
     {
