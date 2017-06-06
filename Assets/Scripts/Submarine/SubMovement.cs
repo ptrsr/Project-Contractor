@@ -162,7 +162,6 @@ public class SubMovement : MonoBehaviour {
         {
             _oxygen.Remove(_oxygenLossOnHit);
             _particles.Play();
-            Debug.Log("boom");
         }
         if (other.gameObject.tag == "Shark")
         {

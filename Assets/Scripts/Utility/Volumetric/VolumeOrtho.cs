@@ -40,7 +40,7 @@ public class VolumeOrtho : Volumetric
         }
     }
 
-    protected override void SetDimensions(Camera cam)
+    protected override void applySettings(Camera cam)
     {
         cam.orthographicSize = _size / 2;
         cam.aspect = _layers / _size;

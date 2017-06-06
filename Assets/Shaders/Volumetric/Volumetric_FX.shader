@@ -1,4 +1,4 @@
-﻿Shader "custom/volumetric_fx"
+﻿Shader "custom/fx_volumetric"
 {
 	SubShader
 	{
@@ -165,7 +165,6 @@
 			{
 				Cull Off ZTest On
 				Blend SrcAlpha OneMinusSrcAlpha
-				Tags{ "RenderType" = "Transparent" }
 
 				CGPROGRAM
 				#pragma vertex vert
@@ -193,11 +192,16 @@
 				return o;
 			}
 
+			//triangle size
 			uniform sampler2D _LastCameraDepthTexture;
 			uniform float2 _nCorner;
-			uniform float _far;
+			uniform float2 _fCorner;
 			uniform float _cDir;
-			uniform float _dist;
+
+			//lit values
+			uniform float _litDistance;
+			uniform float _litAngle;
+			uniform float _fallOff;
 
 			fixed4 frag(v2f i) : SV_Target
 			{
@@ -206,20 +210,32 @@
 				if (i.uv.y < 0)
 					height = -height;
 				
-				float dif = i.uv.y / height;
+				float depthTexturePos = i.uv.y / height; // coordinate of depth texture (between -1 and 1)
 
 				if (i.uv.y < 0)
-					dif = -dif;
+					depthTexturePos = -depthTexturePos;
 
-				float2 nPos = float2(_nCorner.x, _nCorner.y * dif);
-				float nDist = distance(nPos, i.uv);
+				float2 nearPlanePos = float2(_nCorner.x, _nCorner.y * depthTexturePos); // frag projected onto nearplane
+				float2 farPlanePos = float2(_fCorner.x, _fCorner.y * depthTexturePos); // frag projected onto farplane
 
-				dif = (dif / 2.0f) + 0.5f;
+				float nDist = distance(nearPlanePos, i.uv);
 
-				float depth = LinearEyeDepth(tex2D(_LastCameraDepthTexture, float2(0, dif))) * 25;
+				float near = sqrt(_nCorner.x * _nCorner.x + nearPlanePos.y * nearPlanePos.y);
+				float far = sqrt(_fCorner.x *_fCorner.x + farPlanePos.y * farPlanePos.y);
 
-				if (depth > nDist)
-					return 1;
+				float a = far / (far - near);
+				float b = far * near / (near - far);
+
+				float textureDepthValue = 1 - tex2D(_LastCameraDepthTexture, float2(0, (depthTexturePos / 2.0f) + 0.5f));
+				float depth = b / (textureDepthValue - a);
+
+				if (depth - nearPlanePos.x > nDist)
+				{
+					float litDistance = pow(1 - (distance(nearPlanePos, i.uv) / distance(nearPlanePos, farPlanePos)), _litDistance);
+					float litAngle = pow(dot(float2(1, 0), normalize(i.uv)), _litAngle);
+
+					return pow(litDistance * litAngle, _fallOff);
+				}
 				else
 					return 0;
 
