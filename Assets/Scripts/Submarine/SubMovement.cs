@@ -57,7 +57,7 @@ public class SubMovement : MonoBehaviour {
 
 	void FixedUpdate () {
         if (_frozen) return;
-        _oxygen.Remove(1);
+        //_oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         //return only if stunned
