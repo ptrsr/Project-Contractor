@@ -54,11 +54,11 @@ public class ElectricEel : FishNeutral
         SetState<EelHide>();
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         BindZ();
 
-        base.Update();
+        base.FixedUpdate();
     }
 
     public void OnCollisionEnter(Collision c)

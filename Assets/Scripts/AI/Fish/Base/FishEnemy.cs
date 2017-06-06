@@ -40,9 +40,9 @@ public class FishEnemy : Fish
         _targetBody = _target.GetComponent<Rigidbody>();
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
     }
 
     //Get a random direction within target range
