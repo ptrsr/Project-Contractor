@@ -36,10 +36,7 @@ public class SonarCollider : MonoBehaviour
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
             if (Vector3.Distance(transform.position, mousePos) < 2.5f)
-            {
-                Debug.DrawLine(transform.position, Input.mousePosition, Color.cyan, 1f);
                 SetSonarActive(!_enabled);
-            }
         }
     }
 

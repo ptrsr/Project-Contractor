@@ -109,7 +109,8 @@ public class D3b0g : MonoBehaviour
                 "Range to origin: {5:0.000}\n" +
                 "Range to target: {6:0.000}\n" +
                 "Target from origin: {7:0.000}\n" +
-                "Can chase target: {8}",
+                "Can chase target: {8}\n" +
+                "Awake count: {9}",
                 octo.GetState,
                 octo.TentacleControl.GetState,
                 octo.Range,
@@ -118,7 +119,8 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(octo.transform.position, octo.OriginPos),
                 Vector3.Distance(octo.Target.position, octo.transform.position),
                 Vector3.Distance(octo.Target.position, octo.OriginPos),
-                octo.DetectTarget());
+                octo.DetectTarget(),
+                octo.AwakeCounter);
             AddCircle(octo.gameObject, octo.OriginPos, octo.Range);
         }
         else if (_current is FishEnemy)
