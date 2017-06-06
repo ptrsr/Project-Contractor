@@ -6,8 +6,6 @@ uniform half4 _endColor;
 uniform float _depth;
 uniform float _fogFallOff;
 uniform float _fogDepth;
-uniform float4 _darkZones[10];
-uniform float _rangeData[10];
 
 half4 fogColor (float3 worldPos) {
 	float fragDepth = worldPos.y;
