@@ -29,7 +29,7 @@ public class OctopusLatchOnPlayer : FishState
 
     public override void Step()
     {
-        if (_subMove.Charged || !_octo.DetectTarget())
+        if (_subMove.Charged)// || !_octo.DetectTarget())
             _octo.SetState<OctopusLatchOffPlayer>();
 
         SetPos(_octo.Target.position, _octo.TargetNormal);

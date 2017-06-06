@@ -16,7 +16,7 @@ public class OctopusLatchOnRock : FishState
         _restCounter = 0;
         _rotCounter = 0;
 
-        _octo.Collider.enabled = false;
+        _octo.Collider.enabled = true;
         _octo.Body.isKinematic = true;
     }
 
@@ -28,10 +28,11 @@ public class OctopusLatchOnRock : FishState
         SetPos(_octo.RockPos, _octo.RockNormal);
         SetRot(_octo.RockNormal);
 
-        if (_restCounter != _octo.RestTime)
+        if (_restCounter != _octo.RestTime / 4)
             _restCounter++;
         else
-            _octo.SetState<OctopusLatchOffRock>();
+            //_octo.SetState<OctopusLatchOffRock>();
+            _octo.SetState<OctopusSleep>();
     }
 
     private void SetPos(Vector3 target, Vector3 normal)

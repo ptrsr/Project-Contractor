@@ -11,13 +11,14 @@ class DarkZone {
 //	public List<float> blendData;
 }
 [System.Serializable]
-class Sonar {
+public class Sonar {
 	public int maxPulses = 5;
 	public float interval = 1;
 	public float width = 2;
 	public float distance = 20;
 	public float speed = 5;
 	public bool active = false;
+    public bool enabled = true;
 }
 [System.Serializable]
 class Fog {
@@ -41,6 +42,7 @@ public class FX : MonoBehaviour {
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
+    public Sonar SonarVals { get { return _sonar; } }
 
 	[SerializeField]
 	private Fog _fog = new Fog();
@@ -132,6 +134,7 @@ public class FX : MonoBehaviour {
 	float time;
 	void PassiveSonar () {
 		time += Time.deltaTime;
+        if (!_sonar.enabled) return;
 		_sonar.active = false;
 		if (time > _sonar.interval) {
 			_sonar.active = true;

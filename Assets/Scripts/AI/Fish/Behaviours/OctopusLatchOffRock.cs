@@ -15,7 +15,8 @@ public class OctopusLatchOffRock : FishState
 
         _octo.Body.AddForce(_octo.RockNormal * _octo.MoveSpeed);
         _octo.TentacleControl.SetState<TentacleLatchOff>();
-        _octo.SetState<OctopusFindRock>();
+        //_octo.SetState<OctopusFindRock>();
+        _octo.SetState<OctopusBurstChase>();
     }
 
     public override void Step()

@@ -30,6 +30,13 @@ public class Octopus : FishEnemy
     private int _restTime = 500;
     public int RestTime { get { return _restTime; } }
 
+    [SerializeField]
+    private int _awareDuration = 200;
+    public int AwareDuration { get { return _awareDuration; } }
+
+    private int _awakeCounter = 0;
+    public int AwakeCounter { get { return _awakeCounter; } set { _awakeCounter = value; } }
+
     private Collider _collider;
     public Collider Collider { get { return _collider; } }
 
@@ -68,12 +75,27 @@ public class Octopus : FishEnemy
         stateCache[typeof(OctopusLatchOnPlayer)] = new OctopusLatchOnPlayer(this);
         stateCache[typeof(OctopusLatchOffRock)] = new OctopusLatchOffRock(this);
         stateCache[typeof(OctopusLatchOffPlayer)] = new OctopusLatchOffPlayer(this);
+        stateCache[typeof(OctopusSleep)] = new OctopusSleep(this);
 
         SetState<OctopusFindRock>();
     }
 
+    public void OnTriggerEnter(Collider c)
+    {
+        if (c.tag == "Pulse")
+        {
+            Debug.DrawLine(transform.position, Target.position, Color.red, 1f);
+            if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection))
+            {
+                _awakeCounter++;
+            }
+        }
+    }
+
     public override bool DetectTarget()
     {
+        return false;
+
         //Wait for cooldown
         if (_attackCounter != _attackCooldown)
         {
