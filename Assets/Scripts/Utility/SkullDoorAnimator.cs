@@ -46,7 +46,15 @@ public class SkullDoorAnimator : MonoBehaviour {
         {
             if (!_played)
             {
-                _sceneManager.LoadScene(Random.Range(0, 2));
+                if(Time.time < 150){
+                    _sceneManager.LoadScene(2);
+                }
+                else if(Time.time < 200 && Time.time > 150){
+                    _sceneManager.LoadScene(1);
+                }
+                else{
+                    _sceneManager.LoadScene(0);
+                }
                 _subMov.Freeze(true);
                 _animator[1].SetBool("Rotate", true);
                 _lenght = _animator[1].GetCurrentAnimatorClipInfo(0).Length;

@@ -53,6 +53,7 @@ public class SubMovement : MonoBehaviour {
         //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
         //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         _lastTap = 0;
+       
     }
 
 	void FixedUpdate ()
