@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class VolumeProj : Volumetric
 {
-    public float test;
-
     [SerializeField]
     float
-        _angle = 2,
+        _triangleAngle = 2,
         _farPlane = 2,
         _thick = 1,
-        _quality = 1;
+        _quality = 1,
+
+        _litDistance,
+        _litAngle,
+        _litFallOff;
 
     [SerializeField]
     int
@@ -35,20 +37,27 @@ public class VolumeProj : Volumetric
             if (i % 2 == 0)
                 divide++;
 
-            Vector2 size = new Vector2(_angle * 2, _farPlane) * (_quality / divide);
+            Vector2 size = new Vector2(_triangleAngle * 2, _farPlane) * (_quality / divide);
 
             _pingPong[i] = new RenderTexture((int)size.x, (int)size.y, 0);
             _pingPong[i].Create();
         }
     }
 
-    protected override void SetDimensions(Camera cam)
+    protected override void applySettings(Camera cam)
     {
-        cam.fieldOfView = (_angle);
-        cam.aspect = 1 / (_angle);
+        cam.fieldOfView = (_triangleAngle);
+        cam.aspect = 1 / (_triangleAngle);
 
-        cam.rect = new Rect(new Vector2(), new Vector2(_quality, 0.1f));
+        cam.rect = new Rect(new Vector2(), new Vector2(1, _quality * 10));
         cam.farClipPlane = _farPlane;
+
+        if (_mat == null)
+            return;
+
+        _mat.SetFloat("_litDistance", _litDistance);
+        _mat.SetFloat("_litAngle", _litAngle);
+        _mat.SetFloat("_fallOff", _litFallOff);
     }
 
     public override void Render(ref RenderTexture src)
@@ -59,13 +68,11 @@ public class VolumeProj : Volumetric
 
         Vector3 pos = transform.position;
         Vector3 forward = transform.forward;
-        float angle = Mathf.Asin((_angle / 2) * Mathf.Deg2Rad);
+        float angle = Mathf.Asin((_triangleAngle / 2) * Mathf.Deg2Rad);
         Vector3 toTop = transform.up * angle;
 
         float near = _cam.nearClipPlane;
         float far  = _cam.farClipPlane;
-
-        print(_cam.projectionMatrix);
 
         Vector2 texCoord = new Vector2(0, 1) * angle * near + new Vector2(near, 0);
         Vector2 fTexCoord = new Vector2(0, 1) * angle * far + new Vector2(far, 0);
@@ -74,13 +81,6 @@ public class VolumeProj : Volumetric
         _mat.SetVector("_fCorner", fTexCoord);
 
         _mat.SetFloat("_cDir", angle);
-        _mat.SetFloat("_dist", _farPlane - near);
-
-        float a = far / (far - near);
-        float b = far * near / (near - far);
-
-        _mat.SetFloat("_a", a);
-        _mat.SetFloat("_b", b);
 
         GL.Begin(GL.QUADS);
         {
