@@ -19,7 +19,9 @@ public class OctopusSleep : FishState
 
     public override void Step()
     {
-        Debug.Log(_octo.AwakeCounter);
+        //Prevent the body from sleeping
+        _octo.Body.WakeUp();
+
         //Becomes aware
         if (_octo.AwakeCounter == 1)
         {
