@@ -1,4 +1,4 @@
-﻿Shader "custom/submerged_fx"
+﻿Shader "custom/fx_underwater"
 {
 	Properties
 	{

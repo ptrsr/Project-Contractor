@@ -1,4 +1,4 @@
-﻿Shader "custom/volumetric_fx"
+﻿Shader "custom/fx_volumetric"
 {
 	SubShader
 	{

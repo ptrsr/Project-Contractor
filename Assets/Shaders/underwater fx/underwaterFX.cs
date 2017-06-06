@@ -4,13 +4,6 @@ using UnityEngine;
 
 #region values
 [System.Serializable]
-class DarkZone {
-	public List<GameObject> objects;
-	public List<Vector4> positionData;
-	public List<float> rangeData;
-//	public List<float> blendData;
-}
-[System.Serializable]
 class Sonar {
 	public int maxPulses = 5;
 	public float interval = 1;
@@ -36,13 +29,10 @@ class Caustics {
 }
 #endregion
 
-public class FX : MonoBehaviour
+public class underwaterFX : MonoBehaviour
 {
     [SerializeField]
     Shader _shader;
-
-	[SerializeField]
-	private DarkZone _darkZone = new DarkZone ();
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
@@ -81,7 +71,6 @@ public class FX : MonoBehaviour
 		_pulses = new float[_sonar.maxPulses];
 		_origins = new Vector4[_sonar.maxPulses];
 
-        SetupDarkZones ();
 	}
 
 	void Update () {
@@ -90,20 +79,7 @@ public class FX : MonoBehaviour
 		PulseControl ();
 		_depth = CalculateWorldDepth ();
 	}
-
-	void SetupDarkZones() {
-		for (int i = 0; i < _darkZone.objects.Count; i++) {
-			float range = _darkZone.objects [i].GetComponent<darkZone> ().range;
-			_darkZone.rangeData.Add (range);
-//			float blendWidth = _darkZone.objects [i].GetComponent<darkZone> ().blendWidth;
-//			_darkZone.blendData.Add (blendWidth);
-			Vector3 pos = _darkZone.objects[i].transform.position;
-			_darkZone.positionData.Add (pos);
-		}
-		//_mat.SetVectorArray ("_darkZones", _darkZone.positionData);
-		//_mat.SetFloatArray ("_rangeData", _darkZone.rangeData);
-//		_mat.SetFloatArray ("_blendData", _darkZone.blendData);
-	}
+		
 
 	float CalculateWorldDepth()
     {
