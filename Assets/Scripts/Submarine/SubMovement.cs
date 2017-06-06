@@ -44,12 +44,15 @@ public class SubMovement : MonoBehaviour {
     private int _counter = 0;
     private int _stunSlowCounter = 0;
 
+    private ParticleSystem _particles;
+
 
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
+        _particles = GetComponentInChildren<ParticleSystem>();
         //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
         //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         _lastTap = 0;
@@ -151,11 +154,17 @@ public class SubMovement : MonoBehaviour {
             _oxygen.Add(value.OxygenVal());
             other.gameObject.SetActive(false);
         }
-        if(other.gameObject.tag == "Wall")
+       
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Wall")
         {
             _oxygen.Remove(_oxygenLossOnHit);
+            _particles.Play();
+            Debug.Log("boom");
         }
-        if(other.gameObject.tag == "Shark")
+        if (other.gameObject.tag == "Shark")
         {
             _oxygen.Remove(_oxygenLossOnHit);
         }
