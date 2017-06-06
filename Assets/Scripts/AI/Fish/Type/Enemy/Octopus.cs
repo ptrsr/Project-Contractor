@@ -85,10 +85,8 @@ public class Octopus : FishEnemy
         if (c.tag == "Pulse")
         {
             Debug.DrawLine(transform.position, Target.position, Color.red, 1f);
-            if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection))
-            {
+            if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && Vector3.Distance(OriginPos, Target.position) < Range)
                 _awakeCounter++;
-            }
         }
     }
 
