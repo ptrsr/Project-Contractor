@@ -6,8 +6,8 @@ public class FishNeutral : Fish
 {
     [Header("Neutral Fish Variables")]
     [SerializeField]
-    private int _detectionRange = 60;
-    public int DetectionRange { get { return _detectionRange; } }
+    private int _range = 60;
+    public int Range { get { return _range; } }
 
     [SerializeField]
     private int _wallDetectionRange = 4;
@@ -25,7 +25,7 @@ public class FishNeutral : Fish
     public float Difficulty { get { return _difficulty; } }
 
     //Ignores the player for wall detection
-    private LayerMask _ignoreDetection = 1 << 8;
+    private LayerMask _ignoreDetection = (1 << 8);
     public LayerMask IgnoreDetection { get { return _ignoreDetection; } }
 
     public override void Start()

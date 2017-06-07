@@ -125,6 +125,26 @@ public class D3b0g : MonoBehaviour
                 octo.AwakeCounter);
             AddCircle(octo.gameObject, octo.OriginPos, octo.Range);
         }
+        else if (_current is ElectricEel)
+        {
+            ElectricEel eel = (ElectricEel)_current;
+            _text.text = string.Format(
+                "State: {0}\n" +
+                "Range: {1}\n" +
+                "Direction: {2}\n" +
+                "Speed: {3}\n" +
+                "Range to origin: {4:0.000}\n" +
+                "Target from origin: {5:0.000}\n" +
+                "Can chase target: {6}",
+                eel.GetState,
+                eel.Range,
+                eel.Direction,
+                eel.Body.velocity,
+                Vector3.Distance(eel.transform.position, eel.OriginPos),
+                Vector3.Distance(eel.OriginPos, eel.Target.position),
+                eel.DetectTarget());
+            AddCircle(eel.gameObject, eel.OriginPos, eel.Range);
+        }
         else if (_current is FishEnemy)
         {
             FishEnemy enemy = (FishEnemy)_current;
@@ -159,13 +179,13 @@ public class D3b0g : MonoBehaviour
                 "Target from origin: {5:0.000}\n" +
                 "Can chase target: {6}",
                 neutral.GetState,
-                neutral.DetectionRange,
+                neutral.Range,
                 neutral.Direction,
                 neutral.Body.velocity,
                 Vector3.Distance(neutral.transform.position, neutral.OriginPos),
                 Vector3.Distance(neutral.OriginPos, neutral.Target.position),
-                (Vector3.Distance(neutral.OriginPos, neutral.Target.position) < neutral.DetectionRange));
-            AddCircle(neutral.gameObject, neutral.OriginPos, neutral.DetectionRange);
+                (Vector3.Distance(neutral.OriginPos, neutral.Target.position) < neutral.Range));
+            AddCircle(neutral.gameObject, neutral.OriginPos, neutral.Range);
         }
     }
 

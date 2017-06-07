@@ -73,6 +73,19 @@ public class ElectricEel : FishNeutral
         SetState<EelReturnToHole>();
     }
 
+    public bool DetectTarget()
+    {
+        float targetDis = Vector3.Distance(OriginPos, Target.position);
+        float origDis = Vector3.Distance(transform.position, OriginPos);
+
+        /* Check if:
+         * target is not obstructed by a wall
+         * target is in range of the enemy
+         * target is in range of the origin
+         * enemy is in range of the origin */
+        return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && targetDis < Range && origDis < Range);
+    }
+
     public override Quaternion GetLookRotation(Vector3 direction)
     {
         //Proper rotation for the model

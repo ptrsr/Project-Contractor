@@ -19,7 +19,7 @@ public class EelHide : FishState
 
     public override void Step()
     {
-        if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) < _eel.DetectionRange)
+        if (_eel.DetectTarget())
             _eel.SetState<EelCharge>();
 
         //Move anchor and head back to start positions
