@@ -1,4 +1,4 @@
-﻿Shader "custom/warp"
+﻿Shader "custom/fx_screenWarp"
 {
 	Properties{
 		_warp ("warp amount", Range(0,0.1)) = 0

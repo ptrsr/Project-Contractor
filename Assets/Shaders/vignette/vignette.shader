@@ -1,4 +1,4 @@
-﻿Shader "custom/vignette"
+﻿Shader "custom/fx_vignette"
 {
 	SubShader
 	{

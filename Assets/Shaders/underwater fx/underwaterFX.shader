@@ -17,9 +17,9 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-			#include "Caustics_CG.cginc"
-			#include "Fog_CG.cginc"
-			#include "Sonar_CG.cginc"
+			#include "Caustics.cginc"
+			#include "Fog.cginc"
+			#include "Sonar.cginc"
 
 			struct appdata
 			{
@@ -37,7 +37,7 @@
 				float4 ray : TEXCOORD1;
 			};
 
-			uniform sampler2D _scene;
+			uniform sampler2D _Scene;
 			uniform sampler2D _CameraDepthNormalsTexture;
 
 			v2f vert (appdata v)
@@ -53,12 +53,13 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scene render
-				fixed4 scene = tex2D(_scene, i.uv);
+				fixed4 scene = tex2D(_Scene, i.uv);
 
 				// depth sampling
 				float linearDepth;
 				float3 viewNormal;
 				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
+				float eyeDepth = linearDepth * 1000;
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
@@ -66,8 +67,8 @@
 				float3 xyPlanePos = xyPlanePosition(i.ray);
 
 				// pulse colors
-				half4 pulseCol = pulseColor(worldPos);
-				half4 pulseEdge = edgeColor(xyPlanePos);
+				half4 pulseCol = pulseColor(worldPos, i.uv);
+				half4 pulseEdge = edgeCol(xyPlanePos);
 				if(worldPos.z < 0)
 					pulseEdge = 0;
 				
@@ -82,7 +83,7 @@
 				
 				// fog color
 				half4 fog = fogColor(worldPos);
-				float fogDiff = fogBlend(linearDepth);
+				float fogDiff = fogBlend(eyeDepth);
 
 				//final output blending
 				scene += caustics;

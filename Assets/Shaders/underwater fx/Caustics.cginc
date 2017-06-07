@@ -2,11 +2,11 @@
 #define CAUSTICS_INCLUDED
 
 uniform sampler2D _Caustics;
-uniform float _causticsSize;
-uniform float _causticsIntensity;
-uniform float _causticsDepth;
-uniform float _surface;
-uniform half4 _causticsColor;
+uniform float causticsSize;
+uniform float causticsIntensity;
+uniform float causticsDepth;
+uniform float surface;
+uniform half4 causticsColor;
 
 float3 worldPosition (float depth, float4 ray) {
 	// calculating fragments world position
@@ -21,20 +21,20 @@ half4 Caustics (float3 worldPos) {
 	float2 shift1 = float2(time, 0);
 	float2 shift2 = float2(0.5, time);
 	// texture overlay in world space
-	float2 fragUV = float2(worldPos.x, worldPos.z) / _causticsSize;
+	float2 fragUV = float2(worldPos.x, worldPos.z) / causticsSize;
 	half4 c1 = tex2D(_Caustics, fragUV + shift1);
 	half4 c2 = tex2D(_Caustics, fragUV + shift2);
-	half4 c = (c1 * _causticsIntensity) * (c2 * _causticsIntensity);
+	half4 c = (c1 * causticsIntensity) * (c2 * causticsIntensity);
 	// return caustics
-	return _causticsColor * c;
+	return causticsColor * c;
 }
 
 float causticsDepthBlend (float3 worldPos) {
 	float fragDepth = worldPos.y;
-	float depthBlend = 1 - ((fragDepth - _surface) / (_causticsDepth - _surface));
-	if(fragDepth < _causticsDepth)
+	float depthBlend = 1 - ((fragDepth - surface) / (causticsDepth - surface));
+	if(fragDepth < causticsDepth)
 		depthBlend = 0;
-	if(fragDepth > _surface)
+	if(fragDepth > surface)
 		depthBlend = 1;
 	// return blend diff
 	return pow(depthBlend, 5);
