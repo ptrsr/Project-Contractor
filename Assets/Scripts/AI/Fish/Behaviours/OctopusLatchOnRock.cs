@@ -15,9 +15,9 @@ public class OctopusLatchOnRock : FishState
         _octo = (Octopus)fish;
         _restCounter = 0;
         _rotCounter = 0;
-
-        _octo.Collider.enabled = true;
+        
         _octo.Body.isKinematic = true;
+        _octo.Collider.enabled = true;
     }
 
     public override void Step()

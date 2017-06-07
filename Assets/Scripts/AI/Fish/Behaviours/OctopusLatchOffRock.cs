@@ -8,19 +8,26 @@ public class OctopusLatchOffRock : FishState
 
     private Octopus _octo;
 
+    private int _counter = 0;
+
     public override void Initialize()
     {
         _octo = (Octopus)fish;
         _octo.Body.isKinematic = false;
+        _octo.Body.mass = 0.1f;
 
         _octo.Body.AddForce(_octo.RockNormal * _octo.MoveSpeed);
         _octo.TentacleControl.SetState<TentacleLatchOff>();
-        //_octo.SetState<OctopusFindRock>();
-        _octo.SetState<OctopusBurstChase>();
     }
 
     public override void Step()
     {
-        //Empty
+        if (_counter == _octo.LatchOffDelay)
+        {
+            _counter = 0;
+            _octo.SetState<OctopusBurstChase>();
+        }
+        else
+            _counter++;
     }
 }

@@ -11,6 +11,7 @@ public class OctopusBurstMove : FishState
     public override void Initialize()
     {
         _octo = (Octopus)fish;
+        _octo.Body.angularVelocity = Vector3.zero;
     }
 
     public override void Step()

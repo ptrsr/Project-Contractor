@@ -14,6 +14,7 @@ public class OctopusSleep : FishState
     {
         _octo = (Octopus)fish;
         _octo.Body.isKinematic = false;
+        _octo.Body.mass = 2000;
         _octo.AwakeCounter = 0;
     }
 

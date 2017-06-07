@@ -10,6 +10,7 @@ public class FishEnemy : Fish
     public float ChaseSpeed { get { return _chaseSpeed; } }
 
     [SerializeField]
+    [Tooltip("Default detection range")]
     private float _range = 10f;
     public float Range { get { return _range; } }
     
