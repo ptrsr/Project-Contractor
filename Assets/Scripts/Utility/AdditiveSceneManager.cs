@@ -27,6 +27,10 @@ public class AdditiveSceneManager : MonoBehaviour {
         {
             names.Add(_doors[i].name);
         }
+        for(int i = 0; i < _sceneNames.Length; i++)
+        {
+            LoadSceneToMain(_sceneNames[i]);
+        }
         
 
 
@@ -87,11 +91,15 @@ public class AdditiveSceneManager : MonoBehaviour {
     public void LoadScene(int buildindex)
     {
         gameObjs = GetRootObjectsOfScene(_sceneNames[buildindex]);
+        GameObject door = FindDoorWithName(name);
+        if(door != null) { door.SetActive(false); }
         _load = true;
     }
     public void UnloadScene(int buildindex)
     {
         gameObjs = GetRootObjectsOfScene(_sceneNames[buildindex]);
+        GameObject door = FindDoorWithName(name);
+        if (door != null) { door.SetActive(true); }
         _unload = true;
     }
     
@@ -119,8 +127,6 @@ public class AdditiveSceneManager : MonoBehaviour {
 
     public void LoadSceneToMain(string name)
     {
-        GameObject door = FindDoorWithName(name);
-        if(door != null) { door.SetActive(false); }
         SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
     }
     public void RemoveSceneFromMain(string name)
