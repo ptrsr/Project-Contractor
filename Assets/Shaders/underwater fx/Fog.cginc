@@ -27,4 +27,8 @@ float fogBlend (float eyeDepth) {
 	return diff;
 }
 
+//float fogBlend (float linearDepth) {
+//	return pow(linearDepth, _fogFallOff);
+//}
+
 #endif

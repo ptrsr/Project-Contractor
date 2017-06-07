@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 #region values
-
 [System.Serializable]
 public class Sonar {
 	public int maxPulses = 10;
@@ -57,7 +56,7 @@ public class UnderwaterFX : MonoBehaviour {
 	private float _depth;
 
 	void Start() {
-		_light = GameObject.Find ("Directional Light");
+		_light = GameObject.Find ("Directional light");
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
