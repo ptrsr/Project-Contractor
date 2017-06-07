@@ -17,7 +17,7 @@ public class sonarHighlight : MonoBehaviour {
 		sonarCam.depthTextureMode = DepthTextureMode.Depth;
 		scene = new RenderTexture (sonarCam.pixelWidth, sonarCam.pixelHeight, 16, RenderTextureFormat.Depth);
 
-		mat = mainCam.GetComponent<UnderwaterFX> ()._mat;
+		mat = mainCam.GetComponent<underwaterFX> ()._mat;
 	}
 
 	void Update () {

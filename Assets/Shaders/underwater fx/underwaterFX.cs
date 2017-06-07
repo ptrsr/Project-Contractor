@@ -32,7 +32,7 @@ class Caustics {
 }
 #endregion
 
-public class UnderwaterFX : MonoBehaviour {
+public class underwaterFX : MonoBehaviour {
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
