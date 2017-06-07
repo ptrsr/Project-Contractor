@@ -39,7 +39,7 @@ public class KeyPickup : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (_pickedUp && !_keyManager.Open)
         {
             transform.position = Vector3.Lerp(transform.position, _chaseTarget.position, 0.1f);

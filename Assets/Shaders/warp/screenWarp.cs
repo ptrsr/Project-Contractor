@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class warp : MonoBehaviour {
+public class screenWarp : MonoBehaviour {
 
 	public Material mat;
 

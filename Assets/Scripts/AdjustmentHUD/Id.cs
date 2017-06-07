@@ -34,6 +34,7 @@ public class Id : MonoBehaviour {
 
     private void IncreaseValues()
     {
+        Debug.Log("increase");
         ChangeValue(true);
     }
 

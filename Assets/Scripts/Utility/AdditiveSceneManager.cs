@@ -19,7 +19,6 @@ public class AdditiveSceneManager : MonoBehaviour {
     private int _numberOfObjects = 0;
     private bool _load = false;
     private bool _unload = false;
-    Thread thread;
     GameObject[] gameObjs;
 
 
@@ -28,9 +27,10 @@ public class AdditiveSceneManager : MonoBehaviour {
         {
             names.Add(_doors[i].name);
         }
-        LoadSceneToMain(_sceneNames[_buildIndex]);
-        //thread = new Thread(Cut);
-        //thread.Start();
+        for(int i = 0; i < _sceneNames.Length; i++)
+        {
+            LoadSceneToMain(_sceneNames[i]);
+        }
         
 
 
@@ -51,7 +51,7 @@ public class AdditiveSceneManager : MonoBehaviour {
         if (_load){
             
             _numberOfObjects = gameObjs.Length;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 gameObjs[_counter].SetActive(true);
                 if (_counter >= _numberOfObjects - 1)
@@ -86,29 +86,23 @@ public class AdditiveSceneManager : MonoBehaviour {
 
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.L)){
-            if (!_unload)
-            {
-                ChangeScene();
-                _load = true;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            if(!_load)
-            {
-                ChangeScene();
-                _unload = true;
-            }
-        }
-
     }
 
-    private void ChangeScene()
+    public void LoadScene(int buildindex)
     {
-        gameObjs = GetRootObjectsOfScene(_sceneNames[_buildIndex]);
+        gameObjs = GetRootObjectsOfScene(_sceneNames[buildindex]);
+        GameObject door = FindDoorWithName(name);
+        if(door != null) { door.SetActive(false); }
+        _load = true;
     }
+    public void UnloadScene(int buildindex)
+    {
+        gameObjs = GetRootObjectsOfScene(_sceneNames[buildindex]);
+        GameObject door = FindDoorWithName(name);
+        if (door != null) { door.SetActive(true); }
+        _unload = true;
+    }
+    
     
 
     private GameObject FindDoorWithName(string name)
@@ -133,8 +127,6 @@ public class AdditiveSceneManager : MonoBehaviour {
 
     public void LoadSceneToMain(string name)
     {
-        GameObject door = FindDoorWithName(name);
-        if(door != null) { door.SetActive(false); }
         SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
     }
     public void RemoveSceneFromMain(string name)
