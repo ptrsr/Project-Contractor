@@ -13,7 +13,7 @@ public class D3b0g : MonoBehaviour
     private Fish _current;
     private MeshRenderer[] _tempRenderers = null;
     private List<Color> _tempColors = new List<Color>();
-    private LineRenderer _circle;
+    private List<LineRenderer> _circles = new List<LineRenderer>();
 
     public void Start()
     {
@@ -72,7 +72,8 @@ public class D3b0g : MonoBehaviour
         if (_current is Shark)
         {
             Shark shark = (Shark)_current;
-            Transform nearest = shark.GetNearestWayPoint();
+            Transform nearest = shark.GetNearestWayPointTo(shark.transform);
+            Transform nearTarget = shark.GetNearestWayPointTo(shark.Target);
             _text.text = string.Format(
                 "State: {0}\n" +
                 "Range: {1}\n" +
@@ -94,7 +95,8 @@ public class D3b0g : MonoBehaviour
                 Vector3.Distance(shark.Target.position, nearest.position),
                 shark.WayId,
                 shark.DetectTarget());
-            AddCircle(shark.gameObject, shark.transform.position, shark.Range);
+            AddCircle(shark.gameObject, shark.transform.position, shark.ViewRange);
+            AddCircle(nearTarget.gameObject, nearTarget.position, shark.Range, 1);
             if (shark.DetectTarget()) AddDetectionLine(shark.transform, shark.Target);
         }
         else if (_current is Octopus)
@@ -174,7 +176,7 @@ public class D3b0g : MonoBehaviour
         _text.text = "";
         _current = null;
 
-        RemoveCircle();
+        RemoveCircles();
 
         if (_tempRenderers == null)
             return;
@@ -199,22 +201,25 @@ public class D3b0g : MonoBehaviour
         }
     }
 
-    private void AddCircle(GameObject obj, Vector3 center, float radius)
+    private void AddCircle(GameObject obj, Vector3 center, float radius, int id = 0)
     {
         float scale = 0.1f;
         int size = (int)((2f * Mathf.PI) / scale) + 2;
 
+        if (id < _circles.Count && _circles[id].gameObject != obj)
+            RemoveCircle(id);
         if (!obj.GetComponent<LineRenderer>())
         {
-            _circle = obj.AddComponent<LineRenderer>();
-            _circle.material = new Material(Shader.Find("Particles/Additive"));
-            _circle.startColor = Color.red;
-            _circle.endColor = Color.red;
-            _circle.startWidth = 1f;
-            _circle.endWidth = 1f;
+            LineRenderer circle = obj.AddComponent<LineRenderer>();
+            circle.material = new Material(Shader.Find("Particles/Additive"));
+            circle.startColor = Color.red;
+            circle.endColor = Color.red;
+            circle.startWidth = 1f;
+            circle.endWidth = 1f;
+            _circles.Add(circle);
         }
 
-        _circle.positionCount = size;
+        _circles[id].positionCount = size;
 
         int i = 0;
         for (float c = 0; c < 2 * Mathf.PI; c += 0.1f)
@@ -223,21 +228,33 @@ public class D3b0g : MonoBehaviour
             float y = radius * Mathf.Sin(c);
 
             Vector3 pos = new Vector3(center.x + x, center.y + y, center.z);
-            _circle.SetPosition(i, pos);
+            _circles[id].SetPosition(i, pos);
             i++;
         }
-        _circle.SetPosition(i, _circle.GetPosition(0));
+        _circles[id].SetPosition(i, _circles[id].GetPosition(0));
     }
 
-    private void AddDetectionLine(Transform obj, Transform target)
+    private void AddDetectionLine(Transform obj, Transform target, int id = 0)
     {
-        _circle.positionCount += 2;
-        _circle.SetPosition(_circle.positionCount - 2, obj.transform.position);
-        _circle.SetPosition(_circle.positionCount - 1, target.transform.position);
+        _circles[id].positionCount += 2;
+        _circles[id].SetPosition(_circles[id].positionCount - 2, obj.transform.position);
+        _circles[id].SetPosition(_circles[id].positionCount - 1, target.transform.position);
     }
 
-    private void RemoveCircle()
+    private void RemoveCircles()
     {
-        Destroy(_circle);
+        foreach (LineRenderer circle in _circles)
+        {
+            _circles.Remove(circle);
+            Destroy(circle);
+        }
+    }
+
+    private void RemoveCircle(int id)
+    {
+        LineRenderer circle = _circles[id];
+        _circles.RemoveAt(id);
+        Destroy(circle);
+
     }
 }

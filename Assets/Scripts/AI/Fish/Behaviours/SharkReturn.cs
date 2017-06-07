@@ -22,7 +22,7 @@ public class SharkReturn : FishState
 
     private void FindWayPoint()
     {
-        Transform point = _shark.GetNearestWayPoint();
+        Transform point = _shark.GetNearestWayPointTo(_shark.transform);
         int id = _shark.GetWayPointId(point);
         int startId = _shark.GetWayPointId(point);
 

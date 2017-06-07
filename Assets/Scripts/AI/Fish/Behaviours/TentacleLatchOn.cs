@@ -18,6 +18,9 @@ public class TentacleLatchOn : FishState
         
         _spreadCounter = 0;
         _grabCounter = 0;
+
+        //Temp disable Octo collider to prevent odd behaviours
+        _tentacles.Octo.Collider.enabled = false;
     }
 
     public override void Step()
@@ -35,6 +38,9 @@ public class TentacleLatchOn : FishState
         }
         else
         {
+            //Re-enable Octo collider for proper behaviours
+            _tentacles.Octo.Collider.enabled = true;
+
             //Position on the opposide of the player normal
             Vector3 pos = _tentacles.Octo.Target.position - (_tentacles.Octo.TargetNormal * _tentacles.Octo.LatchOnOffset);
 

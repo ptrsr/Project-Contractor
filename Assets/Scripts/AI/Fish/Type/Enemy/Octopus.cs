@@ -26,6 +26,10 @@ public class Octopus : FishEnemy
     public float LatchOnOffset { get { return _latchOnOffset; } }
 
     [SerializeField]
+    private int _latchOffDelay = 25;
+    public int LatchOffDelay { get { return _latchOffDelay; } }
+
+    [SerializeField]
     [Tooltip("The time the Octopus stays on a rock before finding a new one")]
     private int _restTime = 500;
     public int RestTime { get { return _restTime; } }
@@ -80,13 +84,31 @@ public class Octopus : FishEnemy
         SetState<OctopusFindRock>();
     }
 
+    public override void FixedUpdate()
+    {
+        BindZ();
+
+        base.FixedUpdate();
+    }
+
     public void OnTriggerEnter(Collider c)
     {
+        //Slowly count up to make it aware
         if (c.tag == "Pulse")
         {
             Debug.DrawLine(transform.position, Target.position, Color.red, 1f);
             if (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && Vector3.Distance(OriginPos, Target.position) < Range)
                 _awakeCounter++;
+        }
+    }
+
+    public void OnCollisionEnter(Collision c)
+    {
+        //Instantly wake when the player collides
+        if (c.transform == Target)
+        {
+            IsChasing = true;
+            SetState<OctopusBurstChase>();
         }
     }
 
