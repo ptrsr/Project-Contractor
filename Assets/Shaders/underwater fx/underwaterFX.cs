@@ -5,7 +5,8 @@ using Singleton;
 
 #region values
 [System.Serializable]
-class Sonar {
+class Sonar
+{
 	public int maxPulses = 5;
 	public float interval = 1;
 	public float width = 2;
@@ -14,7 +15,8 @@ class Sonar {
 	public bool active = false;
 }
 [System.Serializable]
-class Fog {
+class Fog
+{
     [Range(0f, 10f)]
     public float fallOff = 10;
 	public Color startColor, endColor;
@@ -22,11 +24,24 @@ class Fog {
 	public float maxDepth;
 }
 [System.Serializable]
-class Caustics {
+class Caustics
+{
 	public Color causticsColor;
 	[Range(0f,50f)]
 	public float size, intensity = 20;
 	public float causticsDepth = -150;
+}
+
+[System.Serializable]
+public class Vignette
+{
+    [Range(0, 2)]
+    public float range = 0.5f;
+
+    [Range(0, 1)]
+    public float
+        width = 0,
+        intensity = 1;
 }
 #endregion
 
@@ -43,6 +58,8 @@ public class underwaterFX : MonoBehaviour
 
 	[SerializeField]
 	private Caustics _caustics = new Caustics();
+
+    public Vignette _vignette = new Vignette();
 
     [SerializeField]
     Light _sceneLight;
@@ -71,7 +88,8 @@ public class underwaterFX : MonoBehaviour
 
 	}
 
-	void Update () {
+	void Update ()
+    {
 		PassiveSonar ();
 		PulseActivate ();
 		PulseControl ();
@@ -167,6 +185,11 @@ public class underwaterFX : MonoBehaviour
         _mat.SetInt("_pulselength", _sonar.maxPulses);
         _mat.SetFloatArray("_pulses", _pulses);
         _mat.SetVectorArray("_originarray", _origins);
+
+        //vignette
+        _mat.SetFloat("_vignetteRange", _vignette.range);
+        _mat.SetFloat("_vignetteWidth", _vignette.width);
+        _mat.SetFloat("_vignetteIntensity", _vignette.intensity);
     }
 
 	[ImageEffectOpaque]

@@ -3,33 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class SubMovement : MonoBehaviour {
+public class SubMovement : MonoBehaviour
+{
 
     private Rigidbody _rigidBody;
-    private Oxygen _oxygen;
-    private Camera _camera;
     private Vector3 _startPosition;
 
 
     //-----------------------------------Movement speed variables------------------------------
-    [SerializeField]
-    private int _dragSpeed = 10;
-    [SerializeField]
-    private int _maxSpeed = 4;
-    [SerializeField]
-    private int _distanceForMaxSpeed = 20;
-    [SerializeField]
-    private int _chargeSpeed = 50;
+    private int 
+        _dragSpeed = 10,
+        _maxSpeed = 4,
+        _distanceForMaxSpeed = 20,
+        _chargeSpeed = 50;
     
-
-
     //----------------------------------Checks for submarine states----------------------------
-    private bool _tapping = false;
-    private bool _charged = false;
-    private bool _slowed = false;
-    private bool _stunned = false;
-    private bool _frozen = false;
-
+    private bool 
+        _tapping = false,
+        _charged = false,
+        _slowed = false,
+        _stunned = false,
+        _frozen = false;
 
     //---------------------------------Charging data--------------------------------------------
     private float _lastTap;
@@ -44,15 +38,9 @@ public class SubMovement : MonoBehaviour {
     private int _counter = 0;
     private int _stunSlowCounter = 0;
 
-    private ParticleSystem _particles;
-
-
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
-        _oxygen = FindObjectOfType<Oxygen>();
-        _camera = Camera.main;
         _startPosition = transform.position;
-        _particles = GetComponentInChildren<ParticleSystem>();
         //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
         //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         _lastTap = 0;
@@ -62,7 +50,6 @@ public class SubMovement : MonoBehaviour {
 	void FixedUpdate ()
     {
         if (_frozen) return;
-        _oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         //return only if stunned
@@ -88,7 +75,8 @@ public class SubMovement : MonoBehaviour {
                     Vector3 dir = pos - transform.position;
                     _rigidBody.AddForce(dir.normalized * _chargeSpeed, ForceMode.VelocityChange);
                 }
-                _counter++; }
+                _counter++;
+            }
             return;
         }
         //check for double taps
@@ -97,9 +85,8 @@ public class SubMovement : MonoBehaviour {
             float clickTime = Time.time - _lastTap;
 
             if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
-            {
                 _charged = true;
-            }
+            
             _lastTap = Time.time;
         }
         //Movement through dragging
@@ -114,15 +101,15 @@ public class SubMovement : MonoBehaviour {
 
             //adding force based on direction and distance from mouse
             float speed = 0;
+
             if (distance > _distanceForMaxSpeed)
-            {
                 speed = _maxSpeed;
-            }
-            else { speed = distance / _dragSpeed; }
+            else
+                speed = distance / _dragSpeed;
+
             if (_slowed)
-            {
                 speed /= 2;
-            }
+
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
         }
         
@@ -143,30 +130,6 @@ public class SubMovement : MonoBehaviour {
         Quaternion quat = new Quaternion();
         quat.eulerAngles = vec3;
         return quat;
-    }
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.tag == "Oxygen")
-        {
-           OxygenValue value = other.gameObject.GetComponent<OxygenValue>();
-            _oxygen.Add(value.OxygenVal());
-            other.gameObject.SetActive(false);
-        }
-       
-    }
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag == "Wall")
-        {
-            _oxygen.Remove(_oxygenLossOnHit);
-            _particles.Play();
-        }
-        if (other.gameObject.tag == "Shark")
-        {
-            _oxygen.Remove(_oxygenLossOnHit);
-        }
     }
 
     //Using a position provided at start to move the submarine to surface
@@ -194,13 +157,10 @@ public class SubMovement : MonoBehaviour {
     private int StunSlowDelay(int frames, int counter = 0)
     {
         if(counter >= frames)
-        {
             _stunned = false;
-        }
         else
-        {
             counter++;
-        }
+
         return counter;
     }
 

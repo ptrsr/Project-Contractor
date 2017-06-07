@@ -20,6 +20,7 @@
 			#include "Caustics_CG.cginc"
 			#include "Fog_CG.cginc"
 			#include "Sonar_CG.cginc"
+			#include "Vignette_CG.cginc"
 
 			struct appdata
 			{
@@ -85,9 +86,10 @@
 				float fogDiff = fogBlend(linearDepth);
 
 				//final output blending
-				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
-				scene = scene + pulseCol + pulseEdge;
+				scene += caustics;
+				scene += pulseCol + pulseEdge;
+				scene += Vignette(i.uv);
 
 				return scene;
 			}
