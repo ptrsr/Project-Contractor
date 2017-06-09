@@ -24,6 +24,7 @@ public class OctopusBurstIdle : FishState
         //Idle time
         if (_count < (_octo.IsChasing ? fish.IdleTime / _octo.IdleIntervalChange : fish.IdleTime))
         {
+            _octo.Body.AddForce(-_octo.Direction / 1.2f);
             _count++;
         }
         else

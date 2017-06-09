@@ -137,7 +137,7 @@ public class Octopus : FishEnemy
     {
         //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
-        lookRot.eulerAngles -= new Vector3(0f, 0f, 0f);
+        lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
         return lookRot;
     }
 
