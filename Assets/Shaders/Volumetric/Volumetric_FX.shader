@@ -234,7 +234,8 @@
 					float litDistance = pow(1 - (distance(nearPlanePos, i.uv) / distance(nearPlanePos, farPlanePos)), _litDistance);
 					float litAngle = pow(dot(float2(1, 0), normalize(i.uv)), _litAngle);
 
-					return pow(litDistance * litAngle, _fallOff);
+					float lit = pow(litDistance * litAngle, _fallOff);
+					return fixed4(1, 1, 1, lit);
 				}
 				else
 					return 0;

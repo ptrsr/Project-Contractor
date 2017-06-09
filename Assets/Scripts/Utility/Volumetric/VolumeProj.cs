@@ -63,7 +63,6 @@ public class VolumeProj : Volumetric
     public override void Render(ref RenderTexture src)
     {
         base.Render(ref src);
-
         _mat.SetPass(3);
 
         Vector3 pos = transform.position;

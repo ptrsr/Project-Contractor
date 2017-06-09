@@ -26,10 +26,9 @@ public abstract class Volumetric : MonoBehaviour
 
     }
 
-    void OnValidate()
+    protected virtual void OnValidate()
     {
         applySettings(GetComponent<Camera>());
-        CreateTextures();
     }
 
     abstract protected void CreateTextures();

@@ -17,6 +17,12 @@ public class VolumeOrtho : Volumetric
         _layers = 1,
         _blurLayers = 1;
 
+    override protected void OnValidate()
+    {
+        base.OnValidate();
+        CreateTextures();
+    }
+
     protected override void CreateTextures()
     {
         if (_pingPong != null)

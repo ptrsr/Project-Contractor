@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 #region values
 [System.Serializable]
@@ -156,6 +157,9 @@ public class underwaterFX : MonoBehaviour {
 	void OnRenderImage (RenderTexture src, RenderTexture dst){
 		updateShader ();
 		RaycastCornerBlit (src, dst, _mat);
+
+        foreach (var volume in Volumes.Get())
+            volume.Render(ref dst);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
