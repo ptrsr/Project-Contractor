@@ -155,9 +155,10 @@ public class SubMovement : MonoBehaviour {
     {
         if(other.gameObject.tag == "Oxygen")
         {
-           OxygenValue value = other.gameObject.GetComponent<OxygenValue>();
-            _oxygen.Add(value.OxygenVal());
-            other.gameObject.SetActive(false);
+           OxygenCrack value = other.gameObject.GetComponent<OxygenCrack>();
+            _oxygen.Refill();
+            value.PickUp();
+
         }
        
     }
