@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SubMovement : MonoBehaviour {
@@ -61,6 +62,10 @@ public class SubMovement : MonoBehaviour {
 
 	void FixedUpdate ()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
+        }
         if (_frozen) return;
         _oxygen.Remove(1);
         //keeps the player on the correct plane
