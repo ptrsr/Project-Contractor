@@ -40,14 +40,6 @@ public class Tentacles : Fish
         SetState<TentacleFollow>();
     }
 
-    public override void FixedUpdate()
-    {
-        foreach (Rigidbody body in _tentacleTips)
-        {
-            body.AddForce(Vector3.left * MoveSpeed);
-        }
-    }
-
     public void SetCollidersActive(bool value)
     {
         Collider[] cols = GetComponentsInChildren<SphereCollider>();
@@ -74,6 +66,20 @@ public class Tentacles : Fish
 
     public void SetKinematic(bool value, int id)
     {
+        if (_tentacleTips[id].isKinematic)
+            return;
+
         _tentacleTips[id].isKinematic = value;
+
+        SetKinematic(value, _tentacleTips[id].transform.parent, 0);
+    }
+
+    private void SetKinematic(bool value, Transform parent, int counter)
+    {
+        if (counter == 6)
+            return;
+
+        parent.GetComponent<Rigidbody>().isKinematic = true;
+        SetKinematic(value, parent.parent, counter + 1);
     }
 }

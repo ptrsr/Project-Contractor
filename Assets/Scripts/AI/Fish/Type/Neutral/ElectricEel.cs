@@ -84,8 +84,12 @@ public class ElectricEel : FishNeutral
             return;
 
         //Stun player
-        Target.GetComponent<SubMovement>().StunPlayer();
-        
+        SubMovement sub = Target.GetComponent<SubMovement>();
+        sub.StunSlowCooldown = 40;
+        sub.StunPlayer();
+
+        OxygenVals.Remove(OxygenDrain);
+
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
         SetState<EelReturnToHole>();
     }

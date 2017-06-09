@@ -28,7 +28,14 @@ public class FishEnemy : Fish
     [SerializeField]
     private int _wallDetectionRange = 4;
     public int WallDetectionRange { get { return _wallDetectionRange; } }
-    
+
+    [SerializeField]
+    private int _oxygenDrain = 250;
+    public int OxygenDrain { get { return _oxygenDrain; } }
+
+    private Oxygen _oxygen;
+    public Oxygen OxygenVals { get { return _oxygen; } }
+
     //Ignores the player for wall detections
     private int _ignoreDetection = (1 << 8);
     public int IgnoreDetection { get { return _ignoreDetection; } }
@@ -37,6 +44,7 @@ public class FishEnemy : Fish
     {
         base.Start();
 
+        _oxygen = FindObjectOfType<Oxygen>();
         _target = FindObjectOfType<SubMovement>().transform;
         _targetBody = _target.GetComponent<Rigidbody>();
     }

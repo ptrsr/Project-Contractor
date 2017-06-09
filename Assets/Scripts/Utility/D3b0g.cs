@@ -265,9 +265,10 @@ public class D3b0g : MonoBehaviour
     {
         foreach (LineRenderer circle in _circles)
         {
-            _circles.Remove(circle);
             Destroy(circle);
         }
+
+        _circles.Clear();
     }
 
     private void RemoveCircle(int id)

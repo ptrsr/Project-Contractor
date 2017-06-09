@@ -24,6 +24,13 @@ public class FishNeutral : Fish
     private float _difficulty = 5;
     public float Difficulty { get { return _difficulty; } }
 
+    [SerializeField]
+    private int _oxygenDrain = 250;
+    public int OxygenDrain { get { return _oxygenDrain; } }
+
+    private Oxygen _oxygen;
+    public Oxygen OxygenVals { get { return _oxygen; } }
+
     //Ignores the player for wall detection
     private LayerMask _ignoreDetection = (1 << 8);
     public LayerMask IgnoreDetection { get { return _ignoreDetection; } }
@@ -32,6 +39,7 @@ public class FishNeutral : Fish
     {
         base.Start();
 
+        _oxygen = FindObjectOfType<Oxygen>();
         target = FindObjectOfType<SubMovement>().transform;
         targetBody = target.GetComponent<Rigidbody>();
     }

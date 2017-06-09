@@ -64,7 +64,7 @@ public class Octopus : FishEnemy
     public override void Start()
     {
         base.Start();
-
+        
         _collider = GetComponent<Collider>();
         _rockPos = origPos;
         _attackCounter = _attackCooldown;
@@ -137,7 +137,7 @@ public class Octopus : FishEnemy
     {
         //Proper rotation for the model
         Quaternion lookRot = base.GetLookRotation(direction);
-        lookRot.eulerAngles -= new Vector3(180f, 0f, 180f);
+        lookRot.eulerAngles -= new Vector3(0f, 0f, 0f);
         return lookRot;
     }
 
