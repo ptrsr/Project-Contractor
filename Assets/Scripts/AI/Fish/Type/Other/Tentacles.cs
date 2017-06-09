@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tentacles : Fish
@@ -39,9 +40,17 @@ public class Tentacles : Fish
         SetState<TentacleFollow>();
     }
 
+    public override void FixedUpdate()
+    {
+        foreach (Rigidbody body in _tentacleTips)
+        {
+            body.AddForce(Vector3.left * MoveSpeed);
+        }
+    }
+
     public void SetCollidersActive(bool value)
     {
-        Collider[] cols = GetComponentsInChildren<CapsuleCollider>();
+        Collider[] cols = GetComponentsInChildren<SphereCollider>();
         foreach (Collider col in cols)
         {
             col.enabled = value;
@@ -50,10 +59,17 @@ public class Tentacles : Fish
 
     public void SetKinematic(bool value)
     {
-        foreach (Rigidbody tentacle in _tentacleTips)
+        List<Rigidbody> bodies = GetComponentsInChildren<Rigidbody>().ToList();
+        bodies.RemoveRange(0, 2);
+
+        foreach (Rigidbody body in bodies)
         {
-            tentacle.isKinematic = value;
+            body.isKinematic = value;
         }
+        //foreach (Rigidbody tentacle in _tentacleTips)
+        //{
+        //    tentacle.isKinematic = value;
+        //}
     }
 
     public void SetKinematic(bool value, int id)

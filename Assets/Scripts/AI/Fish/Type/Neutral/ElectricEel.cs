@@ -29,8 +29,17 @@ public class ElectricEel : FishNeutral
     [SerializeField]
     private float _knockbackStrength = 100f;
 
+    private Vector3 _holeDir;
+    public Vector3 HoleDir { get { return _holeDir; } }
+
     private Collider _collider;
     public Collider Collider { get { return _collider; } }
+
+    private RigidbodyConstraints _xCons = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+    public RigidbodyConstraints XCons { get { return _xCons; } }
+
+    private RigidbodyConstraints _yCons = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+    public RigidbodyConstraints YCons { get { return _yCons; } }
 
     public override void Start()
     {
@@ -44,6 +53,14 @@ public class ElectricEel : FishNeutral
         target = FindObjectOfType<SubMovement>().transform;
         targetBody = target.GetComponent<Rigidbody>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
+        _holeDir = _holeExit.position - AnchorOrigPos;
+
+        _holeDir = new Vector3(_holeDir.x < 0 ? -_holeDir.x : _holeDir.x, _holeDir.y < 0 ? -_holeDir.y : _holeDir.y, 0);
+
+        if (_holeDir.x > _holeDir.y)
+            AnchorBody.constraints = _xCons;
+        else if (_holeDir.y > _holeDir.x)
+            AnchorBody.constraints = _yCons;
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
 
@@ -68,7 +85,7 @@ public class ElectricEel : FishNeutral
 
         //Stun player
         Target.GetComponent<SubMovement>().StunPlayer();
-
+        
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
         SetState<EelReturnToHole>();
     }

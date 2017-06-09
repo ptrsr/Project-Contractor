@@ -16,7 +16,7 @@ public class EelCharge : FishState
     public override void Step()
     {
         //Move anchor to hole exit
-        if (Vector3.Distance(_eel.HoleExit.position, _eel.Anchor.position) > 0)
+        if (Vector3.Distance(_eel.HoleExit.position, _eel.Anchor.position) > 3)
         {
             Vector3 dir = (_eel.HoleExit.position - _eel.Anchor.position).normalized * _eel.ChargeSpeed;
             _eel.AnchorBody.AddForce(dir);
