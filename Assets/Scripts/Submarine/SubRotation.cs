@@ -17,7 +17,7 @@ public class SubRotation : MonoBehaviour {
         _sub = GetComponent<SubMovement>();
 	}
 	
-	// Update is called once per frame
+
 	void Update () {
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
@@ -30,7 +30,6 @@ public class SubRotation : MonoBehaviour {
             Quaternion newRot = new Quaternion();
             newRot.eulerAngles = (new Vector3(dir.y, -dir.x, 0));
             transform.rotation = Quaternion.Slerp(transform.rotation,newRot,rotationSpeed * Time.deltaTime);
-
         }
         else
         {
