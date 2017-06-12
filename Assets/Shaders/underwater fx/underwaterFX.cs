@@ -19,10 +19,16 @@ public class Sonar {
 }
 [System.Serializable]
 class Fog {
+	[Range(0,500)]
 	public float fogRange = 400f;
 	public Color startColor, endColor;
 	public float _surface = 100f;
 	public float _maxDepth = -200f;
+
+	[Range(0,1)]
+	public float _intensity = 0;
+	[Range(1,10)]
+	public float _curveShift = 0;
 }
 [System.Serializable]
 class Caustics {
@@ -64,6 +70,9 @@ public class underwaterFX : MonoBehaviour {
 		aPulse = new float[_sonar.maxPulses];
 		aOrigin = new Vector4[_sonar.maxPulses];
 		SetupPulses ();
+
+		// camera values
+//		_mat.SetFloat("_cameraFar", _cam.farClipPlane);
 	}
 
 	void Update () {
@@ -145,6 +154,10 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloat("surface", _fog._surface);
 		_mat.SetFloat("_fogDepth", _fog._maxDepth);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+
+		_mat.SetFloat ("_intensity", _fog._intensity);
+		_mat.SetFloat ("_curve", _fog._curveShift);
+	
 
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);

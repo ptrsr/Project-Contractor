@@ -59,7 +59,6 @@
 				float linearDepth;
 				float3 viewNormal;
 				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
-				float eyeDepth = linearDepth * 1000;
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
@@ -83,7 +82,7 @@
 				
 				// fog color
 				half4 fog = fogColor(worldPos);
-				float fogDiff = fogBlend(eyeDepth);
+				float fogDiff = fogBlend(linearDepth);
 
 				//final output blending
 				scene += caustics;
