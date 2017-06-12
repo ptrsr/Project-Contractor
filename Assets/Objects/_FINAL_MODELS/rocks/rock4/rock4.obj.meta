@@ -7,11 +7,16 @@ ModelImporter:
   fileIDToRecycleName:
     100000: rock4
     100002: //RootNode
+    100004: Group1
     400000: rock4
     400002: //RootNode
+    400004: Group1
     2300000: rock4
+    2300002: Group1
     3300000: rock4
+    3300002: Group1
     4300000: rock4
+    4300002: Group1
   materials:
     importMaterials: 1
     materialName: 0
