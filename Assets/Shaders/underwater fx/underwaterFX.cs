@@ -48,7 +48,7 @@ public class underwaterFX : MonoBehaviour {
 	public Material _mat; 
 	public Transform _origin;
 	private Camera _cam;
-	private GameObject _light;
+	private Light _light;
 
 	private float[] aPulse;
 	private bool[] activepulse;
@@ -57,7 +57,7 @@ public class underwaterFX : MonoBehaviour {
 	private float _depth;
 
 	void Start() {
-		_light = GameObject.Find ("Directional light");
+		_light = GameObject.Find ("Directional light").GetComponent<Light>();
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
@@ -82,7 +82,28 @@ public class underwaterFX : MonoBehaviour {
 
     void lightUpdate() {
         float intensity = 1 - calculateWorldDepth();
-        _light.GetComponent<Light>().intensity = intensity;
+
+        Vector2 worldPos = new Vector2(_origin.position.x, _origin.position.y);
+
+        foreach (var zone in DarkZones.Get())
+        {
+            Vector2 zonePos = new Vector2(zone.Position.x, zone.Position.y);
+            float dist = Vector2.Distance(worldPos, zonePos);
+
+            if (dist > zone.CloseRadius + zone.FarRadius)
+                continue;
+
+            if (dist < zone.CloseRadius)
+                intensity *= zone.Color.grayscale;
+            else
+                intensity *= Mathf.Abs((zone.CloseRadius - dist) / zone.FarRadius);
+            
+            break;
+        }
+
+        _light.intensity = intensity;
+
+
     }
 
 	void SetupPulses () {
@@ -144,7 +165,13 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloat ("_fogEnd", _fog.fogRange);
 		_mat.SetFloat("surface", _fog._surface);
 		_mat.SetFloat("_fogDepth", _fog._maxDepth);
-		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
+
+        _mat.SetFloat("_darkZones", DarkZones.Get().Count);
+        _mat.SetVectorArray("_darkPositions", DarkZones.Positions());
+        _mat.SetFloatArray("_darkCloseRadius", DarkZones.CloseRadius());
+        _mat.SetFloatArray("_darkFarRadius", DarkZones.FarRadius());
+
+        _mat.SetVectorArray("_darkColors", DarkZones.Colors());
 
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);
