@@ -1,0 +1,202 @@
+fileFormatVersion: 2
+guid: 9a4000fc77c14b447abe14d322e21aa5
+timeCreated: 1497258041
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Center
+    100002: Head
+    100004: Head_Nub
+    100006: L_Back_1
+    100008: L_Back_2
+    100010: L_Back_3
+    100012: L_Back_4
+    100014: L_Back_5
+    100016: L_Back_6
+    100018: L_Back_Nub
+    100020: L_BackCenter_1
+    100022: L_BackCenter_2
+    100024: L_BackCenter_3
+    100026: L_BackCenter_4
+    100028: L_BackCenter_5
+    100030: L_BackCenter_6
+    100032: L_BackCenter_Nub
+    100034: L_Front_1
+    100036: L_Front_2
+    100038: L_Front_3
+    100040: L_Front_4
+    100042: L_Front_5
+    100044: L_Front_6
+    100046: L_Front_Nub
+    100048: L_FrontCenter_1
+    100050: L_FrontCenter_2
+    100052: L_FrontCenter_3
+    100054: L_FrontCenter_4
+    100056: L_FrontCenter_5
+    100058: L_FrontCenter_6
+    100060: L_FrontCenter_Nub
+    100062: NEW_squid:Group28054
+    100064: //RootNode
+    100066: R_Back_1
+    100068: R_Back_2
+    100070: R_Back_3
+    100072: R_Back_4
+    100074: R_Back_5
+    100076: R_Back_6
+    100078: R_Back_Nub
+    100080: R_BackCenter_1
+    100082: R_BackCenter_2
+    100084: R_BackCenter_3
+    100086: R_BackCenter_4
+    100088: R_BackCenter_5
+    100090: R_BackCenter_6
+    100092: R_BackCenter_Nub
+    100094: R_Front_1
+    100096: R_Front_2
+    100098: R_Front_3
+    100100: R_Front_4
+    100102: R_Front_5
+    100104: R_Front_6
+    100106: R_Front_Nub
+    100108: R_FrontCenter_1
+    100110: R_FrontCenter_2
+    100112: R_FrontCenter_3
+    100114: R_FrontCenter_4
+    100116: R_FrontCenter_5
+    100118: R_FrontCenter_6
+    100120: R_FrontCenter_Nub
+    400000: Center
+    400002: Head
+    400004: Head_Nub
+    400006: L_Back_1
+    400008: L_Back_2
+    400010: L_Back_3
+    400012: L_Back_4
+    400014: L_Back_5
+    400016: L_Back_6
+    400018: L_Back_Nub
+    400020: L_BackCenter_1
+    400022: L_BackCenter_2
+    400024: L_BackCenter_3
+    400026: L_BackCenter_4
+    400028: L_BackCenter_5
+    400030: L_BackCenter_6
+    400032: L_BackCenter_Nub
+    400034: L_Front_1
+    400036: L_Front_2
+    400038: L_Front_3
+    400040: L_Front_4
+    400042: L_Front_5
+    400044: L_Front_6
+    400046: L_Front_Nub
+    400048: L_FrontCenter_1
+    400050: L_FrontCenter_2
+    400052: L_FrontCenter_3
+    400054: L_FrontCenter_4
+    400056: L_FrontCenter_5
+    400058: L_FrontCenter_6
+    400060: L_FrontCenter_Nub
+    400062: NEW_squid:Group28054
+    400064: //RootNode
+    400066: R_Back_1
+    400068: R_Back_2
+    400070: R_Back_3
+    400072: R_Back_4
+    400074: R_Back_5
+    400076: R_Back_6
+    400078: R_Back_Nub
+    400080: R_BackCenter_1
+    400082: R_BackCenter_2
+    400084: R_BackCenter_3
+    400086: R_BackCenter_4
+    400088: R_BackCenter_5
+    400090: R_BackCenter_6
+    400092: R_BackCenter_Nub
+    400094: R_Front_1
+    400096: R_Front_2
+    400098: R_Front_3
+    400100: R_Front_4
+    400102: R_Front_5
+    400104: R_Front_6
+    400106: R_Front_Nub
+    400108: R_FrontCenter_1
+    400110: R_FrontCenter_2
+    400112: R_FrontCenter_3
+    400114: R_FrontCenter_4
+    400116: R_FrontCenter_5
+    400118: R_FrontCenter_6
+    400120: R_FrontCenter_Nub
+    4300000: NEW_squid:Group28054
+    9500000: //RootNode
+    13700000: NEW_squid:Group28054
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
