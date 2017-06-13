@@ -35,7 +35,7 @@ public class SubMovement : MonoBehaviour {
     //---------------------------------Charging data--------------------------------------------
     private float _lastTap;
     [SerializeField]
-    private float _tapIntervalsForCharge = 1;
+    private float _tapIntervalsForCharge = 0.6f;
     [SerializeField]
     private int _cooldown = 90;
     [SerializeField]
@@ -102,7 +102,7 @@ public class SubMovement : MonoBehaviour {
             float clickTime = Time.time - _lastTap;
 
             if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
-            {
+            { 
                 _charged = true;
             }
             _lastTap = Time.time;
@@ -159,6 +159,12 @@ public class SubMovement : MonoBehaviour {
             _oxygen.Refill();
             value.PickUp();
 
+        }
+        if(other.gameObject.tag == "SpawnPoint")
+        {
+            Debug.Log("new Spawn point");
+            Vector3 newPos = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y + 20, 0);
+            _startPosition = newPos;
         }
        
     }
