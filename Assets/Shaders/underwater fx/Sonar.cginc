@@ -1,6 +1,7 @@
 #ifndef SONAR_INCLUDED
 #define SONAR_INCLUDED
 
+// SONAR DATA
 uniform int _pulselength;
 uniform float _pulses[10];
 uniform float4 originarray[10];
@@ -9,6 +10,11 @@ uniform float fade;
 uniform float edgeWidth;
 uniform float _start;
 uniform float _distance;
+
+// PING DATA
+uniform float _pingInter[10];
+uniform float4 _originInter[10];
+uniform int _pingsInter;
 
 
 half4 pulseColor (float3 pos, float2 uv) {
@@ -62,6 +68,20 @@ half4 edgeCol (float3 pos) {
 float4 horizBars(float2 p) {
 	return 1 - saturate(round(abs(frac(p.y * 100) * 2)));
 }
+
+
+half4 pingColor (float3 pos) {
+	half4 col = half4(0,0,0,0);
+	for(int i = 0; i < _pingsInter; i++) {
+		float dist = distance(pos, _originInter[i]);
+		if (dist < _pingInter[i] + edgeWidth/2 && dist > _pingInter[i] - edgeWidth/2)
+			col = half4(0,1,0,1);
+
+//		col *= pow(saturate(1 - dist / 30), 0.2);
+	}
+	return col;
+}
+
 
 
 float3 xyPlanePosition (float4 ray) {
