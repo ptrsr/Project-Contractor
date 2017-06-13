@@ -36,6 +36,9 @@ public class Shark : FishEnemy
     private int _wayId = 0;
     public int WayId { get { return _wayId; } set { _wayId = value; } }
 
+    public Shark SyncTarget;
+    public int SyncStep = 0;
+
     public override void Start()
     {
         base.Start();
@@ -44,6 +47,10 @@ public class Shark : FishEnemy
         List<Transform> temp = _path.GetComponentsInChildren<Transform>().ToList();
         temp.RemoveAt(0);
         _waypoints = temp.ToArray();
+
+        _wayId = GetWayPointId(GetNearestWayPointTo(transform));
+
+        SyncStep = Mathf.Abs(GetWayPointId(GetNearestWayPointTo(transform)) - GetWayPointId(GetNearestWayPointTo(SyncTarget.transform)));
 
         stateCache[typeof(SharkIdle)] = new SharkIdle(this);
         stateCache[typeof(SharkWayPoint)] = new SharkWayPoint(this);
@@ -72,7 +79,7 @@ public class Shark : FishEnemy
         int id = -1;
         float lowestRange = 9999f;
 
-        for (int i = 0; i < _waypoints.Length - 1; i++)
+        for (int i = 0; i < _waypoints.Length; i++)
         {
             float testRange = Vector3.Distance(target.position, _waypoints[i].position);
             if (testRange < lowestRange)
@@ -87,7 +94,7 @@ public class Shark : FishEnemy
 
     public int GetWayPointId(Transform waypoint)
     {
-        for (int i = 0; i < _waypoints.Length - 1; i++)
+        for (int i = 0; i < _waypoints.Length; i++)
         {
             if (_waypoints[i] == waypoint)
                 //Waypoint found
