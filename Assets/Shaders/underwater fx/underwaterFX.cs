@@ -40,6 +40,9 @@ class Caustics {
 public class underwaterFX : MonoBehaviour {
 
 	[SerializeField]
+	private bool update = false;
+
+	[SerializeField]
 	private Sonar _sonar = new Sonar();
 	public Sonar SonarVals{get{return _sonar;}}
 
@@ -61,7 +64,7 @@ public class underwaterFX : MonoBehaviour {
 	private float _depth;
 
 	void Start() {
-		_light = GameObject.Find ("Directional light");
+		_light = GameObject.Find ("Directional Light");
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
@@ -71,13 +74,15 @@ public class underwaterFX : MonoBehaviour {
 
 		// camera values
 //		_mat.SetFloat("_cameraFar", _cam.farClipPlane);
+
+		updateStart ();
 	}
 
 	void Update () {
 		PassiveSonar ();
 		PulseActivate ();
 		PulseControl ();
-		_depth = calculateWorldDepth ();
+//		_depth = calculateWorldDepth ();
         lightUpdate();
 	}
 
@@ -134,8 +139,7 @@ public class underwaterFX : MonoBehaviour {
 		}
 	}
 
-	void updateShader()
-	{
+	void updateStart () {
 		// sonar
 		_mat.SetInt ("_pulselength", _sonar.maxPulses);
 		_mat.SetFloatArray ("_pulses", aPulse);
@@ -151,11 +155,10 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetColor("_endColor", _fog.endColor);
 		_mat.SetFloat("surface", _fog._surface);
 		_mat.SetFloat("_fogDepth", _fog._maxDepth);
-		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
 
 		_mat.SetFloat ("_intensity", _fog._intensity);
 		_mat.SetFloat ("_curve", _fog._curveShift);
-	
+
 
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);
@@ -164,9 +167,21 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetColor ("causticsColor", _caustics.causticsColor);
 	}
 
+	void updateShader()
+	{
+		// sonar
+		_mat.SetFloatArray ("_pulses", aPulse);
+		_mat.SetVectorArray ("originarray", aOrigin);
+
+	}
+
 	[ImageEffectOpaque]
 	void OnRenderImage (RenderTexture src, RenderTexture dst){
 		updateShader ();
+
+		if (update)
+			updateStart ();
+		
 		RaycastCornerBlit (src, dst, _mat);
 
         foreach (var volume in Volumes.Get())
