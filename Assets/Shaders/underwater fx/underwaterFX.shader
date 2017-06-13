@@ -65,13 +65,22 @@
 				// fragments fake xy plane position
 				float3 xyPlanePos = xyPlanePosition(i.ray);
 
-				// pulse colors
+
+				// PULSE COLORS
 				half4 pulseCol = pulseColor(worldPos, i.uv);
 				half4 pulseEdge = edgeCol(xyPlanePos);
-				if(worldPos.z < 0)
+
+				// PING COLORS
+				half4 pingInterCol = pingColor(xyPlanePos);
+
+				// PULSES MASKING
+				if(worldPos.z < 0) {
 					pulseEdge = 0;
+					pingInterCol = 0;
+				}
+
 				
-				// caustics color
+				// CAUSTICS COLOR
 				half4 caustics = Caustics(worldPos);
 				float cDiff = causticsDepthBlend(worldPos);
 				float cMask = causticsMask(viewNormal, float3(0,1,0));
@@ -79,15 +88,18 @@
 				caustics *= cMask;
 				if(linearDepth > 0.9)
 					caustics = 0;
-				
-				// fog color
+
+
+				// FOG COLOR
 				half4 fog = fogColor(worldPos);
 				float fogDiff = fogBlend(linearDepth);
 
+
 				//final output blending
-				scene += caustics;
+//				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
 				scene = scene + pulseCol + pulseEdge;
+				scene += pingInterCol;
 
 				return scene;
 			}

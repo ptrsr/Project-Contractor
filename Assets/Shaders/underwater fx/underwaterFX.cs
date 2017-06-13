@@ -44,7 +44,7 @@ public class underwaterFX : MonoBehaviour {
 
 	[SerializeField]
 	private Sonar _sonar = new Sonar();
-	public Sonar SonarVals{get{return _sonar;}}
+	public Sonar SonarVals{get{ return _sonar; }}
 
 	[SerializeField]
 	private Fog _fog = new Fog();
@@ -57,7 +57,9 @@ public class underwaterFX : MonoBehaviour {
 	private Camera _cam;
 	private GameObject _light;
 
-	private float[] aPulse;
+	public float[] aPulse;
+	//	public float[] pulses{get{return aPulse;}}
+
 	private bool[] activepulse;
 	private Vector4[] aOrigin;
 
@@ -73,7 +75,7 @@ public class underwaterFX : MonoBehaviour {
 		SetupPulses ();
 
 		// camera values
-//		_mat.SetFloat("_cameraFar", _cam.farClipPlane);
+		//		_mat.SetFloat("_cameraFar", _cam.farClipPlane);
 
 		updateStart ();
 	}
@@ -82,8 +84,8 @@ public class underwaterFX : MonoBehaviour {
 		PassiveSonar ();
 		PulseActivate ();
 		PulseControl ();
-//		_depth = calculateWorldDepth ();
-        lightUpdate();
+		//		_depth = calculateWorldDepth ();
+		lightUpdate();
 	}
 
 	float calculateWorldDepth() {
@@ -92,10 +94,10 @@ public class underwaterFX : MonoBehaviour {
 		return depth;
 	}
 
-    void lightUpdate() {
-        float intensity = 1 - calculateWorldDepth();
-        _light.GetComponent<Light>().intensity = intensity;
-    }
+	void lightUpdate() {
+		float intensity = 1 - calculateWorldDepth();
+		_light.GetComponent<Light>().intensity = intensity;
+	}
 
 	void SetupPulses () {
 		for (int i = 0; i < _sonar.maxPulses; i++) {
@@ -181,11 +183,11 @@ public class underwaterFX : MonoBehaviour {
 
 		if (update)
 			updateStart ();
-		
+
 		RaycastCornerBlit (src, dst, _mat);
 
-        foreach (var volume in Volumes.Get())
-            volume.Render(ref dst);
+		foreach (var volume in Volumes.Get())
+			volume.Render(ref dst);
 	}
 
 	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
