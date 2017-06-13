@@ -10,6 +10,7 @@ public class Oxygen : MonoBehaviour {
     private Camera _mainCamera;
     [SerializeField]
     private float _oxygen = 10000;
+	[SerializeField]
     private float _maxOxygen;
     private float _newValueRemove = 0;
     private bool _changeAdd = false;
@@ -23,7 +24,6 @@ public class Oxygen : MonoBehaviour {
 	private void Start () {
         _mainCamera = Camera.main;
         _vignette = FindObjectOfType<vignette>();
-        _maxOxygen = _oxygen;
         _sub = FindObjectOfType<SubMovement>();
         _delay = (1 / _smoothness) + 50;
     }
