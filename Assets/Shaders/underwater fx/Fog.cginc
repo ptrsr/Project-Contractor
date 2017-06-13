@@ -4,7 +4,6 @@
 uniform half4 _startColor;
 uniform half4 _endColor;
 uniform float _depth;
-uniform float _fogEnd;
 uniform float _fogDepth;
 
 uniform float _intensity;

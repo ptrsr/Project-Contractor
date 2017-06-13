@@ -8,15 +8,12 @@ uniform float width;
 uniform float fade;
 uniform float edgeWidth;
 uniform float _start;
+uniform float _distance;
 
-uniform sampler2D sonarScene;
 
 half4 pulseColor (float3 pos, float2 uv) {
 	// calculating each pulse draw
 	half4 pulsecol = half4(0,0,0,0);
-
-	float altDepth = DecodeFloatRG(tex2D(sonarScene, uv));
-	altDepth = Linear01Depth(altDepth);
 
 	for(int i = 0; i < _pulselength; i++) {
 		float dist = distance(pos, originarray[i]);
@@ -24,10 +21,6 @@ half4 pulseColor (float3 pos, float2 uv) {
 			float diff = 1 - (_pulses[i] - dist) / (fade);
 
 			pulsecol = half4(1,0,0,1);
-
-			if(altDepth < 0.9)
-				pulsecol = half4(0,1,0,1);
-
 			pulsecol *= diff;
 		}
 		if (dist < _start)
@@ -41,7 +34,7 @@ half4 pulseColor (float3 pos, float2 uv) {
 	if (pos.z > -width/2 && pos.z < width/2)
 		depthMask = 1;
 
-	pulsecol *= fadeDiff;
+//	pulsecol *= fadeDiff;
 	pulsecol *= depthMask;
 	// return pulse
 	return pulsecol;
@@ -53,9 +46,12 @@ half4 edgeCol (float3 pos) {
 	half4 col = half4(0,0,0,0);
 	for(int i = 0; i < _pulselength; i++) {
 		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] + edgeWidth/2 && dist > _pulses[i] - edgeWidth/2 && dist > _start) {
+		if (dist < _pulses[i] + edgeWidth/2 && dist > _pulses[i] - edgeWidth/2 && dist > _start)
 			col = half4(1,1,1,1);
-		}
+
+		// fading edge over distance (didnt really work)
+//		col *= pow(1 - dist / _distance, 0.2);
+
 	}
 	// return color
 	return col;
