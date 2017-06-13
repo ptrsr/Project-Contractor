@@ -19,8 +19,6 @@ public class Sonar {
 }
 [System.Serializable]
 class Fog {
-	[Range(0,500)]
-	public float fogRange = 400f;
 	public Color startColor, endColor;
 	public float _surface = 100f;
 	public float _maxDepth = -200f;
@@ -146,11 +144,11 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloat ("fade", _sonar.fade);
 		_mat.SetFloat ("edgeWidth", _sonar.edgeWidth);
 		_mat.SetFloat ("_start", _sonar.start);
+		_mat.SetFloat ("_distance", _sonar.distance);
 
 		// fog
 		_mat.SetColor("_startColor", _fog.startColor);
 		_mat.SetColor("_endColor", _fog.endColor);
-		_mat.SetFloat ("_fogEnd", _fog.fogRange);
 		_mat.SetFloat("surface", _fog._surface);
 		_mat.SetFloat("_fogDepth", _fog._maxDepth);
 		_mat.SetFloat("_depth", Mathf.Clamp(_depth, 0, 1));
