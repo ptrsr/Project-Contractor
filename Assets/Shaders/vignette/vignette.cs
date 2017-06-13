@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class vignette : MonoBehaviour {
-	[Range(0,2)]
+	[Range(0,1)]
 	public float range = 0.5f;
 	[Range(0,1)]
 	public float width = 0, intensity = 1;
@@ -11,7 +11,7 @@ public class vignette : MonoBehaviour {
 	public Material mat;
 
 	void ShaderUpdate () {
-		mat.SetFloat ("_range", range);
+		mat.SetFloat ("_range", range*2);
 		mat.SetFloat ("_width", width);
 		mat.SetFloat ("_intensity", intensity);
 	}
