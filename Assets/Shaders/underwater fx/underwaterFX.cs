@@ -144,6 +144,7 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloat ("fade", _sonar.fade);
 		_mat.SetFloat ("edgeWidth", _sonar.edgeWidth);
 		_mat.SetFloat ("_start", _sonar.start);
+		_mat.SetFloat ("_distance", _sonar.distance);
 
 		// fog
 		_mat.SetColor("_startColor", _fog.startColor);
