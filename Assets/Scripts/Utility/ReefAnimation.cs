@@ -26,4 +26,10 @@ public class ReefAnimation : MonoBehaviour {
 	{
 		_key3InPlace = true;
 	}
+
+	private void OnTriggerEnter(Collider other){
+		if (other.gameObject.tag == "Player") {
+			_animator.SetBool ("Close", true);		
+		}
+	}
 }
