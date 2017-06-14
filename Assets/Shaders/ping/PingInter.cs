@@ -14,7 +14,7 @@ public class PingInter : MonoBehaviour {
 	public Vector3 getOrigin{get{ return origin; }}
 
 	private float ping = 0;
-	public float getPing{get{ return ping; }}
+	public float getPing{ get { return ping; } set { ping = value; } }
 
 	private int maxPulses;
 	private int pingHits = 0;

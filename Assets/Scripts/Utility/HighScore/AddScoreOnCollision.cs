@@ -19,13 +19,12 @@ public class AddScoreOnCollision : MonoBehaviour {
     {
         if (collider.gameObject.CompareTag("Player"))
         {
+			gameObject.GetComponent<PingInter> ().getPing = 0;
             gameObject.SetActive(false);
             _manager.AddScore(_scoreToAdd);
         }
 
 
     }
-
-
-
+		
 }
