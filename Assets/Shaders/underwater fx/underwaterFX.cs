@@ -67,7 +67,7 @@ public class underwaterFX : MonoBehaviour {
 
 	void Start() {
 
-		_light = GameObject.Find ("Directional light").GetComponent<Light>();
+		_light = GameObject.Find ("Directional Light").GetComponent<Light>();
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
 		activepulse = new bool[_sonar.maxPulses];
