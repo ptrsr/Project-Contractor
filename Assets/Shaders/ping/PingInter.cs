@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PingInter : MonoBehaviour {
+	public bool active = true;
 
 	public float distance = 20;
 	public float speed = 50;
@@ -41,6 +42,9 @@ public class PingInter : MonoBehaviour {
 	void PingCheck () {
 		if (pinged)
 			return;
+
+		if (!active)
+			return;
 		
 		dist = Vector3.Distance (origin, player.position);
 		for (int i = 0; i < maxPulses; i++) {
@@ -50,7 +54,7 @@ public class PingInter : MonoBehaviour {
 	}
 
 	void PingUpdate () {
-		if (pinged) {
+		if (active && pinged) {
 			ping += Time.deltaTime * speed;
 			if (ping > distance) {
 				pinged = false;

@@ -49,7 +49,7 @@ public class PingData : MonoBehaviour {
 			_pingInteractable [i] = pingInter [i].getPing;
 		}
 
-		for (int i = 0; i < pingInter.Count; i++) {
+		for (int i = 0; i < pingHostile.Count; i++) {
 			_pingHostile [i] = pingHostile [i].getPing;
 			_originHostile [i] = pingHostile [i].getOrigin;
 		}
