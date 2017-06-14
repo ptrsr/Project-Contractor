@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PingData : MonoBehaviour {
 
-	public List<PingInter> PingInter;
-	public List<PingHostile> PingHostile;
+	public List<PingInter> pingInter;
+	public List<PingHostile> pingHostile;
 
 	private float[] _pingInteractable;
 	private Vector4[] _originInteractable;
@@ -20,8 +20,8 @@ public class PingData : MonoBehaviour {
 	void Start () {
 		underwater = Camera.main.GetComponent<underwaterFX> (); 
 
-		pingsInter = PingInter.Count;
-		pingsHostile = PingHostile.Count;
+		pingsInter = pingInter.Count;
+		pingsHostile = pingHostile.Count;
 
 		_pingInteractable = new float[pingsInter];
 		_originInteractable = new Vector4[pingsInter];
@@ -39,19 +39,19 @@ public class PingData : MonoBehaviour {
 	}
 
 	void SetupOrigins () {
-		for (int i = 0; i < PingInter.Count; i++) {
-			_originInteractable [i] = PingInter [i].getOrigin;
+		for (int i = 0; i < pingInter.Count; i++) {
+			_originInteractable [i] = pingInter [i].getOrigin;
 		}
 	}
 
 	void UpdatePings () {
-		for (int i = 0; i < PingInter.Count; i++) {
-			_pingInteractable [i] = PingInter [i].getPing;
+		for (int i = 0; i < pingInter.Count; i++) {
+			_pingInteractable [i] = pingInter [i].getPing;
 		}
 
-		for (int i = 0; i < PingInter.Count; i++) {
-			_pingHostile [i] = PingHostile [i].getPing;
-			_originHostile [i] = PingHostile [i].getOrigin;
+		for (int i = 0; i < pingInter.Count; i++) {
+			_pingHostile [i] = pingHostile [i].getPing;
+			_originHostile [i] = pingHostile [i].getOrigin;
 		}
 	}
 
