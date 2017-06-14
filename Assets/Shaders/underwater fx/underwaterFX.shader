@@ -8,7 +8,6 @@
 	SubShader
 	{
 		Cull Off ZWrite Off ZTest Always
-		Tags {"RenderType" = "Transparent"}
 
 		Pass
 		{
@@ -25,16 +24,16 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float4 uv : TEXCOORD0;
-				float4 ray : TEXCOORD1;
+				float4 uv	  : TEXCOORD0;
+				float4 ray	  : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float2 uv : TEXCOORD0;
-				float4 ray : TEXCOORD1;
+				float2 uv	  : TEXCOORD0;
+				float4 ray	  : TEXCOORD1;
 			};
 
 			uniform sampler2D _Scene;

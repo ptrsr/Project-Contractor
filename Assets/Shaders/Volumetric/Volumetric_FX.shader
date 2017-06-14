@@ -163,7 +163,7 @@
 		// TEMP
 		Pass
 			{
-				Cull Off ZTest On
+				Cull Off ZTest LEqual ZWrite Off
 				Blend SrcAlpha OneMinusSrcAlpha
 
 				CGPROGRAM
