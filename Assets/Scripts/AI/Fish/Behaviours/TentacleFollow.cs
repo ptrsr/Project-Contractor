@@ -19,11 +19,8 @@ public class TentacleFollow : FishState
     {
         foreach (Rigidbody tentacle in _tentacles.TentacleTips)
         {
-            //Use the direction to prevent tentacles hanging down
-            if (_tentacles.Octo.Body.velocity == Vector3.zero)
-                tentacle.AddForce(-_tentacles.Octo.Direction * _tentacles.MoveSpeed);
-            else
-                tentacle.AddForce(-_tentacles.Octo.Body.velocity.normalized * _tentacles.MoveSpeed);
+            tentacle.AddForce(-_tentacles.Octo.Direction * _tentacles.MoveSpeed);
+            tentacle.AddForce(-_tentacles.Octo.Body.velocity.normalized * _tentacles.MoveSpeed);
         }
     }
 }

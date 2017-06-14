@@ -11,6 +11,7 @@ public class OctopusBurstChase : FishState
     public override void Initialize()
     {
         _octo = (Octopus)fish;
+        _octo.TentacleControl.SetState<TentacleFollow>();
     }
 
     public override void Step()

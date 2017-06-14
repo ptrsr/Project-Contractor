@@ -24,12 +24,13 @@ public class OctopusBurstIdle : FishState
         //Idle time
         if (_count < (_octo.IsChasing ? fish.IdleTime / _octo.IdleIntervalChange : fish.IdleTime))
         {
+            _octo.Body.AddForce(-_octo.Direction / 1.2f);
             _count++;
         }
         else
         {
             _count = 0;
-            if (_octo.DetectTarget())
+            if (_octo.IsChasing)//_octo.DetectTarget())
                 _octo.SetState<OctopusBurstChase>();
             else
                 _octo.SetState<OctopusBurstMove>();

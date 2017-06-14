@@ -21,15 +21,20 @@ public class OctopusLatchOnPlayer : FishState
         Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
         _octo.TargetNormal = hit.normal;
         _subMove = _octo.Target.GetComponent<SubMovement>();
+        _octo.Collider.enabled = false;
         //Slow down the player
         _subMove.SlowDownPlayer(true);
         //Prevents odd behaviours
         _octo.Body.isKinematic = true;
+        //Stun the player to make it less possible for odd movements and instant escapes
+        _subMove.StunSlowCooldown = 120;
+        _subMove.StunPlayer();
+        _octo.OxygenVals.Remove(_octo.OxygenDrain);
     }
 
     public override void Step()
     {
-        if (_subMove.Charged || !_octo.DetectTarget())
+        if (_subMove.Charged)
             _octo.SetState<OctopusLatchOffPlayer>();
 
         SetPos(_octo.Target.position, _octo.TargetNormal);
@@ -38,7 +43,7 @@ public class OctopusLatchOnPlayer : FishState
 
     private void SetPos(Vector3 target, Vector3 normal)
     {
-        _octo.transform.position = Vector3.Lerp(_octo.transform.position, target + (normal * _octo.LatchOnOffset), _octo.RotationSpeed / 2f);
+        _octo.transform.position = Vector3.Lerp(_octo.transform.position, target + (normal * _octo.LatchOnOffset), _octo.RotationSpeed * 2f);
     }
 
     private void SetRot(Vector3 normal)

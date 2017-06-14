@@ -29,8 +29,17 @@ public class ElectricEel : FishNeutral
     [SerializeField]
     private float _knockbackStrength = 100f;
 
+    private Vector3 _holeDir;
+    public Vector3 HoleDir { get { return _holeDir; } }
+
     private Collider _collider;
     public Collider Collider { get { return _collider; } }
+
+    private RigidbodyConstraints _xCons = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+    public RigidbodyConstraints XCons { get { return _xCons; } }
+
+    private RigidbodyConstraints _yCons = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+    public RigidbodyConstraints YCons { get { return _yCons; } }
 
     public override void Start()
     {
@@ -44,6 +53,14 @@ public class ElectricEel : FishNeutral
         target = FindObjectOfType<SubMovement>().transform;
         targetBody = target.GetComponent<Rigidbody>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
+        _holeDir = _holeExit.position - AnchorOrigPos;
+
+        _holeDir = new Vector3(_holeDir.x < 0 ? -_holeDir.x : _holeDir.x, _holeDir.y < 0 ? -_holeDir.y : _holeDir.y, 0);
+
+        if (_holeDir.x > _holeDir.y)
+            AnchorBody.constraints = _xCons;
+        else if (_holeDir.y > _holeDir.x)
+            AnchorBody.constraints = _yCons;
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
 
@@ -54,11 +71,11 @@ public class ElectricEel : FishNeutral
         SetState<EelHide>();
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         BindZ();
 
-        base.Update();
+        base.FixedUpdate();
     }
 
     public void OnCollisionEnter(Collision c)
@@ -67,10 +84,27 @@ public class ElectricEel : FishNeutral
             return;
 
         //Stun player
-        Target.GetComponent<SubMovement>().StunPlayer();
+        SubMovement sub = Target.GetComponent<SubMovement>();
+        sub.StunSlowCooldown = 40;
+        sub.StunPlayer();
+
+        OxygenVals.Remove(OxygenDrain);
 
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
         SetState<EelReturnToHole>();
+    }
+
+    public bool DetectTarget()
+    {
+        float targetDis = Vector3.Distance(OriginPos, Target.position);
+        float origDis = Vector3.Distance(transform.position, OriginPos);
+
+        /* Check if:
+         * target is not obstructed by a wall
+         * target is in range of the enemy
+         * target is in range of the origin
+         * enemy is in range of the origin */
+        return (!Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) && targetDis < Range && origDis < Range);
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)

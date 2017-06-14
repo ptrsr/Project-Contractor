@@ -22,6 +22,11 @@ public class Shark : FishEnemy
     public int DetectionAngle { get { return _detectionAngle; } }
 
     [SerializeField]
+    [Tooltip("The range of how far the shark can see")]
+    private int _viewRange = 30;
+    public int ViewRange { get { return _viewRange; } }
+
+    [SerializeField]
     private int _pointRange = 4;
     public int PointRange { get { return _pointRange; } }
 
@@ -31,6 +36,9 @@ public class Shark : FishEnemy
     private int _wayId = 0;
     public int WayId { get { return _wayId; } set { _wayId = value; } }
 
+    public Shark SyncTarget;
+    public int SyncStep = 0;
+
     public override void Start()
     {
         base.Start();
@@ -39,6 +47,10 @@ public class Shark : FishEnemy
         List<Transform> temp = _path.GetComponentsInChildren<Transform>().ToList();
         temp.RemoveAt(0);
         _waypoints = temp.ToArray();
+
+        _wayId = GetWayPointId(GetNearestWayPointTo(transform));
+
+        SyncStep = Mathf.Abs(GetWayPointId(GetNearestWayPointTo(transform)) - GetWayPointId(GetNearestWayPointTo(SyncTarget.transform)));
 
         stateCache[typeof(SharkIdle)] = new SharkIdle(this);
         stateCache[typeof(SharkWayPoint)] = new SharkWayPoint(this);
@@ -54,19 +66,22 @@ public class Shark : FishEnemy
             return;
 
         c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
-        c.gameObject.GetComponent<SubMovement>().StunPlayer();
+        SubMovement sub = Target.GetComponent<SubMovement>();
+        sub.StunSlowCooldown = 60;
+        sub.StunPlayer();
+        OxygenVals.Remove(OxygenDrain);
 
         SetState<SharkIdle>();
     }
 
-    public Transform GetNearestWayPoint()
+    public Transform GetNearestWayPointTo(Transform target)
     {
         int id = -1;
         float lowestRange = 9999f;
 
-        for (int i = 0; i < _waypoints.Length - 1; i++)
+        for (int i = 0; i < _waypoints.Length; i++)
         {
-            float testRange = Vector3.Distance(transform.position, _waypoints[i].position);
+            float testRange = Vector3.Distance(target.position, _waypoints[i].position);
             if (testRange < lowestRange)
             {
                 id = i;
@@ -79,7 +94,7 @@ public class Shark : FishEnemy
 
     public int GetWayPointId(Transform waypoint)
     {
-        for (int i = 0; i < _waypoints.Length - 1; i++)
+        for (int i = 0; i < _waypoints.Length; i++)
         {
             if (_waypoints[i] == waypoint)
                 //Waypoint found
@@ -92,20 +107,18 @@ public class Shark : FishEnemy
 
     public override bool DetectTarget()
     {
-        Transform nearest = GetNearestWayPoint();
+        Transform nearTarget = GetNearestWayPointTo(Target);
         float targetDis = Vector3.Distance(transform.position, Target.position);
-        float pointDis = Vector3.Distance(transform.position, nearest.position);
-        float targetPointDis = Vector3.Distance(nearest.position, Target.position);
+        float targetPointDis = Vector3.Distance(nearTarget.position, Target.position);
 
-        /*Check if:
-         * target is in an angle in front
-         * is not obstructed by walls
-         * target is in range to the shark
-         * shark is in range to a waypoint
-         * target is in range to a waypoint*/
+        /* Check if:
+         * Target is in angle in front of the shark
+         * Target is not obstructed by walls
+         * Target is near a waypoint
+         * Shark is in range of the Target */
         return (Vector3.Angle(-transform.right, Target.position - transform.position) < _detectionAngle &&
             !Physics.Raycast(transform.position, Target.position, ~IgnoreDetection) &&
-            targetDis < Range && pointDis < Range && targetPointDis < Range);
+            targetPointDis < Range && targetDis < ViewRange);
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)
