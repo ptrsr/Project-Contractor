@@ -6,12 +6,12 @@ public class vignette : MonoBehaviour {
 	[Range(0,1)]
 	public float range = 0.5f;
 	[Range(0,1)]
-	public float width = 0, intensity = 1;
+	public float width = 0.5f, intensity = 1;
 
 	public Material mat;
 
 	void ShaderUpdate () {
-		mat.SetFloat ("_range", range*2);
+		mat.SetFloat ("_range", Mathf.Lerp(0.5f, 2f, range));
 		mat.SetFloat ("_width", width);
 		mat.SetFloat ("_intensity", intensity);
 	}
