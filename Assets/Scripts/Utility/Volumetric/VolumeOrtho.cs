@@ -5,22 +5,34 @@ using UnityEngine;
 public class VolumeOrtho : Volumetric
 {
     [SerializeField]
-    float
+    private float
         _size = 2,
         _height = 2,
         _thick = 1,
         _quality = 1;
 
     [SerializeField]
-    int
+    private int
         _passes = 1,
         _layers = 1,
         _blurLayers = 1;
 
+    private Vector3
+         _tl,
+         _tr,
+         _bl,
+         _br;
+
+    private BoxCollider2D _collider;
+
+    private bool _done = false;
+
     override protected void OnValidate()
     {
         base.OnValidate();
-        CreateTextures();
+
+        if (Application.isPlaying)
+            CreateTextures();
     }
 
     protected override void CreateTextures()
@@ -49,7 +61,7 @@ public class VolumeOrtho : Volumetric
     protected override void applySettings(Camera cam)
     {
         cam.orthographicSize = _size / 2;
-        cam.aspect = _layers / _size;
+        cam.aspect = _thick / _size;
 
         cam.pixelRect = new Rect(0, 0, _layers, _size * _quality * 2);
         cam.farClipPlane = _height;
@@ -57,6 +69,12 @@ public class VolumeOrtho : Volumetric
 
     public override void Render(ref RenderTexture dst)
     {
+        if (!_done)
+            SetupBox();
+
+        if (!CheckOnScreen())
+            return;
+
         base.Render(ref dst);
 
         _mat.SetFloat("_height", _height);
@@ -92,24 +110,49 @@ public class VolumeOrtho : Volumetric
         _mat.SetPass(2);
         _mat.SetTexture("_texture", _pingPong[0]);
 
+        GL.Begin(GL.QUADS);
+        {
+            GL.TexCoord2(0, 0);
+            GL.Vertex(_tl);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex(_tr);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex(_br);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex(_bl);
+        }
+        GL.End();
+    }
+
+    private bool CheckOnScreen()
+    {
+        Camera cam = Camera.main;
+        Vector3 pos = cam.transform.position;
+
+        Vector3 tl = cam.WorldToViewportPoint(_tl);
+        Vector3 tr = cam.WorldToViewportPoint(_tr);
+        Vector3 bl = cam.WorldToViewportPoint(_bl);
+
+        if (tl.x <= 1 && tr.x >= 0 && bl.y <= 1 && tl.y >= 0)
+            return true;
+
+        return false;
+    }
+
+    private void SetupBox()
+    {
         Vector3 pos = transform.position;
         Vector3 toRight = transform.up * _size / 2;
         Vector3 toBottom = transform.forward * _height;
 
-        GL.Begin(GL.QUADS);
-        {
-            GL.TexCoord2(0, 0);
-            GL.Vertex(pos - toRight);
+         _tl = pos - toRight;
+         _tr = pos + toRight;
+         _bl = pos - toRight + toBottom;
+         _br = pos + toRight + toBottom;
 
-            GL.TexCoord2(1, 0);
-            GL.Vertex(pos + toRight);
-
-            GL.TexCoord2(1, 1);
-            GL.Vertex(pos + toRight + toBottom);
-
-            GL.TexCoord2(0, 1);
-            GL.Vertex(pos - toRight + toBottom);
-        }
-        GL.End();
+        _done = true;
     }
 }
