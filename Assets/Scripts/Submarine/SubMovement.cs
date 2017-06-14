@@ -46,6 +46,7 @@ public class SubMovement : MonoBehaviour {
     private int _stunSlowCounter = 0;
 
     private ParticleSystem _particles;
+    private HighScoreManager _manager;
 
 
     void Awake () {
@@ -54,6 +55,7 @@ public class SubMovement : MonoBehaviour {
         _camera = Camera.main;
         _startPosition = transform.position;
         _particles = GetComponentInChildren<ParticleSystem>();
+        _manager = FindObjectOfType<HighScoreManager>();
         //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
         //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
         _lastTap = 0;
@@ -165,6 +167,13 @@ public class SubMovement : MonoBehaviour {
             Debug.Log("new Spawn point");
             Vector3 newPos = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y + 20, 0);
             _startPosition = newPos;
+        }
+        if(other.gameObject.tag == "End")
+        {
+            if(_manager != null)
+            {
+                _manager.StartEndPlacement(this);
+            }
         }
        
     }
