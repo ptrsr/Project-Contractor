@@ -36,7 +36,7 @@ public class Shark : FishEnemy
     private int _wayId = 0;
     public int WayId { get { return _wayId; } set { _wayId = value; } }
 
-    public Shark SyncTarget;
+    public Shark SyncTarget = null;
     public int SyncStep = 0;
 
     public override void Start()
@@ -50,7 +50,8 @@ public class Shark : FishEnemy
 
         _wayId = GetWayPointId(GetNearestWayPointTo(transform));
 
-        SyncStep = Mathf.Abs(GetWayPointId(GetNearestWayPointTo(transform)) - GetWayPointId(GetNearestWayPointTo(SyncTarget.transform)));
+        if (SyncTarget!= null)
+            SyncStep = Mathf.Abs(GetWayPointId(GetNearestWayPointTo(transform)) - GetWayPointId(GetNearestWayPointTo(SyncTarget.transform)));
 
         stateCache[typeof(SharkIdle)] = new SharkIdle(this);
         stateCache[typeof(SharkWayPoint)] = new SharkWayPoint(this);
