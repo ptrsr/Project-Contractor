@@ -52,7 +52,7 @@ public abstract class Fish : MonoBehaviour
         body = GetComponent<Rigidbody>();
     }
 
-    public virtual void Update()
+    public virtual void FixedUpdate()
     {
         _state.Step();
     }

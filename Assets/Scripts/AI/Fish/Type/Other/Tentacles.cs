@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tentacles : Fish
@@ -15,6 +16,7 @@ public class Tentacles : Fish
     [Tooltip("The time it takes for the tentacles to attempt to spread")]
     private int _spreadDuration = 20;
     public int SpreadDuration { get { return _spreadDuration; } }
+    private int _spreadCounter = 0;
 
     [SerializeField]
     [Tooltip("A small time frame to give the grab a more round outcome")]
@@ -41,7 +43,7 @@ public class Tentacles : Fish
 
     public void SetCollidersActive(bool value)
     {
-        Collider[] cols = GetComponentsInChildren<CapsuleCollider>();
+        Collider[] cols = GetComponentsInChildren<SphereCollider>();
         foreach (Collider col in cols)
         {
             col.enabled = value;
@@ -50,14 +52,35 @@ public class Tentacles : Fish
 
     public void SetKinematic(bool value)
     {
-        foreach (Rigidbody tentacle in _tentacleTips)
+        List<Rigidbody> bodies = GetComponentsInChildren<Rigidbody>().ToList();
+        bodies.RemoveRange(0, 2);
+
+        foreach (Rigidbody body in bodies)
         {
-            tentacle.isKinematic = value;
+            body.isKinematic = value;
         }
+        //foreach (Rigidbody tentacle in _tentacleTips)
+        //{
+        //    tentacle.isKinematic = value;
+        //}
     }
 
     public void SetKinematic(bool value, int id)
     {
+        if (_tentacleTips[id].isKinematic)
+            return;
+
         _tentacleTips[id].isKinematic = value;
+
+        SetKinematic(value, _tentacleTips[id].transform.parent, 0);
+    }
+
+    private void SetKinematic(bool value, Transform parent, int counter)
+    {
+        if (counter == 6)
+            return;
+
+        parent.GetComponent<Rigidbody>().isKinematic = true;
+        SetKinematic(value, parent.parent, counter + 1);
     }
 }
