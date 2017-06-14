@@ -19,7 +19,8 @@ public class PingInter : MonoBehaviour {
 
 	private int maxPulses;
 	private int pingHits = 0;
-	private bool pinged = false;
+	private bool ACTIVATE = false;
+	private bool pinging = false;
 
 	private float dist = 0;
 
@@ -34,33 +35,84 @@ public class PingInter : MonoBehaviour {
 		maxPulses = sonar.SonarVals.maxPulses;
 	}
 
-	void Update () {
+	void FixedUpdate () {
 		PingCheck ();
 		PingUpdate ();
 	}
 
 	void PingCheck () {
-		if (pinged)
-			return;
+//		if (pinged)
+//			return;
 
 		if (!active)
 			return;
 		
 		dist = Vector3.Distance (origin, player.position);
 		for (int i = 0; i < maxPulses; i++) {
-			if (dist - 1 < sonar.aPulse [i] && dist + 1 > sonar.aPulse[i])
-				pinged = true;
+			if (dist - 1 < sonar.aPulse [i] && dist + 1 > sonar.aPulse [i]) {
+				if (!ACTIVATE) 
+					ping = 0;
+
+				ACTIVATE = true;
+			}
 		}
 	}
 
 	void PingUpdate () {
-		if (active && pinged) {
+		if (ACTIVATE) {
+			if (!active)
+				return;
+			
 			ping += Time.deltaTime * speed;
 			if (ping > distance) {
-				pinged = false;
+				ACTIVATE = false;
 				ping = 0;
 			}
 		}
 	}
+
+
+
+	void P () {
+
+		if (pinging) {
+			if (!active)
+				return;
+
+			ping += Time.deltaTime * speed;
+			if (ping > distance) {
+				pinging = false;
+				ping = 0;
+			}
+
+		}
+	}
+
+
+
+	void C () {
+
+		if (!active)
+			return;
+
+		dist = Vector3.Distance (origin, player.position);
+
+		for (int i = 0; i < maxPulses; i++) {
+			
+			if (dist < sonar.aPulse [i]) {
+				
+				ACTIVATE = true;
+			}
+		}
+
+		if (ACTIVATE)
+			pinging = true;
+
+		ACTIVATE = false;
+
+	}
+
+
+
 
 }
