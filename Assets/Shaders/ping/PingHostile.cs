@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PingInter : MonoBehaviour {
+public class PingHostile : MonoBehaviour {
 
 	public float distance = 20;
 	public float speed = 50;
@@ -36,6 +36,7 @@ public class PingInter : MonoBehaviour {
 	void Update () {
 		PingCheck ();
 		PingUpdate ();
+		origin = transform.position;
 	}
 
 	void PingCheck () {

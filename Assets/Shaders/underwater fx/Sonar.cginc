@@ -16,6 +16,10 @@ uniform float _pingInter[10];
 uniform float4 _originInter[10];
 uniform int _pingsInter;
 
+uniform float _pingHostile[10];
+uniform float4 _originHostile[10];
+uniform int _pingsHostile;
+
 
 half4 pulseColor (float3 pos, float2 uv) {
 	// calculating each pulse draw
@@ -70,18 +74,25 @@ float4 horizBars(float2 p) {
 }
 
 
-half4 pingColor (float3 pos) {
+half4 pingInterColor (float3 pos) {
 	half4 col = half4(0,0,0,0);
 	for(int i = 0; i < _pingsInter; i++) {
 		float dist = distance(pos, _originInter[i]);
 		if (dist < _pingInter[i] + edgeWidth/2 && dist > _pingInter[i] - edgeWidth/2)
 			col = half4(0,1,0,1);
-
-//		col *= pow(saturate(1 - dist / 30), 0.2);
 	}
 	return col;
 }
 
+half4 pingHostileColor (float3 pos) {
+	half4 col = half4(0,0,0,0);
+	for(int i = 0; i < _pingsHostile; i++) {
+		float dist = distance(pos, _originHostile[i]);
+		if (dist < _pingHostile[i] + edgeWidth/2 && dist > _pingHostile[i] - edgeWidth/2)
+			col = half4(1,0,0,1);
+	}
+	return col;
+}
 
 
 float3 xyPlanePosition (float4 ray) {

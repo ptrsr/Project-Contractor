@@ -71,12 +71,14 @@
 				half4 pulseEdge = edgeCol(xyPlanePos);
 
 				// PING COLORS
-				half4 pingInterCol = pingColor(xyPlanePos);
+				half4 pingInterCol = pingInterColor(xyPlanePos);
+				half4 pingHostileCol = pingHostileColor(xyPlanePos);
 
 				// PULSES MASKING
 				if(worldPos.z < 0) {
 					pulseEdge = 0;
 					pingInterCol = 0;
+					pingHostileCol = 0;
 				}
 
 				
@@ -100,6 +102,7 @@
 				scene = lerp(scene, fog, fogDiff);
 				scene = scene + pulseCol + pulseEdge;
 				scene += pingInterCol;
+				scene += pingHostileCol;
 
 				return scene;
 			}
