@@ -22,7 +22,11 @@ public class KeyPickup : MonoBehaviour {
             else if (km[1].ID == 1)
             {
                 _keyManager = km[1];
-            }
+			}
+			else if (km[2].ID == 1)
+			{
+				_keyManager = km[2];
+			}
         }
         else if (_id == 2)
         {
@@ -30,16 +34,35 @@ public class KeyPickup : MonoBehaviour {
             {
                 _keyManager = km[0];
             }
-            else if (km[1].ID == 1)
+            else if (km[1].ID == 2)
             {
                 _keyManager = km[1];
-            }
-        }
+			}
+			else if (km[2].ID == 2)
+			{
+				_keyManager = km[2];
+			}
+		}
+		else if (_id == 3)
+		{
+			if (km[0].ID == 3)
+			{
+				_keyManager = km[0];
+			}
+			else if (km[1].ID == 3)
+			{
+				_keyManager = km[1];
+			}
+			else if (km[2].ID == 3)
+			{
+				_keyManager = km[2];
+			}
+		}
 
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (_pickedUp && !_keyManager.Open)
         {
             transform.position = Vector3.Lerp(transform.position, _chaseTarget.position, 0.1f);
@@ -60,6 +83,7 @@ public class KeyPickup : MonoBehaviour {
         _chaseTarget = chaseTarget;
         GetComponent<Collider>().enabled = false;
         if (_id == 1) { _keyManager.PickUpKey1(this.gameObject); }
-        else if(_id == 2) { _keyManager.PickUpKey2(this.gameObject); }
+		else if(_id == 2) { _keyManager.PickUpKey2(this.gameObject); }
+		else if(_id == 3) { _keyManager.PickUpKey3(this.gameObject); }
     }
 }

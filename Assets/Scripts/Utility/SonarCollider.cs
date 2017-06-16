@@ -11,7 +11,7 @@ public class SonarCollider : MonoBehaviour
 
     public void Start()
     {
-        _sonar = FindObjectOfType<FX>().SonarVals;
+        _sonar = FindObjectOfType<underwaterFX>().SonarVals;
         SpawnPulse();
     }
 

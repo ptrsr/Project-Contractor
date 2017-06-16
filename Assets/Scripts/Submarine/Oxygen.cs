@@ -3,61 +3,69 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Slider))]
 public class Oxygen : MonoBehaviour {
 
-    private Slider _slider;
-    private Image _image;
-    private Color _currentColor;
-    private SubMovement _submarine;
+    private SubMovement _sub;
+    private vignette _vignette;
+    private Camera _mainCamera;
     [SerializeField]
-    private Image _sliderImage = null;
-    private bool _surface = false;
-    private float _alpha = 0;
+    private float _oxygen = 10000;
+	[SerializeField]
+    private float _maxOxygen;
+    private float _newValueRemove = 0;
+    private bool _changeAdd = false;
+    private bool _changeRemove = false;
+    private float _counter = 0;
+    private float _delay = 0;
+    private float _smoothness = 0.05f;
+    private float _currentOxygen = 0;
+
+ 
 	private void Start () {
-        _slider = GetComponent<Slider>();
-        _image = GetComponentInParent<Image>();
-        _currentColor = _image.color;
-        _submarine = FindObjectOfType<SubMovement>();
-        AudioSource s = FindObjectOfType<AudioSource>();
+        _mainCamera = Camera.main;
+        _vignette = FindObjectOfType<vignette>();
+        _sub = FindObjectOfType<SubMovement>();
+        _delay = (1 / _smoothness) + 50;
     }
 
     private void Update()
     {
-        UpdateColor();
-        if(_slider.value == 0)
+        if (_changeAdd)
         {
-            _surface = true;
-        }
-        if (_surface)
-        {
-            _alpha += 5.0f;
-            _image.color = new Color(_currentColor.r,_currentColor.g,_currentColor.b,_alpha/255.0f);
-            if(_alpha >= 255.0f)
+            _oxygen = Mathf.Lerp(_oxygen, _maxOxygen, _smoothness);
+            ChangeValues();
+            if(_counter >= _delay)
             {
-                _submarine.Surface();
-                _slider.gameObject.SetActive(true);
-                _slider.value = _slider.maxValue;
-                _surface = false;
-                _alpha = 0;
-                _image.color = new Color(_currentColor.r, _currentColor.g, _currentColor.b, 0);
-                
+                _counter = 0;
+                _changeAdd = false;
             }
+            else { _counter++; }
+        }
+        else if (_changeRemove)
+        {
+            _oxygen -= _newValueRemove;
+            ChangeValues();
         }
     }
-
-    private void UpdateColor()
+    public void Refill()
     {
-        float max = _slider.maxValue;
-        _sliderImage.color = Color.Lerp(Color.red, Color.green, _slider.value / max);
+        _changeAdd = true;
+        
     }
-
-    public void Add(int value)
-    { 
-        _slider.value += value;
-    }
-    public void Remove(int value)
+    public void Remove(float value)
     {
-        _slider.value -= value;
+        _newValueRemove = value;
+        _changeRemove = true;
+    }
+    private void ChangeValues()
+    {
+        if (_oxygen > 0)
+        {
+            _vignette.range = _oxygen / _maxOxygen;
+        }
+        else if (_oxygen < 0)
+        {
+            _sub.Surface();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SubMovement : MonoBehaviour {
@@ -20,6 +21,7 @@ public class SubMovement : MonoBehaviour {
     private int _distanceForMaxSpeed = 20;
     [SerializeField]
     private int _chargeSpeed = 50;
+    
 
 
     //----------------------------------Checks for submarine states----------------------------
@@ -27,49 +29,24 @@ public class SubMovement : MonoBehaviour {
     private bool _charged = false;
     private bool _slowed = false;
     private bool _stunned = false;
-    private bool _goingLeft = false;
-    private bool _goingRight = false;
-    private bool _goingDownLeft = false;
-    private bool _goingDownRight = false;
-    private bool _goingUpLeft = false;
-    private bool _goingUpRight = false;
+    private bool _frozen = false;
 
 
-    //---------------------------------Charging date--------------------------------------------
+    //---------------------------------Charging data--------------------------------------------
     private float _lastTap;
     [SerializeField]
-    private float _tapIntervalsForCharge = 1;
+    private float _tapIntervalsForCharge = 0.6f;
     [SerializeField]
     private int _cooldown = 90;
     [SerializeField]
     private int _stunSlowTime = 60;
+    [SerializeField]
+    private int _oxygenLossOnHit = 10;
     private int _counter = 0;
     private int _stunSlowCounter = 0;
 
-
-    //------------------------------Rotation of sumbarine---------------------------------------
-    private Quaternion left = new Quaternion();
-    private Quaternion right = new Quaternion();
-    private Quaternion forward = new Quaternion();
-    private Quaternion leftUp = new Quaternion();
-    private Quaternion leftDown = new Quaternion();
-    private Quaternion rightUp = new Quaternion();
-    private Quaternion rightDown = new Quaternion();
-
-    [SerializeField]
-    private Vector3 _possibleLeftTurn = new Vector3(0, 25, 0);
-    [SerializeField]
-    private Vector3 _possibleLeftDownTurn = new Vector3(-50, 50, 0);
-    [SerializeField]
-    private Vector3 _possibleLeftUpTurn = new Vector3(50, 50, 0);
-    [SerializeField]
-    private Vector3 _possibleRightTurn = new Vector3(0, -25, 0);
-    [SerializeField]
-    private Vector3 _possibleRightDownTurn = new Vector3(-50, -50, 0);
-    [SerializeField]
-    private Vector3 _possibleRightUpTurn = new Vector3(50, -50, 0);
-    [SerializeField]
-    private float _smoothnessOfTurning = 0.1f;
+    private ParticleSystem _particles;
+    private HighScoreManager _manager;
 
 
     void Awake () {
@@ -77,19 +54,21 @@ public class SubMovement : MonoBehaviour {
         _oxygen = FindObjectOfType<Oxygen>();
         _camera = Camera.main;
         _startPosition = transform.position;
+        _particles = GetComponentInChildren<ParticleSystem>();
+        _manager = FindObjectOfType<HighScoreManager>();
         //TutorialImage tutorial = FindObjectOfType<TutorialImage>();
         //if (tutorial != null) tutorial.SetChaseTarget(this.transform);
-        left = GetQuaternionFromVector(_possibleLeftTurn);
-        right = GetQuaternionFromVector(_possibleRightTurn);
-        leftDown = GetQuaternionFromVector(_possibleLeftDownTurn);
-        leftUp = GetQuaternionFromVector(_possibleLeftUpTurn);
-        rightDown = GetQuaternionFromVector(_possibleRightDownTurn);
-        rightUp = GetQuaternionFromVector(_possibleRightUpTurn);
-        forward = GetQuaternionFromVector(new Vector3(0, 0, 0));
         _lastTap = 0;
+       
     }
 
-	void FixedUpdate () {
+	void FixedUpdate ()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
+        }
+        if (_frozen) return;
         _oxygen.Remove(1);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
@@ -100,8 +79,6 @@ public class SubMovement : MonoBehaviour {
             return;
         }
         //Gets correct direction of mouse and rotates depending on that
-        GetCorrectDirection();
-        RotateDependingOnDirection();
         //Cooldown after you charge(double tap)
         if (_charged)
         {
@@ -122,18 +99,18 @@ public class SubMovement : MonoBehaviour {
             return;
         }
         //check for double taps
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             float clickTime = Time.time - _lastTap;
 
             if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
-            {
+            { 
                 _charged = true;
             }
             _lastTap = Time.time;
         }
         //Movement through dragging
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
 
             Vector3 pos = GetMousePosition();
@@ -158,97 +135,6 @@ public class SubMovement : MonoBehaviour {
         
     }
 
-
-    //Gets correct direction of mouse
-    private void GetCorrectDirection() {
-        _goingLeft = false;
-        _goingRight = false;
-        _goingUpLeft = false;
-        _goingUpRight = false;
-        _goingDownRight = false;
-        _goingDownLeft = false;
-        Vector3 pos = GetMousePosition();
-        float distance = Vector3.Distance(pos, transform.position);
-        Vector3 dir = pos - transform.position;
-        dir = dir.normalized;
-        if (dir.x >= 0.5f && dir.y < 0.5f)
-        {
-            _goingRight = true;
-        }
-        else if (dir.x <= -0.5f && dir.y <= 0.5f  )
-        {
-            _goingLeft = true;
-        }
-        else if (dir.x <= -0.3f && dir.y <= -0.1f)
-        {
-            _goingDownLeft = true;
-        }
-        else if (dir.x <= -0.3f && dir.y >= 0.3f)
-        {
-            _goingUpLeft = true;
-        }
-        else if (dir.x <= 0.3f && dir.y <= -0.1f)
-        {
-            _goingDownRight = true;
-        }
-        else if (dir.x <= 0.3f && dir.y >= 0.3f)
-        {
-            _goingUpRight = true;
-        }
-
-
-        if (!Input.GetMouseButton(0))
-        {
-            _goingLeft = false;
-            _goingRight = false;
-            transform.rotation = Quaternion.Slerp(transform.rotation, forward, _smoothnessOfTurning);
-        }
-    }
-
-    //Rotates depending on the direction of the mouse
-    private void RotateDependingOnDirection()
-    {
-        if (_goingLeft)
-        {
-            RotateDependingOnDistance(left);
-        }
-        else if (_goingDownLeft)
-        {
-            RotateDependingOnDistance(leftDown);
-        }
-        else if (_goingUpLeft)
-        {
-            RotateDependingOnDistance(leftUp);
-        }
-        else if (_goingRight)
-        {
-            RotateDependingOnDistance(right);
-        }
-        else if (_goingUpRight)
-        {
-            RotateDependingOnDistance(rightUp);
-        }
-        else if (_goingDownRight)
-        {
-            RotateDependingOnDistance(rightDown);
-        }
-    }
-
-    //Rotates depending on the distance from the mouse(from small rotation to full) for smoothness
-    private void RotateDependingOnDistance(Quaternion quat)
-    {
-        Vector3 pos = GetMousePosition();
-        float distance = Vector3.Distance(pos, transform.position);
-        if (distance < 1)
-        {
-            Quaternion tempQuat = new Quaternion();
-            tempQuat.eulerAngles = quat.eulerAngles * -(distance / 10);
-            transform.rotation = Quaternion.Slerp(transform.rotation, tempQuat, _smoothnessOfTurning);
-        }
-        else
-            transform.rotation = Quaternion.Slerp(transform.rotation, quat, _smoothnessOfTurning);
-    }
-
     //Get mouse position in world space
     private Vector3 GetMousePosition()
     {
@@ -271,9 +157,36 @@ public class SubMovement : MonoBehaviour {
     {
         if(other.gameObject.tag == "Oxygen")
         {
-           OxygenValue value = other.gameObject.GetComponent<OxygenValue>();
-            _oxygen.Add(value.OxygenVal());
-            other.gameObject.SetActive(false);
+           OxygenCrack value = other.gameObject.GetComponent<OxygenCrack>();
+            _oxygen.Refill();
+            value.PickUp();
+
+        }
+        if(other.gameObject.tag == "SpawnPoint")
+        {
+            Debug.Log("new Spawn point");
+            Vector3 newPos = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y + 20, 0);
+            _startPosition = newPos;
+        }
+        if(other.gameObject.tag == "End")
+        {
+            if(_manager != null)
+            {
+                _manager.StartEndPlacement(this);
+            }
+        }
+       
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Wall")
+        {
+            _oxygen.Remove(_oxygenLossOnHit);
+            _particles.Play();
+        }
+        if (other.gameObject.tag == "Shark")
+        {
+            _oxygen.Remove(_oxygenLossOnHit);
         }
     }
 
@@ -312,8 +225,14 @@ public class SubMovement : MonoBehaviour {
         return counter;
     }
 
+    public void Freeze(bool value)
+    {
+        _frozen = value;
+    }
+
 
     public bool Charged { get { return _charged;  } }
+    public bool Frozen { get { return _frozen; } }
 
     public int DragSpeed { get { return _dragSpeed; } set { _dragSpeed = value; } }
     public int MaxSpeed { get { return _maxSpeed; } set { _maxSpeed = value; } }

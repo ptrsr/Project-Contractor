@@ -143,7 +143,7 @@ namespace UnityEngine.PostProcessing
 
             // Find out which camera flags are needed before rendering begins
             // Note that motion vectors will only be available one frame after being enabled
-            var flags = DepthTextureMode.None;
+            var flags = DepthTextureMode.DepthNormals;
             foreach (var component in m_Components)
             {
                 if (component.active)
@@ -331,7 +331,7 @@ namespace UnityEngine.PostProcessing
 
             // Reset camera mode
             if (m_Camera != null)
-                m_Camera.depthTextureMode = DepthTextureMode.None;
+                m_Camera.depthTextureMode = DepthTextureMode.DepthNormals;
 
             // Factories
             m_MaterialFactory.Dispose();
