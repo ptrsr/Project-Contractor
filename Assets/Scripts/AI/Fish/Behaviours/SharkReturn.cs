@@ -126,11 +126,11 @@ public class SharkReturn : FishState
             point = _shark.WayPoints[_shark.WayId];
 
             id++;
-            id = id == _shark.WayPoints.Length - 1 ? 0 : id;
+            id = id >= _shark.WayPoints.Length ? 0 : id;
 
             if (id == startId) //Checked all, break the loop
             {
-                _shark.WayId = id + 1 >= _shark.WayPoints.Length - 1 ? 0 : id + 1;
+                _shark.WayId = id + 1 >= _shark.WayPoints.Length ? 0 : id + 1;
                 break;
             }
             //Check if a waypoint is in front of the shark
