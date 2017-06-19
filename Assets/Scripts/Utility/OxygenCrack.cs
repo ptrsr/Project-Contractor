@@ -32,7 +32,7 @@ public class OxygenCrack : MonoBehaviour {
 	void Update () {
         if (_increaseSize)
         {
-            _oxygen.transform.position = Vector3.Lerp(_oxygen.transform.position, new Vector3(pos.x, pos.y + 5, pos.z), _smoothness);
+            _oxygen.transform.position = Vector3.Lerp(_oxygen.transform.position, new Vector3(pos.x, pos.y, pos.z), _smoothness);
             _oxygen.transform.localScale = Vector3.Lerp(_oxygen.transform.localScale, new Vector3(5, 5, 5), _smoothness);
         }
         else if (_pickUp)
@@ -63,10 +63,10 @@ public class OxygenCrack : MonoBehaviour {
     private void CreateOxygen()
     {
         _oxygen = Instantiate(_oxygenPrefab);
-        _oxygen.transform.position = transform.position;
+        _oxygen.transform.position = transform.parent.position;
         _oxygen.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
-        pos = _oxygen.transform.position;
+        pos = transform.position;
         _increaseSize = true;
     }
 

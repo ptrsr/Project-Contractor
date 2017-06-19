@@ -12,8 +12,12 @@ public class SkullDoorAnimator : MonoBehaviour {
     private bool _played = false;
 	private bool _opened = false;
     private bool _finished = false;
-    private int _lenght = 0;
+    [SerializeField]
+    private int _lenghtRotateEyes = 0;
+    [SerializeField]
+    private int _lenghtLockedDoor = 0;
     private float _startedAt = 0;
+    private float _startedAt2 = 0;
     private int _counter = 0;
     private int _delay = 460;
     private AdditiveSceneManager _sceneManager;
@@ -29,15 +33,11 @@ public class SkullDoorAnimator : MonoBehaviour {
         if (_finished) return;
         if (_opened)
         {
-            if (_counter >= _delay)
+            if (_startedAt2 + _lenghtLockedDoor >= Time.time)
             {
                 _subMov.Freeze(false);
                 _counter = 0;
                 _finished = false;
-            }
-            else
-            {
-                _counter++;
             }
             return;
         }
@@ -46,6 +46,7 @@ public class SkullDoorAnimator : MonoBehaviour {
         {
             if (!_played)
             {
+                
                 if(Time.time < 150){
                     _sceneManager.LoadScene(2);
                 }
@@ -57,14 +58,14 @@ public class SkullDoorAnimator : MonoBehaviour {
                 }
                 _subMov.Freeze(true);
                 _animator[1].SetBool("Rotate", true);
-                _lenght = _animator[1].GetCurrentAnimatorClipInfo(0).Length;
                 _startedAt = Time.time;
                 _played = true;
             }
-            if ((_startedAt + _lenght) - Time.time < 0.0f)
+            if ((_startedAt + _lenghtRotateEyes) - Time.time < 0.0f)
             {
                 _opened = true;
                 _animator[0].SetBool("Open", true);
+                _startedAt2 = Time.time;
             }
             
         }

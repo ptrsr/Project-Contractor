@@ -66,6 +66,7 @@ public class Oxygen : MonoBehaviour {
         else if (_oxygen < 0)
         {
             _sub.Surface();
+            Refill();
         }
     }
 }
