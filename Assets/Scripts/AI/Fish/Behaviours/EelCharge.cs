@@ -7,26 +7,35 @@ public class EelCharge : FishState
     public EelCharge(Fish pFish) : base(pFish) { }
 
     private ElectricEel _eel;
+    private int _counter = 0;
 
     public override void Initialize()
     {
         _eel = (ElectricEel)fish;
+        _counter = 0;
     }
 
     public override void Step()
     {
+        //Counter for if the Player is in a dead-zone
+        if (_counter >= _eel.AttackDuration)
+        {
+            _eel.SetState<EelReturnToHole>();
+            return;
+        }
+        else
+            _counter++;
+
         //Move anchor to hole exit
         if (Vector3.Distance(_eel.HoleExit.position, _eel.Anchor.position) > 3)
         {
-            Vector3 dir = (_eel.HoleExit.position - _eel.Anchor.position).normalized * _eel.ChargeSpeed;
-            _eel.AnchorBody.AddForce(dir);
+            _eel.Anchor.transform.position = Vector3.Lerp(_eel.Anchor.transform.position, _eel.HoleExit.position, _eel.ChargeSpeed / 10000f);
         }
         else
             _eel.AnchorBody.isKinematic = true;
 
         //Set direction for the head
-        if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 4)
-            _eel.Direction = ((_eel.Target.position + (_eel.TargetBody.velocity / _eel.Difficulty)) - _eel.transform.position).normalized;
+        _eel.Direction = ((_eel.Target.position + (_eel.TargetBody.velocity / _eel.Difficulty)) - _eel.transform.position).normalized;
 
         if (Vector3.Distance(_eel.Target.position, _eel.OriginPos) > _eel.Range)
             _eel.SetState<EelReturnToHole>();

@@ -16,6 +16,7 @@ public class EelReturnToHole : FishState
         _eel.Body.angularVelocity = Vector3.zero;
         _eel.AnchorBody.velocity = Vector3.zero;
         _eel.AnchorBody.angularVelocity = Vector3.zero;
+        _eel.Collider.enabled = false;
         _eel.AnchorBody.isKinematic = false;
 
         _holeDir = _eel.HoleExit.position - _eel.AnchorOrigPos;
@@ -24,20 +25,33 @@ public class EelReturnToHole : FishState
     public override void Step()
     {
         //Return anchor to start position
-        if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 5)
+        if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 1)
         {
             Vector3 dir = (_eel.AnchorOrigPos - _eel.Anchor.position).normalized;
             _eel.AnchorBody.AddForce(dir * _eel.MoveSpeed);
 
-            _eel.Direction = (_eel.HoleExit.position - _eel.transform.position).normalized;
+            _eel.Direction = (_eel.HoleExit.position - _eel.Hole.position).normalized;
         }
         else
+        {
+            _eel.Collider.enabled = true;
+            _eel.AnchorBody.isKinematic = true;
             _eel.SetState<EelHide>();
+        }
 
-        //Only move one force to prevent curling up behaviour
-        if (_eel.AnchorBody.constraints == _eel.XCons)
-            _eel.Body.AddForce(new Vector3(0, _eel.Direction.y, 0) * _eel.MoveSpeed / 2f);
-        else if (_eel.AnchorBody.constraints == _eel.YCons)
-            _eel.Body.AddForce(new Vector3(_eel.Direction.x, 0, 0) * _eel.MoveSpeed / 2f);
+        //Move all body segments to an avarage point between the body and the anchor origin pos, to keep the eel alligned
+        foreach (Rigidbody body in _eel.Bodies)
+        {
+            float dis = Vector3.Distance(body.position, _eel.AnchorOrigPos);
+            //Get pos that extends out from the anchor origin pos
+            Vector3 newPos = _eel.AnchorOrigPos + _eel.Direction * dis;
+            //Get the avarage pos between the new pos
+            Vector3 targetPos = ((body.position + newPos) / 2f);
+            Debug.DrawLine(body.position, targetPos, Color.red);
+            //Calculate direction from body to targetPos
+            Vector3 dir = (targetPos - body.position).normalized;
+            //Move towards the targetPos
+            body.AddForce(dir * _eel.MoveSpeed / 2f);
+        }
     }
 }

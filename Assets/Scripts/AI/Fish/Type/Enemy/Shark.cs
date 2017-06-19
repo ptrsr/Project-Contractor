@@ -37,6 +37,8 @@ public class Shark : FishEnemy
     public int WayId { get { return _wayId; } set { _wayId = value; } }
 
     public Shark SyncTarget = null;
+
+    [HideInInspector]
     public int SyncStep = 0;
 
     public override void Start()

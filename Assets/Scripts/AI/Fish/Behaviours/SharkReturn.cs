@@ -119,6 +119,8 @@ public class SharkReturn : FishState
         int id = _shark.GetWayPointId(point);
         int startId = _shark.GetWayPointId(point);
 
+		int count = 0;
+
         //Try to find a waypoint in front of the shark to prevent back tracking
         do
         {
@@ -126,14 +128,15 @@ public class SharkReturn : FishState
             point = _shark.WayPoints[_shark.WayId];
 
             id++;
-            id = id == _shark.WayPoints.Length - 1 ? 0 : id;
+            id = id >= _shark.WayPoints.Length ? 0 : id;
 
             if (id == startId) //Checked all, break the loop
             {
-                _shark.WayId = id + 1 >= _shark.WayPoints.Length - 1 ? 0 : id + 1;
+                _shark.WayId = id + 1 >= _shark.WayPoints.Length ? 0 : id + 1;
                 break;
             }
+			count++;
             //Check if a waypoint is in front of the shark
-        } while (Vector3.Angle(-_shark.transform.right, point.position - _shark.transform.position) > 45f);
+		} while (Vector3.Angle(-_shark.transform.right, point.position - _shark.transform.position) > 45f || count != _shark.WayPoints.Length);
     }
 }

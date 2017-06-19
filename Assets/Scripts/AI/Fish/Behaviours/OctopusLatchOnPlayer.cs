@@ -21,21 +21,32 @@ public class OctopusLatchOnPlayer : FishState
         Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
         _octo.TargetNormal = hit.normal;
         _subMove = _octo.Target.GetComponent<SubMovement>();
-        _octo.Collider.enabled = false;
-        //Slow down the player
-        _subMove.SlowDownPlayer(true);
-        //Prevents odd behaviours
-        _octo.Body.isKinematic = true;
-        //Stun the player to make it less possible for odd movements and instant escapes
-        _subMove.StunSlowCooldown = 120;
-        _subMove.StunPlayer();
-        _octo.OxygenVals.Remove(_octo.OxygenDrain);
+
+        //Pre-check if player is charging, so you can avoid the Octopus quickly
+        if (_subMove.Charged)
+            _octo.SetState<OctopusLatchOffPlayer>();
+        else
+        {
+            _octo.Collider.enabled = false;
+            //Slow down the player
+            _subMove.SlowDownPlayer(true);
+            //Prevents odd behaviours
+            _octo.Body.isKinematic = true;
+            //Stun the player to make it less possible for odd movements and instant escapes
+            _subMove.StunSlowCooldown = 120;
+            _subMove.StunPlayer();
+        }
     }
 
     public override void Step()
     {
         if (_subMove.Charged)
             _octo.SetState<OctopusLatchOffPlayer>();
+
+        if (Vector3.Distance(_octo.transform.position, _octo.OriginPos) > _octo.Range)
+            _octo.SetState<OctopusLatchOffPlayer>();
+
+        _octo.OxygenVals.Remove(_octo.OxygenDrain);
 
         SetPos(_octo.Target.position, _octo.TargetNormal);
         SetRot(_octo.TargetNormal);
