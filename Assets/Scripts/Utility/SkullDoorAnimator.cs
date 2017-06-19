@@ -16,20 +16,31 @@ public class SkullDoorAnimator : MonoBehaviour {
     private int _lenghtRotateEyes = 0;
     [SerializeField]
     private int _lenghtLockedDoor = 0;
+    [SerializeField]
+    private Transform _playerPos;
     private float _startedAt = 0;
     private float _startedAt2 = 0;
     private int _counter = 0;
     private int _delay = 460;
+
+    private int _finalPosition = 0;
+
+
+
     private AdditiveSceneManager _sceneManager;
 
 	void Start () {
         _animator = GetComponentsInChildren<Animator>();
 		_subMov = FindObjectOfType<SubMovement>();
         _sceneManager = FindObjectOfType<AdditiveSceneManager>();
+        if(_playerPos == null)
+        {
+            _playerPos = _subMov.transform;
+        }
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (_finished) return;
         if (_opened)
         {
@@ -46,7 +57,8 @@ public class SkullDoorAnimator : MonoBehaviour {
         {
             if (!_played)
             {
-                
+                _subMov.Freeze(true);
+                if (!MovePlayer()) return;
                 if(Time.time < 150){
                     _sceneManager.LoadScene(2);
                 }
@@ -56,7 +68,6 @@ public class SkullDoorAnimator : MonoBehaviour {
                 else{
                     _sceneManager.LoadScene(0);
                 }
-                _subMov.Freeze(true);
                 _animator[1].SetBool("Rotate", true);
                 _startedAt = Time.time;
                 _played = true;
@@ -71,6 +82,16 @@ public class SkullDoorAnimator : MonoBehaviour {
         }
         
 	}
+
+    private bool MovePlayer()
+    {
+        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, 0.03f);
+        if (Vector3.Distance(_subMov.transform.position, _playerPos.position) < 0.6f)
+        {
+            return true;
+        }
+        else { return false; }
+    }
     public void Key1InPlace()
     {
         _key1InPlace = true;

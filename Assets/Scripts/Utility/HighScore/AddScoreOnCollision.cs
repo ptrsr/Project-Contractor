@@ -8,6 +8,9 @@ public class AddScoreOnCollision : MonoBehaviour {
     [SerializeField]
     private int _scoreToAdd = 0;
 
+
+    public int Score { get { return _scoreToAdd; } }
+
     private HighScoreManager _manager;
     private TreasureId _id;
     private PickUp _pickUp;
@@ -69,7 +72,6 @@ public class AddScoreOnCollision : MonoBehaviour {
             }
             _update = true;
             _newPos = collider.transform.position;
-            _manager.AddScore(_scoreToAdd);
             _pickUp.Pick();
         }
 
