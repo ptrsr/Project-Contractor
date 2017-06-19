@@ -32,7 +32,7 @@ public class OctopusFindRock : FishState
         do
         {
             _octo.SetRandomDirection();
-            Debug.DrawRay(_octo.transform.position, _octo.Direction * _octo.Range, Color.yellow, 2f);
+            Debug.DrawRay(_octo.transform.position, _octo.Direction * _octo.Range * 2f, Color.yellow, 2f);
             Physics.Raycast(_octo.transform.position, _octo.Direction, out hit, _octo.Range * 2f, ~_octo.IgnoreDetection);
             i++;
             if (i >= 100)

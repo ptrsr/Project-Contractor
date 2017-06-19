@@ -43,7 +43,6 @@ public class Oxygen : MonoBehaviour {
         }
         else if (_changeRemove)
         {
-            _oxygen -= _newValueRemove;
             ChangeValues();
         }
     }
@@ -54,7 +53,7 @@ public class Oxygen : MonoBehaviour {
     }
     public void Remove(float value)
     {
-        _newValueRemove = value;
+        _oxygen -= value;
         _changeRemove = true;
     }
     private void ChangeValues()

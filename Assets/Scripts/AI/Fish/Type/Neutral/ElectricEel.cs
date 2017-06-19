@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ElectricEel : FishNeutral
@@ -8,6 +9,10 @@ public class ElectricEel : FishNeutral
     [SerializeField]
     private int _chargeSpeed = 400;
     public int ChargeSpeed { get { return _chargeSpeed; } }
+
+    [SerializeField]
+    private int _attackDuration = 100;
+    public int AttackDuration { get { return _attackDuration; } }
 
     [SerializeField]
     private Transform _hole = null;
@@ -29,38 +34,21 @@ public class ElectricEel : FishNeutral
     [SerializeField]
     private float _knockbackStrength = 100f;
 
-    private Vector3 _holeDir;
-    public Vector3 HoleDir { get { return _holeDir; } }
-
     private Collider _collider;
     public Collider Collider { get { return _collider; } }
 
-    private RigidbodyConstraints _xCons = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-    public RigidbodyConstraints XCons { get { return _xCons; } }
-
-    private RigidbodyConstraints _yCons = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-    public RigidbodyConstraints YCons { get { return _yCons; } }
+    private List<Rigidbody> _bodies = new List<Rigidbody>();
+    public List<Rigidbody> Bodies { get { return _bodies; } }
 
     public override void Start()
     {
-        origPos = transform.position;
-        origRot = transform.rotation;
-        body = GetComponent<Rigidbody>();
+        base.Start();
 
+        _bodies = transform.parent.GetComponentsInChildren<Rigidbody>().ToList();
         _anchorOrigPos = _anchor.position;
         _anchorBody = _anchor.GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        target = FindObjectOfType<SubMovement>().transform;
-        targetBody = target.GetComponent<Rigidbody>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
-        _holeDir = _holeExit.position - AnchorOrigPos;
-
-        _holeDir = new Vector3(_holeDir.x < 0 ? -_holeDir.x : _holeDir.x, _holeDir.y < 0 ? -_holeDir.y : _holeDir.y, 0);
-
-        if (_holeDir.x > _holeDir.y)
-            AnchorBody.constraints = _xCons;
-        else if (_holeDir.y > _holeDir.x)
-            AnchorBody.constraints = _yCons;
 
         Direction = (Vector3.right * WallDetectionRange).normalized;
 

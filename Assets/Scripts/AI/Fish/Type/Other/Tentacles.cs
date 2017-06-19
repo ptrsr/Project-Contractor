@@ -16,7 +16,6 @@ public class Tentacles : Fish
     [Tooltip("The time it takes for the tentacles to attempt to spread")]
     private int _spreadDuration = 20;
     public int SpreadDuration { get { return _spreadDuration; } }
-    private int _spreadCounter = 0;
 
     [SerializeField]
     [Tooltip("A small time frame to give the grab a more round outcome")]
@@ -59,10 +58,6 @@ public class Tentacles : Fish
         {
             body.isKinematic = value;
         }
-        //foreach (Rigidbody tentacle in _tentacleTips)
-        //{
-        //    tentacle.isKinematic = value;
-        //}
     }
 
     public void SetKinematic(bool value, int id)
