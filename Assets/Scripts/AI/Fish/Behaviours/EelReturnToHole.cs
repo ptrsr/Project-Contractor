@@ -6,11 +6,11 @@ public class EelReturnToHole : FishState
 {
     public EelReturnToHole(Fish pFish) : base(pFish) { }
 
-    private ElectricEel _eel;
+    private Eel _eel;
 
     public override void Initialize()
     {
-        _eel = (ElectricEel)fish;
+        _eel = (Eel)fish;
         //Remove any velocity to prevent eel leaving it's hole from previous forces
         _eel.Body.velocity = Vector3.zero;
         _eel.Body.angularVelocity = Vector3.zero;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ElectricEel : FishNeutral
+public class Eel : FishNeutral
 {
     [Header("Electric Eel Variables")]
     [SerializeField]
