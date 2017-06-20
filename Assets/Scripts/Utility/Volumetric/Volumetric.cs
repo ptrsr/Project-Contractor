@@ -17,6 +17,7 @@ public abstract class Volumetric : MonoBehaviour
     void Start ()
     {
         _cam = GetComponent<Camera>();
+        _cam.enabled = false;
         _mat = new Material(_shader);
         _cam.depthTextureMode = DepthTextureMode.Depth;
 
