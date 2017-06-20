@@ -9,19 +9,29 @@ ModelImporter:
     100002: R_Thrust
     100004: submarine_full
     100006: //RootNode
+    100008: submarine_full_submarine
+    100010: Thrusters
     400000: L_Thrust
     400002: R_Thrust
     400004: submarine_full
     400006: //RootNode
+    400008: submarine_full_submarine
+    400010: Thrusters
     2300000: L_Thrust
     2300002: R_Thrust
     2300004: submarine_full
+    2300006: submarine_full_submarine
+    2300008: Thrusters
     3300000: L_Thrust
     3300002: R_Thrust
     3300004: submarine_full
+    3300006: submarine_full_submarine
+    3300008: Thrusters
     4300000: L_Thrust
     4300002: R_Thrust
     4300004: submarine_full
+    4300006: submarine_full_submarine
+    4300008: Thrusters
   materials:
     importMaterials: 1
     materialName: 0

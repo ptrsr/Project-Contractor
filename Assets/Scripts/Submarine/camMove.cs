@@ -24,10 +24,10 @@ public class camMove : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-        if (_followingAnimation) return;
 		dynaTarget ();
 		lazyTarget ();
-		dynaCam ();
+        if (_followingAnimation) return;
+        dynaCam ();
 	}
 
 

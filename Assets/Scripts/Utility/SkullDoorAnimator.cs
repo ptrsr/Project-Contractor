@@ -20,6 +20,9 @@ public class SkullDoorAnimator : MonoBehaviour {
     private Transform _playerPos;
     [SerializeField]
     private Transform _camPos;
+    [SerializeField]
+    private RuntimeAnimatorController _controller;
+
     private float _startedAt = 0;
     private float _startedAt2 = 0;
     private int _counter = 0;
@@ -29,6 +32,8 @@ public class SkullDoorAnimator : MonoBehaviour {
 
     private Camera _cam;
     private Animator _camAnimator;
+    private camMove _camMove;
+
 
 
 
@@ -44,6 +49,7 @@ public class SkullDoorAnimator : MonoBehaviour {
         }
         _cam = Camera.main;
         _camAnimator = _cam.GetComponent<Animator>();
+        _camMove = _cam.GetComponent<camMove>();
 	}
 	
 	// Update is called once per frame
@@ -51,11 +57,13 @@ public class SkullDoorAnimator : MonoBehaviour {
         if (_finished) return;
         if (_opened)
         {
-            if (_startedAt2 + _lenghtLockedDoor >= Time.time)
+            if (_startedAt2 + _lenghtLockedDoor <= Time.time)
             {
                 _subMov.Freeze(false);
                 _counter = 0;
-                _finished = false;
+                _finished = true;
+                _camAnimator.enabled = false;
+                _camMove.FollowAnimation(false);
             }
             return;
         }
@@ -65,17 +73,11 @@ public class SkullDoorAnimator : MonoBehaviour {
             if (!_played)
             {
                 _subMov.Freeze(true);
-                if (!MovePlayer() || !MoveCamera()) return;
-                if(Time.time < 150){
-                    _sceneManager.LoadScene(2);
-                }
-                else if(Time.time < 200 && Time.time > 150){
-                    _sceneManager.LoadScene(1);
-                }
-                else{
-                    _sceneManager.LoadScene(0);
-                }
-                _camAnimator.SetBool("Play1", true);
+                if (!MovePlayer()) { }
+                if (!MoveCamera()) return;
+                _camMove.FollowAnimation(true);
+                _camAnimator.runtimeAnimatorController = _controller;
+                _camAnimator.enabled = true;
                 _animator[1].SetBool("Rotate", true);
                 _startedAt = Time.time;
                 _played = true;
@@ -86,15 +88,27 @@ public class SkullDoorAnimator : MonoBehaviour {
                 _animator[0].SetBool("Open", true);
                 _startedAt2 = Time.time;
             }
-            
+            if (Time.time < 150)
+            {
+                _sceneManager.LoadScene(2);
+            }
+            else if (Time.time < 200 && Time.time > 150)
+            {
+                _sceneManager.LoadScene(1);
+            }
+            else
+            {
+                _sceneManager.LoadScene(0);
+            }
+
         }
         
 	}
 
     private bool MovePlayer()
     {
-        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, 0.03f);
-        if (Vector3.Distance(_subMov.transform.position, _playerPos.position) < 0.6f)
+        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, 0.05f);
+        if (Vector3.Distance(_subMov.transform.position, _playerPos.position) < 1)
         {
             return true;
         }
@@ -102,8 +116,8 @@ public class SkullDoorAnimator : MonoBehaviour {
     }
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.03f);
-        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 0.6f)
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.05f);
+        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 1)
         {
             return true;
         }
