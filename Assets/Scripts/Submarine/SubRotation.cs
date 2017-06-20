@@ -5,7 +5,7 @@ using UnityEngine;
 public class SubRotation : MonoBehaviour {
 
     [SerializeField]
-    private float rotationSpeed = 3;
+    private float rotationSpeed = 20;
     [SerializeField]
     private float minMaxRotationX = 60;
     [SerializeField]
@@ -27,15 +27,16 @@ public class SubRotation : MonoBehaviour {
             Vector3 dir = mouse_pos - object_pos;
             dir.x = Mathf.Clamp(dir.x, -minMaxRotationX, minMaxRotationX);
             dir.y = Mathf.Clamp(dir.y, -minMaxRotationY, minMaxRotationY);
+            dir = dir.normalized;
             Quaternion newRot = new Quaternion();
-            newRot.eulerAngles = (new Vector3(dir.y, -dir.x, 0));
-            transform.rotation = Quaternion.Slerp(transform.rotation,newRot,rotationSpeed * Time.deltaTime);
+            newRot.eulerAngles = (new Vector3(dir.y * rotationSpeed, -dir.x * rotationSpeed, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 3 * Time.deltaTime);
         }
         else
         {
-            Quaternion newRot = new Quaternion();
-            newRot.eulerAngles = (new Vector3(0, 0, 0));
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRot, rotationSpeed * Time.deltaTime);
+            Quaternion newRot2 = new Quaternion();
+            newRot2.eulerAngles = (new Vector3(0, 0, 0));
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRot2, 3 * Time.deltaTime);
         }
     }
 
