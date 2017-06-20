@@ -30,13 +30,13 @@ public class SubRotation : MonoBehaviour {
             dir = dir.normalized;
             Quaternion newRot = new Quaternion();
             newRot.eulerAngles = (new Vector3(dir.y * rotationSpeed, -dir.x * rotationSpeed, 0));
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 3 * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 5 * Time.deltaTime);
         }
         else
         {
             Quaternion newRot2 = new Quaternion();
             newRot2.eulerAngles = (new Vector3(0, 0, 0));
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRot2, 3 * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRot2, 5 * Time.deltaTime);
         }
     }
 
