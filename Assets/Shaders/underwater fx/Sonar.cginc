@@ -24,7 +24,7 @@ half4 pulseColor (float3 pos, float2 uv) {
 	half4 pulsecol = half4(0,0,0,0);
 	float depthMask = 0;
 	if (abs(pos.z) < width/2 + widthFade)
-		depthMask = 1 - ((abs(pos.z) - width/2) / widthFade);
+		depthMask = saturate( 1 - ((abs(pos.z) - width/2) / widthFade) );
 	// calculating each pulse draw
 	for(int i = 0; i < _pulselength; i++) {
 		float dist = distance(pos.xy, originarray[i].xy);
