@@ -16,17 +16,23 @@ public class OctopusLatchOffPlayer : FishState
         _octo.Body.isKinematic = false;
         _octo.Body.mass = 0.1f;
 
+        //Disable chasing
         _octo.IsChasing = false;
+        //Release octopus from player
         _octo.transform.SetParent(null);
+        //Reset attack delay
         _octo.AttackCounter = 0;
+        //Disable slowing of the player
         _octo.Target.GetComponent<SubMovement>().SlowDownPlayer(false);
 
-        _octo.Body.AddForce(_octo.IsChasing ? Vector3.zero : _octo.RockNormal * _octo.MoveSpeed / 2f);
+        //Short force to get off the player
+        _octo.Body.AddForce(_octo.TargetNormal * _octo.MoveSpeed / 2f);
         _octo.TentacleControl.SetState<TentacleLatchOff>();
     }
 
     public override void Step()
     {
+        //Delay time
         if (_counter == _octo.LatchOffDelay)
         {
             _counter = 0;

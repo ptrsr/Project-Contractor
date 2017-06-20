@@ -22,6 +22,7 @@ public class OctopusBurstChase : FishState
         if (Vector3.Distance(_octo.transform.position, _octo.Target.position) < _octo.LatchOnRange)
             _octo.SetState<OctopusLatchOnPlayer>();
 
+        //Move towards target, predicts target movement based on target's velocity
         _octo.Direction = ((_octo.Target.position + (_octo.TargetBody.velocity / _octo.Difficulty)) - _octo.transform.position).normalized;
 
         //Wait for rotation to be done

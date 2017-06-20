@@ -32,7 +32,9 @@ public class SharkWayPoint : FishState
 
     private Transform NextWaypoint()
     {
+        //Set the next id
         _shark.WayId = _shark.WayId + 1 == _shark.WayPoints.Length ? 0 : _shark.WayId + 1;
+        //Return the new waypoint
         return _shark.WayPoints[_shark.WayId];
     }
 }

@@ -125,9 +125,9 @@ public class D3b0g : MonoBehaviour
                 octo.AwakeCounter);
             AddCircle(octo.gameObject, octo.OriginPos, octo.Range);
         }
-        else if (_current is ElectricEel)
+        else if (_current is Eel)
         {
-            ElectricEel eel = (ElectricEel)_current;
+            Eel eel = (Eel)_current;
             _text.text = string.Format(
                 "State: {0}\n" +
                 "Range: {1}\n" +

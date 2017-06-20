@@ -6,12 +6,12 @@ public class EelCharge : FishState
 {
     public EelCharge(Fish pFish) : base(pFish) { }
 
-    private ElectricEel _eel;
+    private Eel _eel;
     private int _counter = 0;
 
     public override void Initialize()
     {
-        _eel = (ElectricEel)fish;
+        _eel = (Eel)fish;
         _counter = 0;
     }
 
