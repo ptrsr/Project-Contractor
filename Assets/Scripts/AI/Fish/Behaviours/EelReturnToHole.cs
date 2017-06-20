@@ -7,19 +7,18 @@ public class EelReturnToHole : FishState
     public EelReturnToHole(Fish pFish) : base(pFish) { }
 
     private ElectricEel _eel;
-    private Vector3 _holeDir;
 
     public override void Initialize()
     {
         _eel = (ElectricEel)fish;
+        //Remove any velocity to prevent eel leaving it's hole from previous forces
         _eel.Body.velocity = Vector3.zero;
         _eel.Body.angularVelocity = Vector3.zero;
         _eel.AnchorBody.velocity = Vector3.zero;
         _eel.AnchorBody.angularVelocity = Vector3.zero;
+        //Disable collider for a smooth return
         _eel.Collider.enabled = false;
         _eel.AnchorBody.isKinematic = false;
-
-        _holeDir = _eel.HoleExit.position - _eel.AnchorOrigPos;
     }
 
     public override void Step()
@@ -27,9 +26,11 @@ public class EelReturnToHole : FishState
         //Return anchor to start position
         if (Vector3.Distance(_eel.AnchorOrigPos, _eel.Anchor.position) > 1)
         {
+            //Move towards anchor start position
             Vector3 dir = (_eel.AnchorOrigPos - _eel.Anchor.position).normalized;
             _eel.AnchorBody.AddForce(dir * _eel.MoveSpeed);
 
+            //Set the direction pointing towards the hole exit position
             _eel.Direction = (_eel.HoleExit.position - _eel.Hole.position).normalized;
         }
         else

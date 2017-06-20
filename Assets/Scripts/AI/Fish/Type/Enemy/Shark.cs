@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Shark : FishEnemy
 {
-    [Header("Shark Variables")]
-    [SerializeField]
+    //[SerializeField]
     private int _timeForRandomDir = 200;
     public int TimeForRandomDir { get { return _timeForRandomDir; } }
 
+    [Header("Shark Variables")]
     [SerializeField]
     private int _knockBackStrength = 60;
     public int KnockBackStrength { get { return _knockBackStrength; } }
@@ -68,10 +68,14 @@ public class Shark : FishEnemy
         if (c.transform != Target)
             return;
 
+        //Add force to the player's body in which direction the shark is going
         c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
         SubMovement sub = Target.GetComponent<SubMovement>();
+        //Set stun time
         sub.StunSlowCooldown = 60;
+        //Stun the player
         sub.StunPlayer();
+        //Drain oxygen from the player
         OxygenVals.Remove(OxygenDrain);
 
         SetState<SharkIdle>();
@@ -82,16 +86,21 @@ public class Shark : FishEnemy
         int id = -1;
         float lowestRange = 9999f;
 
+        //Go through each waypoint
         for (int i = 0; i < _waypoints.Length; i++)
         {
+            //Get the distance between the shark and the waypoint
             float testRange = Vector3.Distance(target.position, _waypoints[i].position);
+            //Check if it's more near
             if (testRange < lowestRange)
             {
+                //Assign new nearest waypoint
                 id = i;
                 lowestRange = testRange;
             }
         }
 
+        //Return nearest waypoint
         return _waypoints[id];
     }
 

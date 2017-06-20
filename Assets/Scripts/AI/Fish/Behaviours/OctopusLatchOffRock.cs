@@ -16,12 +16,14 @@ public class OctopusLatchOffRock : FishState
         _octo.Body.isKinematic = false;
         _octo.Body.mass = 0.1f;
 
+        //Quick force to get off the rock
         _octo.Body.AddForce(_octo.RockNormal * _octo.MoveSpeed);
         _octo.TentacleControl.SetState<TentacleLatchOff>();
     }
 
     public override void Step()
     {
+        //Delay time
         if (_counter == _octo.LatchOffDelay)
         {
             _counter = 0;

@@ -23,6 +23,7 @@ public class OctopusBurstMove : FishState
         if (_octo.CheckLatchOnRange())
             _octo.SetState<OctopusLatchOnRock>();
 
+        //Move towards rock
         _octo.Direction = (_octo.RockPos - _octo.transform.position).normalized;
 
         //Wait for rotation to be done

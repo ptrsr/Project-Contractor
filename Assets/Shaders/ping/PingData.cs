@@ -56,12 +56,17 @@ public class PingData : MonoBehaviour {
 	}
 
 	void UpdateShader () {
-		underwater._mat.SetFloatArray ("_pingInter", _pingInteractable);
-		underwater._mat.SetVectorArray ("_originInter", _originInteractable);
-		underwater._mat.SetInt ("_pingsInter", pingsInter);
-
-		underwater._mat.SetFloatArray ("_pingHostile", _pingHostile);
-		underwater._mat.SetVectorArray ("_originHostile", _originHostile);
-		underwater._mat.SetInt ("_pingsHostile", pingsHostile);
+        if (_pingInteractable.Length > 0)
+        {
+            underwater._mat.SetFloatArray("_pingInter", _pingInteractable);
+            underwater._mat.SetVectorArray("_originInter", _originInteractable);
+            underwater._mat.SetInt("_pingsInter", pingsInter);
+        }
+        if (_pingHostile.Length > 0)
+        {
+            underwater._mat.SetFloatArray("_pingHostile", _pingHostile);
+            underwater._mat.SetVectorArray("_originHostile", _originHostile);
+            underwater._mat.SetInt("_pingsHostile", pingsHostile);
+        }
 	}
 }

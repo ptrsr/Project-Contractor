@@ -25,7 +25,7 @@ public class FishEnemy : Fish
     private float _difficulty = 5;
     public float Difficulty { get { return _difficulty; } }
 
-    [SerializeField]
+    //[SerializeField]
     private int _wallDetectionRange = 4;
     public int WallDetectionRange { get { return _wallDetectionRange; } }
 
