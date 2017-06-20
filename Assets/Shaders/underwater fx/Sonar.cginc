@@ -14,11 +14,11 @@ uniform float _distance;
 // PING DATA
 uniform float _pingInter[10];
 uniform float4 _originInter[10];
-uniform int _pingsInter;
+uniform float _interactibles[10];
 
 uniform float _pingHostile[10];
 uniform float4 _originHostile[10];
-uniform int _pingsHostile;
+uniform int _hostiles[10];
 
 
 half4 pulseColor (float3 pos, float2 uv) {
@@ -74,24 +74,37 @@ float4 horizBars(float2 p) {
 }
 
 
-half4 pingInterColor (float3 pos) {
+half4 pingInterColor (float3 pos) 
+{
 	half4 col = half4(0,0,0,0);
-	for(int i = 0; i < _pingsInter; i++) {
-		float dist = distance(pos, _originInter[i]);
-		if (dist < _pingInter[i] + edgeWidth/2 && dist > _pingInter[i] - edgeWidth/2 && dist > 2)
+	
+	for(int i = 0; i < 1; i++) 
+	{
+		int current = asint(_interactibles[8]);
+
+		float dist = distance(pos, _originInter[current]);
+		if (dist < _pingInter[current] + edgeWidth/2 && dist > _pingInter[current] - edgeWidth/2 && dist > 2)
 			col = half4(0,1,0,1);
 
-		if (dist < _pingInter[i] - 3 + edgeWidth/2 && dist > _pingInter[i] - 3 - edgeWidth/2 && dist > 2)
+		if (dist < _pingInter[current] - 3 + edgeWidth/2 && dist > _pingInter[current] - 3 - edgeWidth/2 && dist > 2)
 			col = half4(0,1,0,1);
 	}
 	return col;
 }
 
-half4 pingHostileColor (float3 pos) {
+half4 pingHostileColor (float3 pos) 
+{
 	half4 col = half4(0,0,0,0);
-	for(int i = 0; i < _pingsHostile; i++) {
-		float dist = distance(pos, _originHostile[i]);
-		if (dist < _pingHostile[i] + edgeWidth/2 && dist > _pingHostile[i] - edgeWidth/2 && dist > 2)
+	
+	for(int i = 0; i < 10; i++) 
+	{
+		int current = _hostiles[i];
+
+		if (current == -1)
+			return col;
+
+		float dist = distance(pos, _originHostile[current]);
+		if (dist < _pingHostile[current] + edgeWidth/2 && dist > _pingHostile[current] - edgeWidth/2 && dist > 2)
 			col = half4(1,0,0,1);
 	}
 	return col;

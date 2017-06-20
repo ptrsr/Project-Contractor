@@ -10,8 +10,8 @@ public class PingHostile : MonoBehaviour {
 	private Transform player;
 	private underwaterFX sonar;
 
-	private Vector3 origin;
-	public Vector3 getOrigin{get{ return origin; }}
+	private Vector3 _origin;
+	public Vector3 getOrigin{get{ return _origin; }}
 
 	private float ping = 0;
 	public float getPing{ get { return ping; } set { ping = value; } }
@@ -24,7 +24,7 @@ public class PingHostile : MonoBehaviour {
 
 	void Awake () {
 		// define origin on awake so data is available on start
-		origin = transform.position;
+		_origin = transform.position;
 	}
 
 	void Start () {
@@ -33,17 +33,18 @@ public class PingHostile : MonoBehaviour {
 		maxPulses = sonar.SonarVals.maxPulses;
 	}
 
-	void Update () {
+	void Update ()
+    {
 		PingCheck ();
 		PingUpdate ();
-		origin = transform.position;
+		_origin = transform.position;
 	}
 
 	void PingCheck () {
 		if (pinged)
 			return;
 		
-		dist = Vector3.Distance (origin, player.position);
+		dist = Vector3.Distance (_origin, player.position);
 		for (int i = 0; i < maxPulses; i++) {
 			if (dist - 1 < sonar.aPulse [i] && dist + 1 > sonar.aPulse[i])
 				pinged = true;
@@ -59,5 +60,20 @@ public class PingHostile : MonoBehaviour {
 			}
 		}
 	}
+
+    public bool CheckOnScreen()
+    {
+        Camera cam = Camera.main;
+        Vector3 pos = cam.transform.position;
+
+        Vector3 tl = cam.WorldToViewportPoint(new Vector3(dist, dist, 0) + _origin);
+        Vector3 tr = cam.WorldToViewportPoint(new Vector3(-dist, dist, 0) + _origin);
+        Vector3 bl = cam.WorldToViewportPoint(new Vector3(-dist, -dist, 0) + _origin);
+
+        if (tl.x <= 1 && tr.x >= 0 && bl.y <= 1 && tl.y >= 0)
+            return true;
+
+        return false;
+    }
 
 }

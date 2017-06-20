@@ -73,7 +73,12 @@ public class VolumeOrtho : Volumetric
             SetupBox();
 
         if (!CheckOnScreen())
+        {
+            _cam.enabled = false;
             return;
+        }
+
+        _cam.enabled = true;
 
         base.Render(ref dst);
 

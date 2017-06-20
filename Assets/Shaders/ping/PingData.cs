@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PingData : MonoBehaviour {
+public class PingData : MonoBehaviour
+{
 
-	public List<PingInter> pingInter;
-	public List<PingHostile> pingHostile;
+	public List<PingInter> _interactibles;
+	public List<PingHostile> _hostiles;
 
 	private float[] _pingInteractable;
 	private Vector4[] _originInteractable;
@@ -20,8 +21,8 @@ public class PingData : MonoBehaviour {
 	void Start () {
 		underwater = Camera.main.GetComponent<underwaterFX> (); 
 
-		pingsInter = pingInter.Count;
-		pingsHostile = pingHostile.Count;
+		pingsInter = _interactibles.Count;
+		pingsHostile = _hostiles.Count;
 
 		_pingInteractable = new float[pingsInter];
 		_originInteractable = new Vector4[pingsInter];
@@ -39,29 +40,77 @@ public class PingData : MonoBehaviour {
 	}
 
 	void SetupOrigins () {
-		for (int i = 0; i < pingInter.Count; i++) {
-			_originInteractable [i] = pingInter [i].getOrigin;
+		for (int i = 0; i < _interactibles.Count; i++) {
+			_originInteractable [i] = _interactibles [i].getOrigin;
+		}
+
+        if (_originInteractable.Length != 0)
+            underwater._mat.SetVectorArray("_originInter", _originInteractable);
+    }
+
+    void UpdatePings () {
+		for (int i = 0; i < _interactibles.Count; i++) {
+			_pingInteractable [i] = _interactibles [i].getPing;
+		}
+
+		for (int i = 0; i < _hostiles.Count; i++) {
+			_pingHostile [i] = _hostiles [i].getPing;
+			_originHostile [i] = _hostiles [i].getOrigin;
 		}
 	}
 
-	void UpdatePings () {
-		for (int i = 0; i < pingInter.Count; i++) {
-			_pingInteractable [i] = pingInter [i].getPing;
-		}
+	void UpdateShader ()
+    {
+        SetInteractibles();
+        SetHostiles();
 
-		for (int i = 0; i < pingHostile.Count; i++) {
-			_pingHostile [i] = pingHostile [i].getPing;
-			_originHostile [i] = pingHostile [i].getOrigin;
-		}
+        if (_pingInteractable.Length != 0)
+            underwater._mat.SetFloatArray ("_pingInter", _pingInteractable);
+
+        if (_pingHostile.Length != 0)
+        {
+            underwater._mat.SetFloatArray("_pingHostile", _pingHostile);
+            underwater._mat.SetVectorArray("_originHostile", _originHostile);
+        }
 	}
 
-	void UpdateShader () {
-		underwater._mat.SetFloatArray ("_pingInter", _pingInteractable);
-		underwater._mat.SetVectorArray ("_originInter", _originInteractable);
-		underwater._mat.SetInt ("_pingsInter", pingsInter);
+    void SetInteractibles()
+    {
+        int current = 0;
 
-		underwater._mat.SetFloatArray ("_pingHostile", _pingHostile);
-		underwater._mat.SetVectorArray ("_originHostile", _originHostile);
-		underwater._mat.SetInt ("_pingsHostile", pingsHostile);
-	}
+        for (int i = 0; i < _interactibles.Count; i++)
+        {
+            PingInter ping = _interactibles[i];
+
+            if (ping.CheckOnScreen())
+            {
+                underwater._mat.SetFloat("_interactibles" + current.ToString(), i);
+                current++;
+            }
+        }
+        underwater._mat.SetFloat("_interactibles" + current.ToString(), -1);
+
+        print(underwater._mat.GetFloat("_interactibles0"));
+        print(underwater._mat.GetFloat("_interactibles1"));
+        print(underwater._mat.GetFloat("_interactibles2"));
+
+    }
+
+    void SetHostiles()
+    {
+        int current = 0;
+
+        for (int i = 0; i < _hostiles.Count; i++)
+        {
+            PingHostile ping = _hostiles[i];
+
+            if (ping.CheckOnScreen())
+            {
+                underwater._mat.SetInt("_hostiles" + current.ToString(), i);
+                current++;
+            }
+        }
+        underwater._mat.SetInt("_hostiles" + current.ToString(), -1);
+    }
+
 }

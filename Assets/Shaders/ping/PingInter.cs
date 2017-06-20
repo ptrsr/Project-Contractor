@@ -11,8 +11,8 @@ public class PingInter : MonoBehaviour {
 	private Transform player;
 	private underwaterFX sonar;
 
-	private Vector3 origin;
-	public Vector3 getOrigin{get{ return origin; }}
+	private Vector3 _origin;
+	public Vector3 getOrigin{get{ return _origin; }}
 
 	private float ping = 0;
 	public float getPing{ get { return ping; } set { ping = value; } }
@@ -24,12 +24,22 @@ public class PingInter : MonoBehaviour {
 
 	private float dist = 0;
 
-	void Awake () {
-		// define origin on awake so data is available on start
-		origin = transform.position;
-	}
+    private Vector3
+        _tl,
+        _tr,
+        _bl;
 
-	void Start () {
+    void Awake ()
+    {
+		// define origin on awake so data is available on start
+		_origin = transform.position;
+
+        _tl = new Vector3(dist, dist, 0) + _origin;
+        _tr = new Vector3(-dist, dist, 0) + _origin;
+        _bl = new Vector3(-dist, -dist, 0) + _origin;
+    }
+
+    void Start () {
 		sonar = Camera.main.GetComponent<underwaterFX> ();
 		player = GameObject.FindGameObjectWithTag ("Player").transform;
 		maxPulses = sonar.SonarVals.maxPulses;
@@ -47,7 +57,7 @@ public class PingInter : MonoBehaviour {
 		if (!active)
 			return;
 		
-		dist = Vector3.Distance (origin, player.position);
+		dist = Vector3.Distance (_origin, player.position);
 		for (int i = 0; i < maxPulses; i++) {
 			if (dist - 1 < sonar.aPulse [i] && dist + 1 > sonar.aPulse [i]) {
 				if (!ACTIVATE) 
@@ -95,7 +105,7 @@ public class PingInter : MonoBehaviour {
 		if (!active)
 			return;
 
-		dist = Vector3.Distance (origin, player.position);
+		dist = Vector3.Distance (_origin, player.position);
 
 		for (int i = 0; i < maxPulses; i++) {
 			
@@ -110,9 +120,21 @@ public class PingInter : MonoBehaviour {
 
 		ACTIVATE = false;
 
+
 	}
 
+    public bool CheckOnScreen()
+    {
+        Camera cam = Camera.main;
+        Vector3 pos = cam.transform.position;
 
+        Vector3 tl = cam.WorldToViewportPoint(_tl);
+        Vector3 tr = cam.WorldToViewportPoint(_tr);
+        Vector3 bl = cam.WorldToViewportPoint(_bl);
 
+        if (tl.x <= 1 && tr.x >= 0 && bl.y <= 1 && tl.y >= 0)
+            return true;
 
+        return false;
+    }
 }
