@@ -83,7 +83,7 @@
 				// view and normal diff
 				float diff = 1 - (dot(i.viewDir, i.normal) * 0.5 + 0.5);
 
-				float high = pow( dot(_WorldSpaceLightPos0, i.normal) * 0.5 + 0.5 , 5);
+				float high = pow( dot(float3(0,1,0), i.normal) * 0.5 + 0.5 , 5);
 
 				// refraction and color strengths
 				float refDiff = pow(diff, 5 - _refPower);

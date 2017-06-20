@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ElectricEel : FishNeutral
+public class Eel : FishNeutral
 {
     [Header("Electric Eel Variables")]
     [SerializeField]
@@ -50,8 +50,6 @@ public class ElectricEel : FishNeutral
         _collider = GetComponent<Collider>();
         _holeExit = _hole.GetComponentsInChildren<Transform>()[1];
 
-        Direction = (Vector3.right * WallDetectionRange).normalized;
-
         stateCache[typeof(EelHide)] = new EelHide(this);
         stateCache[typeof(EelCharge)] = new EelCharge(this);
         stateCache[typeof(EelReturnToHole)] = new EelReturnToHole(this);
@@ -76,9 +74,12 @@ public class ElectricEel : FishNeutral
         sub.StunSlowCooldown = 40;
         sub.StunPlayer();
 
+        //Drain oxygen from the player
         OxygenVals.Remove(OxygenDrain);
 
+        //Add force to push the player away
         c.rigidbody.AddForce(Direction * _knockbackStrength, ForceMode.Impulse);
+        //Change state to return to hole
         SetState<EelReturnToHole>();
     }
 

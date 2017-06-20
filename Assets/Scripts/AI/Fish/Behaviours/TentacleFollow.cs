@@ -17,6 +17,7 @@ public class TentacleFollow : FishState
 
     public override void Step()
     {
+        //Add force for each tentacle going into the opposide diretion of which the player is going
         foreach (Rigidbody tentacle in _tentacles.TentacleTips)
         {
             tentacle.AddForce(-_tentacles.Octo.Direction * _tentacles.MoveSpeed);

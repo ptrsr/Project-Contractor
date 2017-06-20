@@ -17,9 +17,12 @@ public class OctopusLatchOnPlayer : FishState
 
         //Parent the player to keep equal positions
         _octo.transform.SetParent(_octo.Target.transform);
+        //Find a position to latch on the player
         RaycastHit hit;
         Physics.Raycast(_octo.transform.position, _octo.Direction, out hit);
+        //Assign found value
         _octo.TargetNormal = hit.normal;
+        //Get movement script
         _subMove = _octo.Target.GetComponent<SubMovement>();
 
         //Pre-check if player is charging, so you can avoid the Octopus quickly
@@ -46,8 +49,10 @@ public class OctopusLatchOnPlayer : FishState
         if (Vector3.Distance(_octo.transform.position, _octo.OriginPos) > _octo.Range)
             _octo.SetState<OctopusLatchOffPlayer>();
 
+        //Drain oxygen
         _octo.OxygenVals.Remove(_octo.OxygenDrain);
 
+        //Set position and rotation
         SetPos(_octo.Target.position, _octo.TargetNormal);
         SetRot(_octo.TargetNormal);
     }

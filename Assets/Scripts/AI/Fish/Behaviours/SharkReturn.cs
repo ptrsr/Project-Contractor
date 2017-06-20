@@ -24,62 +24,7 @@ public class SharkReturn : FishState
         }
         else
         {
-            _waypoints = new Queue<Transform>();
-            _shark.Body.velocity = Vector3.zero;
-            //FindWayPoint();
-            _shark.WayId = _shark.SyncTarget.WayId + _shark.SyncStep >= _shark.WayPoints.Length ? _shark.SyncTarget.WayId + _shark.SyncStep - _shark.WayPoints.Length : _shark.SyncTarget.WayId + _shark.SyncStep;
-            //_shark.WayId = _shark.WayId + 1 >= _shark.WayPoints.Length ? 0 : _shark.WayId + 1;
-            //_shark.SetState<SharkWayPoint>();
-            _otherDistance = Vector3.Distance(_shark.SyncTarget.WayPoints[_shark.SyncTarget.WayId].position, _shark.SyncTarget.transform.position);
-            //if (_otherDistance < 35)
-            //{
-            //    _otherDistance = Vector3.Distance(_shark.SyncTarget.WayPoints[_shark.SyncTarget.WayId].position, _shark.SyncTarget.transform.position) +
-            //        Vector3.Distance(_shark.SyncTarget.WayPoints[_shark.SyncTarget.WayId + 1 >= _shark.SyncTarget.WayPoints.Length ? 0 : _shark.SyncTarget.WayId + 1].position, _shark.SyncTarget.transform.position);
-            //    _shark.WayId = _shark.WayId + 1 >= _shark.WayPoints.Length ? 0 : _shark.WayId + 1;
-            //    Debug.Log("Taking next waypoint");
-            //}
-
-            if (Physics.Linecast(_shark.transform.position, _shark.WayPoints[_shark.WayId].position, ~_shark.IgnoreDetection))
-            {
-                int wayId = _shark.GetWayPointId(_shark.GetNearestWayPointTo(_shark.transform));
-
-                _waypoints.Enqueue(_shark.WayPoints[wayId]);
-                int i = wayId;
-                if (_shark.SyncTarget.WayId > wayId)
-                {
-                    do
-                    {
-                        i--;
-                        if (i < 0)
-                            i = _shark.WayPoints.Length - 1;
-                        _waypoints.Enqueue(_shark.WayPoints[i]);
-                    } while (i != _shark.WayId);
-                }
-                else
-                {
-                    do
-                    {
-                        i++;
-                        if (i >= _shark.WayPoints.Length)
-                            i = 0;
-                        _waypoints.Enqueue(_shark.WayPoints[i]);
-                    } while (i != _shark.WayId);
-                }
-            }
-            else
-                _waypoints.Enqueue(_shark.WayPoints[_shark.WayId]);
-
-            _time = _otherDistance / _shark.SyncTarget.MoveSpeed / 1.5f;
-            float distance = 0;
-            //Debug.Log("Count: " + _waypoints.Count);
-            foreach (Transform point in _waypoints)
-            {
-                distance += Vector3.Distance(point.position, _shark.transform.position);
-            }
-            //_speed = Vector3.Distance(_shark.transform.position, _shark.WayPoints[_shark.WayId].position) / _time;
-            _speed = distance / _time;
-            //Debug.Log(string.Format("Speed: {0} Distance: {1}, Time: {2}", _speed, distance, _time));
-            _curPoint = _waypoints.Dequeue();
+            SyncUp();
         }
     }
 
@@ -138,5 +83,74 @@ public class SharkReturn : FishState
 			count++;
             //Check if a waypoint is in front of the shark
 		} while (Vector3.Angle(-_shark.transform.right, point.position - _shark.transform.position) > 45f || count != _shark.WayPoints.Length);
+    }
+
+    private void SyncUp()
+    {
+        _waypoints = new Queue<Transform>();
+        //Remove remaining movement
+        _shark.Body.velocity = Vector3.zero;
+        //Assign the waypoint id that is on sync distance from the sync target
+        _shark.WayId = _shark.SyncTarget.WayId + _shark.SyncStep >= _shark.WayPoints.Length ? _shark.SyncTarget.WayId + _shark.SyncStep - _shark.WayPoints.Length : _shark.SyncTarget.WayId + _shark.SyncStep;
+        //Distance from the sync target to it's current waypoint
+        _otherDistance = Vector3.Distance(_shark.SyncTarget.WayPoints[_shark.SyncTarget.WayId].position, _shark.SyncTarget.transform.position);
+
+        //Check if direct path is obstructed
+        if (CheckLOS(_shark.transform.position, _shark.WayPoints[_shark.WayId].position))
+        {
+            int wayId = _shark.GetWayPointId(_shark.GetNearestWayPointTo(_shark.transform));
+
+            //Enqueue the first point
+            _waypoints.Enqueue(_shark.WayPoints[wayId]);
+            int i = wayId;
+            //Check in which direction the waypoint is to avoid collision with the sync target
+            if (_shark.SyncTarget.WayId > wayId)
+            {
+                //Save waypoint in decreasing order
+                do
+                {
+                    i--;
+                    if (i < 0)
+                        i = _shark.WayPoints.Length - 1;
+                    _waypoints.Enqueue(_shark.WayPoints[i]);
+                } while (i != _shark.WayId);
+            }
+            else
+            {
+                //Save waypoints in increasing order
+                do
+                {
+                    i++;
+                    if (i >= _shark.WayPoints.Length)
+                        i = 0;
+                    _waypoints.Enqueue(_shark.WayPoints[i]);
+                } while (i != _shark.WayId);
+            }
+        }
+        else
+            //Save waypoint directly
+            _waypoints.Enqueue(_shark.WayPoints[_shark.WayId]);
+
+        //Time it takes for our shark to reach the sync waypoint
+        _time = _otherDistance / _shark.SyncTarget.MoveSpeed / 1.5f;
+
+        //Get the total distance of all the waypoint we need to pass
+        float distance = 0;
+        foreach (Transform point in _waypoints)
+        {
+            distance += Vector3.Distance(point.position, _shark.transform.position);
+        }
+
+        //Calculate the speed it needs to reach the sync waypoint in time
+        _speed = distance / _time;
+
+        //Assign first waypoint
+        _curPoint = _waypoints.Dequeue();
+    }
+
+    //Checks if there is any obstruction between 2 points
+    private bool CheckLOS(Vector3 from, Vector3 to)
+    {
+        return Physics.Linecast(from, to, ~_shark.IgnoreDetection);
     }
 }

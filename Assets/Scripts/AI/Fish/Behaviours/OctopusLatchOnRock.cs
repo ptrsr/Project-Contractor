@@ -25,13 +25,13 @@ public class OctopusLatchOnRock : FishState
         if (_octo.DetectTarget())
             _octo.SetState<OctopusLatchOffRock>();
 
+        //Set position and rotation
         SetPos(_octo.RockPos, _octo.RockNormal);
         SetRot(_octo.RockNormal);
 
         if (_restCounter != _octo.RestTime / 4)
             _restCounter++;
         else
-            //_octo.SetState<OctopusLatchOffRock>();
             _octo.SetState<OctopusSleep>();
     }
 

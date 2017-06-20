@@ -5,13 +5,14 @@ using UnityEngine;
 public class Octopus : FishEnemy
 {
     [Header("Octopus Variables")]
-    [SerializeField]
+    //[SerializeField]
     private int _attackCooldown = 500;
     public int AttackCooldown { get { return _attackCooldown; } }
 
     private int _attackCounter;
     public int AttackCounter { get { return _attackCounter; } set { _attackCounter = value; } }
 
+    [Header("Octopus Variables")]
     [SerializeField]
     [Tooltip("Used to decrease idle intervals between bursts when chasing the player")]
     private float _idleIntervalChange = 2f;
@@ -29,8 +30,8 @@ public class Octopus : FishEnemy
     private int _latchOffDelay = 25;
     public int LatchOffDelay { get { return _latchOffDelay; } }
 
-    [SerializeField]
-    [Tooltip("The time the Octopus stays on a rock before finding a new one")]
+    //[SerializeField]
+    //  [Tooltip("The time the Octopus stays on a rock before finding a new one")]
     private int _restTime = 500;
     public int RestTime { get { return _restTime; } }
 

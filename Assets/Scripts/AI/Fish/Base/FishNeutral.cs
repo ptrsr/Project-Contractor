@@ -9,7 +9,7 @@ public class FishNeutral : Fish
     private int _range = 60;
     public int Range { get { return _range; } }
 
-    [SerializeField]
+    //[SerializeField]
     private int _wallDetectionRange = 4;
     public int WallDetectionRange { get { return _wallDetectionRange; } }
 

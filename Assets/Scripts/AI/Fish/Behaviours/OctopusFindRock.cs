@@ -35,16 +35,18 @@ public class OctopusFindRock : FishState
             Debug.DrawRay(_octo.transform.position, _octo.Direction * _octo.Range * 2f, Color.yellow, 2f);
             Physics.Raycast(_octo.transform.position, _octo.Direction, out hit, _octo.Range * 2f, ~_octo.IgnoreDetection);
             i++;
+            //Loop breaker to prevent infinite loops
             if (i >= 100)
             {
                 Debug.Log("Failed to find a rock\nOctopus id: " + _octo.gameObject.name);
-                break;
+                return;
             }
             //Keep trying until the point is in range of origin and is not right next to the Octopus
         } while
         (Vector3.Distance(_octo.OriginPos, hit.point) > _octo.Range ||
         Vector3.Distance(_octo.transform.position, hit.point) < 20);
 
+        //Assign found values
         _octo.RockPos = hit.point;
         _octo.RockNormal = hit.normal;
     }
