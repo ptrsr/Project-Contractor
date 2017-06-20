@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class ReefAnimation : MonoBehaviour {
 
@@ -19,6 +20,7 @@ public class ReefAnimation : MonoBehaviour {
 
     private Camera _cam;
     private Animator _camAnimator;
+    private bool _finished = false;
 
 
     void Start () {
@@ -27,21 +29,34 @@ public class ReefAnimation : MonoBehaviour {
         _sub = FindObjectOfType<SubMovement>();
         _cam = Camera.main;
         _camAnimator = _cam.GetComponent<Animator>();
+        _camAnimator.enabled = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (_finished) return;
         if (_played)
         {
-
+            if (_camAnimator.GetCurrentAnimatorStateInfo(0).IsName("Cutscene1")){
+                _cam.GetComponent<camMove>().FollowAnimation(true);
+            }
+            if (_startedAt + _lenghtAnimation <= Time.time)
+            {
+                _sub.Freeze(false);
+                _cam.GetComponent<camMove>().FollowAnimation(false);
+                _camAnimator.enabled = false;
+                _finished = true;
+            }
         }
 		if (_key3InPlace) {
-			if (!_played) {
-
-                if (!MovePlayer() || !MoveCamera()) return;
-                _camAnimator.SetBool("Play1", true);
-				_played = true;
+			if (!_played)
+            {
                 _sub.Freeze(true);
+                if (!MovePlayer()) { }
+                if (!MoveCamera()) { return; }
+                _camAnimator.enabled = true;
+                _animator.SetBool("Open", true);
+                _played = true;
                 _startedAt = Time.time;
 
 			}
@@ -50,8 +65,8 @@ public class ReefAnimation : MonoBehaviour {
 
     private bool MovePlayer()
     {
-        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos.position, 0.03f);
-        if (Vector3.Distance(_sub.transform.position, _playerPos.position) < 0.6f)
+        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos.position, 0.05f);
+        if (Vector3.Distance(_sub.transform.position, _playerPos.position) < 1)
         {
             return true;
         }
@@ -59,8 +74,11 @@ public class ReefAnimation : MonoBehaviour {
     }
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.03f);
-        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 0.6f)
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.05f);
+        Quaternion newRot = new Quaternion();
+        newRot.eulerAngles = (new Vector3(0,0,0));
+        transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 5 * Time.deltaTime);
+        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 1)
         {
             return true;
         }
