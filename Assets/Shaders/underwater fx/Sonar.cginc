@@ -6,6 +6,7 @@ uniform int _pulselength;
 uniform float _pulses[10];
 uniform float4 originarray[10];
 uniform float width;
+uniform float widthFade;
 uniform float fade;
 uniform float edgeWidth;
 uniform float _start;
@@ -15,42 +16,28 @@ uniform float _distance;
 uniform float _pingInter[10];
 uniform float4 _originInter[10];
 uniform int _pingsInter;
-
 uniform float _pingHostile[10];
 uniform float4 _originHostile[10];
 uniform int _pingsHostile;
 
-
 half4 pulseColor (float3 pos, float2 uv) {
-	// calculating each pulse draw
 	half4 pulsecol = half4(0,0,0,0);
-
+	float depthMask = 0;
+	if (abs(pos.z) < width/2 + widthFade)
+		depthMask = 1 - ((abs(pos.z) - width/2) / widthFade);
+	// calculating each pulse draw
 	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] && dist > _pulses[i] - fade) {
-			float diff = 1 - (_pulses[i] - dist) / (fade);
-
+		float dist = distance(pos.xy, originarray[i].xy);
+		if (dist < _pulses[i] && dist > _pulses[i] - fade && dist > _start) {
 			pulsecol = half4(1,0,0,1);
+			float diff = 1 - (_pulses[i] - dist) / (fade);
 			pulsecol *= diff;
 		}
-		if (dist < _start)
-			pulsecol *= 0;
 	}
-	// masking pulse highlight
-	float depthMask = 0;
-
-	float fadeDiff = (width/2) / abs(pos.z);
-
-	if (pos.z > -width/2 && pos.z < width/2)
-		depthMask = 1;
-
-//	pulsecol *= fadeDiff;
 	pulsecol *= depthMask;
-	// return pulse
 	return pulsecol;
 }
 
-// UPDATED ———————————————————————————————
 half4 edgeCol (float3 pos) {
 	// calculating each pulse draw
 	half4 col = half4(0,0,0,0);
@@ -58,31 +45,19 @@ half4 edgeCol (float3 pos) {
 		float dist = distance(pos, originarray[i]);
 		if (dist < _pulses[i] + edgeWidth/2 && dist > _pulses[i] - edgeWidth/2 && dist > _start)
 			col = half4(1,1,1,1);
-
-		// fading edge over distance (didnt really work)
-//		col *= pow(1 - dist / _distance, 0.2);
-
 	}
-	// return color
 	return col;
 } 
-// UPDATED ———————————————————————————————
-
-
-float4 horizBars(float2 p) {
-	return 1 - saturate(round(abs(frac(p.y * 100) * 2)));
-}
-
 
 half4 pingInterColor (float3 pos) {
 	half4 col = half4(0,0,0,0);
 	for(int i = 0; i < _pingsInter; i++) {
+		// double ping draw
 		float dist = distance(pos, _originInter[i]);
 		if (dist < _pingInter[i] + edgeWidth/2 && dist > _pingInter[i] - edgeWidth/2 && dist > 2)
 			col = half4(0,1,0,1);
-
-		if (dist < _pingInter[i] - 3 + edgeWidth/2 && dist > _pingInter[i] - 3 - edgeWidth/2 && dist > 2)
-			col = half4(0,1,0,1);
+//		if (dist < _pingInter[i] - 3 + edgeWidth/2 && dist > _pingInter[i] - 3 - edgeWidth/2 && dist > 2)
+//			col = half4(0,1,0,1);
 	}
 	return col;
 }
@@ -96,7 +71,6 @@ half4 pingHostileColor (float3 pos) {
 	}
 	return col;
 }
-
 
 float3 xyPlanePosition (float4 ray) {
 	// vector data

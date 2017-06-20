@@ -9,12 +9,14 @@ public class Sonar {
 	public int maxPulses = 10;
 	public float interval = 2;
 	public float width = 2;
+	[Range(0,5)]
+	public float widthFade = 0;
 	public float fade = 30;
 	public float edgeWidth = 1;
 	public float distance = 100;
 	public float speed = 50;
 	public bool active = false;
-	public float start = 5;
+	public float start = 10;
 	public bool enabled = true;
 }
 [System.Serializable]
@@ -169,6 +171,7 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloatArray ("_pulses", aPulse);
 		_mat.SetVectorArray ("originarray", aOrigin);
 		_mat.SetFloat ("width", _sonar.width);
+		_mat.SetFloat ("widthFade", _sonar.widthFade);
 		_mat.SetFloat ("fade", _sonar.fade);
 		_mat.SetFloat ("edgeWidth", _sonar.edgeWidth);
 		_mat.SetFloat ("_start", _sonar.start);
