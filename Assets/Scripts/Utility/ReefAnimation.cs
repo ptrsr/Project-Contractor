@@ -12,11 +12,22 @@ public class ReefAnimation : MonoBehaviour {
     private float _startedAt = 0;
     [SerializeField]
     private int _lenghtAnimation = 0;
-	void Start () {
+    [SerializeField]
+    private Transform _playerPos;
+    [SerializeField]
+    private Transform _camPos;
+
+    private Camera _cam;
+    private Animator _camAnimator;
+
+
+    void Start () {
 
 		_animator = GetComponentInChildren<Animator>();
         _sub = FindObjectOfType<SubMovement>();
-	}
+        _cam = Camera.main;
+        _camAnimator = _cam.GetComponent<Animator>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -26,7 +37,9 @@ public class ReefAnimation : MonoBehaviour {
         }
 		if (_key3InPlace) {
 			if (!_played) {
-				_animator.SetBool ("Open", true);
+
+                if (!MovePlayer() || !MoveCamera()) return;
+                _camAnimator.SetBool("Play1", true);
 				_played = true;
                 _sub.Freeze(true);
                 _startedAt = Time.time;
@@ -34,7 +47,26 @@ public class ReefAnimation : MonoBehaviour {
 			}
 		}
 	}
-	public void Key3InPlace()
+
+    private bool MovePlayer()
+    {
+        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos.position, 0.03f);
+        if (Vector3.Distance(_sub.transform.position, _playerPos.position) < 0.6f)
+        {
+            return true;
+        }
+        else { return false; }
+    }
+    private bool MoveCamera()
+    {
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.03f);
+        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 0.6f)
+        {
+            return true;
+        }
+        else { return false; }
+    }
+    public void Key3InPlace()
 	{
 		_key3InPlace = true;
 	}
