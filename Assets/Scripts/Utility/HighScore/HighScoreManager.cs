@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class HighScoreManager : MonoBehaviour {
     
-    private int _highScoreToAdd = 0;
     private int _highScore = 0;
+    
+    public int SetHighScore { set { _highScore = value; } }
     [SerializeField]
     private Transform[] _pillarPositions;
     [SerializeField]
@@ -41,28 +42,14 @@ public class HighScoreManager : MonoBehaviour {
     private bool _done3 = false;
     private bool _done4 = false;
 
-    private Canvas _canvas;
-    private Text _text1;
-    private Text _text2;
-    private Text _text3;
-    private Text _text4;
+
 
     private bool _startedPlacement = false;
     private bool _finished = false;
     private float _finishedAt = 0.0f;
 
 
-    private int _scoreTreasure1 = 0;
-    private int _scoreTreasure2 = 0;
-    private int _scoreTreasure3 = 0;
-    private int _scoreTreasure4 = 0;
-    private int _totalTreasureKind1 = 0;
-    private int _totalTreasureKind2 = 0;
-
-    private int _treasureKind1 = 0;
-    private int _treasureKind2 = 0;
-
-    private bool _animateHUD = false;
+    private HUDWin _hudWin;
 
 
     public int HighScore { get { return _highScore; } }
@@ -72,26 +59,12 @@ public class HighScoreManager : MonoBehaviour {
         {
             _subPositions[i].position = new Vector3(_subPositions[i].position.x, _subPositions[i].position.y, 0);
         }
-        _canvas = GetComponentInChildren<Canvas>();
-        _text1 = _canvas.GetComponentsInChildren<Text>()[0];
-        _text2 = _canvas.GetComponentsInChildren<Text>()[1];
-        _text3 = _canvas.GetComponentsInChildren<Text>()[2];
-        _text4 = _canvas.GetComponentsInChildren<Text>()[3];
-        _canvas.enabled = false;
+        _hudWin = GetComponentInChildren<HUDWin>();
 	}
 
     private void FixedUpdate()
     {
-        if (_animateHUD)
-        {
-            if (_totalTreasureKind1 != 0) { _totalTreasureKind1 -= 10; _highScore += 10; if (_totalTreasureKind1 <= 0) _totalTreasureKind1 = 0; }
-            if (_totalTreasureKind2 != 0) { _totalTreasureKind2 -= 10; _highScore += 10; if (_totalTreasureKind2 <= 0) _totalTreasureKind2 = 0; }
-            _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
-            _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
-            
-            if (_highScore >= _highScoreToAdd) _highScore = _highScoreToAdd;
-            _text4.text = "Total HighScore: " + _highScore;
-        }
+       
         if (Input.GetKeyDown(KeyCode.H))
         {
             ShowEndHUD();
@@ -230,48 +203,37 @@ public class HighScoreManager : MonoBehaviour {
     public void Treasure1Pickup(GameObject obj)
     {
         _treasureObj1 = obj;
-        _scoreTreasure1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
         _treasure1 = true;
     }
     public void Treasure2Pickup(GameObject obj)
     {
         _treasureObj2 = obj;
-        _scoreTreasure2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
         _treasure2 = true;
     }
     public void Treasure3Pickup(GameObject obj)
     {
         _treasureObj3 = obj;
-        _scoreTreasure3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
         _treasure3 = true;
     }
     public void Treasure4Pickup(GameObject obj)
     {
         _treasureObj4 = obj;
-        _scoreTreasure4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
         _treasure4 = true;
     }
+    
 
 
     private void ShowEndHUD()
     {
-        _canvas.enabled = true;
-        float time = Mathf.Floor(Time.time);
-        time = (time / 60);
-        if(_scoreTreasure1 != 0) { _treasureKind1++; }
-        if(_scoreTreasure2 != 0) { _treasureKind1++; }
-        if(_scoreTreasure3 != 0) { _treasureKind2++; }
-        if(_scoreTreasure4 != 0) { _treasureKind2++; }
-        string timestring = string.Format("{0:0.00}", time);
-        _text1.text = "Time to Finish: " + timestring;
-        _totalTreasureKind1 = _scoreTreasure1 + _scoreTreasure2;
-        _totalTreasureKind2 = _scoreTreasure3 + _scoreTreasure4;
-        _highScoreToAdd = _totalTreasureKind1 + _totalTreasureKind2;
-        _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
-        _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
-
-        _text4.text = "Total HighScore: " + _highScore;
-        _animateHUD = true;
+        if(_treasureObj1)
+            _hudWin.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
+        if(_treasureObj2)
+            _hudWin.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
+        if(_treasureObj3)
+            _hudWin.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
+        if(_treasureObj4)
+            _hudWin.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
+        _hudWin.ShowHud();
     }
 
     public void AddScore(int score)

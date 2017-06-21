@@ -8,6 +8,7 @@ public class Oxygen : MonoBehaviour {
     private SubMovement _sub;
     private vignette _vignette;
     private Camera _mainCamera;
+    private TimeManager _timeManager;
     [SerializeField]
     private float _oxygen = 10000;
 	[SerializeField]
@@ -25,6 +26,7 @@ public class Oxygen : MonoBehaviour {
         _mainCamera = Camera.main;
         _vignette = FindObjectOfType<vignette>();
         _sub = FindObjectOfType<SubMovement>();
+        _timeManager = FindObjectOfType<TimeManager>();
         _delay = (1 / _smoothness) + 50;
     }
 
@@ -64,8 +66,14 @@ public class Oxygen : MonoBehaviour {
         }
         else if (_oxygen < 0)
         {
-            _sub.Surface();
-            Refill();
+            if (_timeManager.DisabledOxygen)
+            {
+                //Losing HUD
+            }
+            else {
+                _sub.Surface();
+                Refill();
+            }
         }
     }
 }
