@@ -24,8 +24,6 @@ public class AddScoreOnCollision : MonoBehaviour {
         if (_update)
         {
             if(InterpolateWithScale(gameObject,_newPos,new Vector3(0.1f, 0.1f, 0.1f), 0.2f)){
-				gameObject.GetComponent<PingInter> ().active = false;
-				gameObject.GetComponent<PingInter> ().getPing = 0;
 
                 gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
 

@@ -87,4 +87,26 @@ namespace Singleton
             return colors;
         }
     }
+
+    public class Pings
+    {
+        private static readonly Pings instance = new Pings();
+        private List<Ping> pings;
+
+        private Pings()
+        {
+            pings = new List<Ping>();
+        }
+
+
+        public static void Add(Ping ping)
+        {
+            instance.pings.Add(ping);
+        }
+
+        public static List<Ping> Get()
+        {
+            return instance.pings;
+        }
+    }
 }

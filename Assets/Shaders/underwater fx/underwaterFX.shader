@@ -66,18 +66,16 @@
 
 
 				// PULSE COLORS
-				half4 pulseCol = pulseColor(worldPos, i.uv);
-				half4 pulseEdge = edgeCol(xyPlanePos);
+				half4 outlineColor = pulseOutline(worldPos, i.uv);
+				half4 highlightColor = pulseHighlight(xyPlanePos);
 
 				// PING COLORS
-				half4 pingInterCol = pingInterColor(xyPlanePos);
-				half4 pingHostileCol = pingHostileColor(xyPlanePos);
+				half4 pingColor = pulsePing(xyPlanePos);
 
 				// PULSES MASKING
 				if(worldPos.z < 0) {
-					pulseEdge = 0;
-					pingInterCol = 0;
-					pingHostileCol = 0;
+					highlightColor = 0;
+					pingColor = 0;
 				}
 
 				
@@ -99,9 +97,8 @@
 				//final output blending
 //				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
-				scene = scene + pulseCol + pulseEdge;
-				scene += pingInterCol;
-				scene += pingHostileCol;
+				scene += outlineColor + highlightColor;
+				scene += pingColor;
 
 				return scene;
 			}

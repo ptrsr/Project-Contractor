@@ -5,37 +5,66 @@ using Singleton;
 
 #region values
 [System.Serializable]
-public class Sonar {
-	public int maxPulses = 10;
-	public float interval = 2;
-	public float width = 2;
-	public float fade = 30;
-	public float edgeWidth = 1;
-	public float distance = 100;
-	public float speed = 50;
-	public bool active = false;
-	public float start = 5;
+public class Sonar
+{
+    public Color
+        highlightColor,
+        outlineColor;
+
+    public float
+        interval = 2,
+        outlineWidth = 2,
+        fade = 30,
+        highlightWidth = 1,
+        distance = 100,
+        speed = 50,
+        start = 5;
+
 	public bool enabled = true;
 }
 [System.Serializable]
-class Fog {
-	public Color startColor, endColor;
-	public float _surface = 100f;
-	public float _maxDepth = -200f;
+class Fog
+{
+	public Color 
+        startColor, 
+        endColor;
+
+    public float 
+        surface = 100f,
+	    maxDepth = -200f;
 
 	[Range(0,1)]
-	public float _intensity = 0;
+	public float intensity = 0;
 	[Range(1,10)]
-	public float _curveShift = 0;
+	public float curveShift = 0;
 }
 [System.Serializable]
-class Caustics {
+class Caustics
+{
 	public Color causticsColor;
-	[Range(0f,50f)]
-	public float size = 30f, intensity = 30f;
-	public float _causticsDepth = -50f;
+
+    [Range(0f,50f)]
+	public float 
+        size = 30f, 
+        intensity = 30f;
+
+    public float causticsDepth = -50f;
 }
 #endregion
+
+public class Pulse
+{
+    public int _number;
+    public Vector4 _origin;
+    public float _distance;
+
+    public Pulse(int number, Vector3 spawnPosition, float spawnDist)
+    {
+        _number = number;
+        _origin = spawnPosition;
+        _distance = spawnDist;
+    }
+}
 
 public class underwaterFX : MonoBehaviour {
 
@@ -53,52 +82,39 @@ public class underwaterFX : MonoBehaviour {
 	private Caustics _caustics = new Caustics();
 
 	public Material _mat; 
-	public Transform _origin;
+	public Transform _player;
 	private Camera _cam;
 	private Light _light;
 
-	public float[] aPulse;
-	//	public float[] pulses{get{return aPulse;}}
+    public List<Pulse> _pulses;
 
-	private bool[] activepulse;
-	private Vector4[] aOrigin;
-
-	private float _depth;
+    private float _pulseTimer;
+    private int _pulsesSpawned;
 
 	void Start() {
 
 		_light = GameObject.Find ("Directional Light").GetComponent<Light>();
 		_cam = Camera.main;
 		_cam.depthTextureMode = DepthTextureMode.DepthNormals;
-		activepulse = new bool[_sonar.maxPulses];
-		aPulse = new float[_sonar.maxPulses];
-		aOrigin = new Vector4[_sonar.maxPulses];
-		SetupPulses ();
 
-		// camera values
-		//		_mat.SetFloat("_cameraFar", _cam.farClipPlane);
+        // PULSE SETUP
+        _pulses = new List<Pulse>();
+        _pulseTimer = 0;
+        _pulsesSpawned = 0;
 
 		updateStart ();
 	}
 
-	void Update () {
-		PassiveSonar ();
-		PulseActivate ();
-		PulseControl ();
-		//		_depth = calculateWorldDepth ();
+	void Update ()
+    {
 		lightUpdate();
 	}
 
-	float calculateWorldDepth() {
-		float camDepth = Camera.main.transform.position.y;
-		float depth = (camDepth - _fog._surface) / (_fog._maxDepth - _fog._surface);
-		return depth;
-	}
+    void lightUpdate()
+    {
+        float intensity = 1 - (_cam.transform.position.y - _fog.surface) / (_fog.maxDepth - _fog.surface);
 
-    void lightUpdate() {
-        float intensity = 1 - calculateWorldDepth();
-
-        Vector2 worldPos = new Vector2(_origin.position.x, _origin.position.y);
+        Vector2 worldPos = new Vector2(_player.position.x, _player.position.y);
 
         foreach (var zone in DarkZones.Get())
         {
@@ -115,74 +131,30 @@ public class underwaterFX : MonoBehaviour {
             
             break;
         }
-
         _light.intensity = intensity;
-
-
     }
 
-	void SetupPulses () {
-		for (int i = 0; i < _sonar.maxPulses; i++) {
-			aPulse [i] = 0;
-		}
-	}
 
-	void PulseActivate() {
-		if (_sonar.active) {
-			for (int i = 0; i < _sonar.maxPulses; i++) {
-				if (!activepulse [i]) {
-					activepulse [i] = true;
-					aOrigin [i] = _origin.position;
-					return;
-				}
-			}
-		}
-	}
+	void updateStart ()
+    {
+        // sonar
+        _mat.SetColor("_outlineColor", _sonar.outlineColor);
+        _mat.SetColor("_highlightColor", _sonar.highlightColor);
 
-	void PulseControl() {
-		for (int i = 0; i < _sonar.maxPulses; i++) {
-			if (activepulse [i]) {
-				aPulse [i] += Time.deltaTime * _sonar.speed;
-				if (aPulse [i] > _sonar.distance) {
-					activepulse [i] = false;
-					aPulse [i] = 0;
-				}
-			}
-		}
-	}
-
-	float time;
-	void PassiveSonar () {
-		time += Time.deltaTime;
-		if (!_sonar.enabled)
-			return;
-		_sonar.active = false;
-		if (time > _sonar.interval) {
-			_sonar.active = true;
-			time = 0;
-		}
-	}
-
-	void updateStart () {
-		// sonar
-		_mat.SetInt ("_pulselength", _sonar.maxPulses);
-		_mat.SetFloatArray ("_pulses", aPulse);
-		_mat.SetVectorArray ("originarray", aOrigin);
-		_mat.SetFloat ("width", _sonar.width);
-		_mat.SetFloat ("fade", _sonar.fade);
-		_mat.SetFloat ("edgeWidth", _sonar.edgeWidth);
-		_mat.SetFloat ("_start", _sonar.start);
-		_mat.SetFloat ("_distance", _sonar.distance);
+        _mat.SetFloat ("_fade", _sonar.fade);
+		_mat.SetFloat ("_highlightWidth", _sonar.highlightWidth);
+        _mat.SetFloat("_outlineWidth", _sonar.outlineWidth);
+        _mat.SetFloat ("_start", _sonar.start);
 
 		// fog
 		_mat.SetColor("_startColor", _fog.startColor);
 		_mat.SetColor("_endColor", _fog.endColor);
-		_mat.SetFloat("surface", _fog._surface);
-		_mat.SetFloat("_fogDepth", _fog._maxDepth);
+		_mat.SetFloat("surface", _fog.surface);
+		_mat.SetFloat("_fogDepth", _fog.maxDepth);
 
 
-		_mat.SetFloat ("_intensity", _fog._intensity);
-		_mat.SetFloat ("_curve", _fog._curveShift);
+		_mat.SetFloat ("_intensity", _fog.intensity);
+		_mat.SetFloat ("_curve", _fog.curveShift);
 
 
         //_mat.SetFloat("_darkZones", DarkZones.Get().Count);
@@ -195,21 +167,55 @@ public class underwaterFX : MonoBehaviour {
 		// caustics
 		_mat.SetFloat("causticsSize", _caustics.size);
 		_mat.SetFloat("causticsIntensity", _caustics.intensity);
-		_mat.SetFloat ("causticsDepth", _caustics._causticsDepth);
+		_mat.SetFloat ("causticsDepth", _caustics.causticsDepth);
 		_mat.SetColor ("causticsColor", _caustics.causticsColor);
 	}
 
-	void updateShader()
+	void UpdatePulses()
 	{
-		// sonar
-		_mat.SetFloatArray ("_pulses", aPulse);
-		_mat.SetVectorArray ("originarray", aOrigin);
+        _pulseTimer += Time.deltaTime;
 
+        // move old pulses, remove if exceeds sonar distance
+        for (int i = _pulses.Count - 1; i >= 0; i--)
+        {
+            Pulse pulse = _pulses[i];
+
+            pulse._distance += _sonar.speed * Time.deltaTime;
+
+            if (pulse._distance > _sonar.distance)
+                _pulses.RemoveAt(i);
+        }
+
+        // spawn new pulse
+        if (_pulseTimer >= _sonar.interval)
+        {
+            _pulseTimer -= _sonar.interval;
+            Pulse pulse = new Pulse(_pulsesSpawned, _player.position, _sonar.start + _sonar.speed * _pulseTimer);
+            _pulsesSpawned++;
+            _pulses.Add(pulse);
+        }
+
+        // update the actual shader
+        Vector4[] origins = new Vector4[10];
+        float[] distances = new float[10];
+
+        for (int i = 0; i < _pulses.Count; i++)
+        {
+            Pulse pulse = _pulses[i];
+
+            origins[i] = pulse._origin;
+            distances[i] = pulse._distance;
+        }
+        distances[_pulses.Count] = -1;
+
+        _mat.SetFloatArray ("_pulseDistances", distances);
+		_mat.SetVectorArray ("_pulseOrigins", origins);
 	}
 
 	[ImageEffectOpaque]
-	void OnRenderImage (RenderTexture src, RenderTexture dst){
-		updateShader ();
+	void OnRenderImage (RenderTexture src, RenderTexture dst)
+    {
+		UpdatePulses ();
 
 		if (update)
 			updateStart ();
