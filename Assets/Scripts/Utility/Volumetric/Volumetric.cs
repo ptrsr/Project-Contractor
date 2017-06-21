@@ -14,7 +14,7 @@ public abstract class Volumetric : MonoBehaviour
 
     protected RenderTexture[] _pingPong;
 
-    void Start ()
+    void Awake ()
     {
         _cam = GetComponent<Camera>();
         _cam.enabled = false;

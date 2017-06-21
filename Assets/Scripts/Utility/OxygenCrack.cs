@@ -21,6 +21,10 @@ public class OxygenCrack : MonoBehaviour {
     private SubMovement _sub;
     private List<int> _lifetimes = new List<int>();
 
+    private bool _disableCreation = false;
+
+    public bool DisableCreation { get { return _disableCreation; } set { _disableCreation = value; } }
+
     // Use this for initialization
     void Start () {
         _sub = FindObjectOfType<SubMovement>();
@@ -30,6 +34,7 @@ public class OxygenCrack : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (_disableCreation) return;
         if (_increaseSize)
         {
             _oxygen.transform.position = Vector3.Lerp(_oxygen.transform.position, new Vector3(pos.x, pos.y, pos.z), _smoothness);
