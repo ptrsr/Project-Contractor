@@ -73,9 +73,9 @@ public class SkullDoorAnimator : MonoBehaviour {
             if (!_played)
             {
                 _subMov.Freeze(true);
+                _camMove.FollowAnimation(true);
                 if (!MovePlayer()) { }
                 if (!MoveCamera()) return;
-                _camMove.FollowAnimation(true);
                 _camAnimator.runtimeAnimatorController = _controller;
                 _camAnimator.enabled = true;
                 _animator[1].SetBool("Rotate", true);
