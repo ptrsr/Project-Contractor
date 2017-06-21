@@ -94,7 +94,7 @@
 				float fogDiff = fogBlend(linearDepth);
 
 				//FINAL OUTPUT BLENDING
-				//scene += caustics;
+				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
 				scene = scene + pulseCol + pulseEdge;
 				scene += pingInterCol;
