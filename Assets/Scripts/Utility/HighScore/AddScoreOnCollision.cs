@@ -8,12 +8,8 @@ public class AddScoreOnCollision : MonoBehaviour {
     [SerializeField]
     private int _scoreToAdd = 0;
 
-
-    public int Score { get { return _scoreToAdd; } }
-
     private HighScoreManager _manager;
     private TreasureId _id;
-    private PickUp _pickUp;
     private Vector3 _newPos;
 
     private bool _update = false;
@@ -21,16 +17,16 @@ public class AddScoreOnCollision : MonoBehaviour {
 	void Start () {
         _manager = FindObjectOfType<HighScoreManager>();
         _id = GetComponent<TreasureId>();
-        _pickUp = GetComponent<PickUp>();
 	}
 
     private void Update()
     {
         if (_update)
         {
-            if(_pickUp.Finished){
+            if(InterpolateWithScale(gameObject,_newPos,new Vector3(0.1f, 0.1f, 0.1f), 0.2f)){
 
                 gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
+
                 _update = false;
             }
         }
@@ -50,8 +46,6 @@ public class AddScoreOnCollision : MonoBehaviour {
         if (collider.gameObject.CompareTag("Player"))
         {
             gameObject.GetComponent<BoxCollider>().enabled = false;
-            gameObject.GetComponent<PingInter>().active = false;
-            gameObject.GetComponent<PingInter>().getPing = 0;
             switch (_id.ID)
             {
                 case 1:
@@ -72,7 +66,7 @@ public class AddScoreOnCollision : MonoBehaviour {
             }
             _update = true;
             _newPos = collider.transform.position;
-            _pickUp.Pick();
+            _manager.AddScore(_scoreToAdd);
         }
 
 

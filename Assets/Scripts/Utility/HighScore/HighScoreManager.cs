@@ -225,14 +225,14 @@ public class HighScoreManager : MonoBehaviour {
 
     private void ShowEndHUD()
     {
-        if(_treasureObj1)
-            _hudWin.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
-        if(_treasureObj2)
-            _hudWin.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
-        if(_treasureObj3)
-            _hudWin.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
-        if(_treasureObj4)
-            _hudWin.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
+        //if(_treasureObj1)
+        //    _hudWin.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
+        //if(_treasureObj2)
+        //    _hudWin.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
+        //if(_treasureObj3)
+        //    _hudWin.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
+        //if(_treasureObj4)
+        //    _hudWin.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
         _hudWin.ShowHud();
     }
 

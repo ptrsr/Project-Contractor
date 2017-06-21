@@ -65,20 +65,19 @@
 				float3 xyPlanePos = xyPlanePosition(i.ray);
 
 
-				// SONAR COLORS
-				half4 pulseCol = pulseColor(worldPos, i.uv);
-				half4 pulseEdge = edgeCol(xyPlanePos);
+				// PULSE COLORS
+				half4 outlineColor = pulseOutline(worldPos, i.uv);
+				half4 highlightColor = pulseHighlight(xyPlanePos);
 
 				// PING COLORS
-				half4 pingInterCol = pingInterColor(xyPlanePos);
-				half4 pingHostileCol = pingHostileColor(xyPlanePos);
+				half4 pingColor = pulsePing(xyPlanePos);
 
 				// PULSES MASKING
 				if(worldPos.z < 0) {
-					pulseEdge = 0;
-					pingInterCol = 0;
-					pingHostileCol = 0;
+					highlightColor = 0;
+					pingColor = 0;
 				}
+
 				
 				// CAUSTICS COLOR
 				half4 caustics = Caustics(worldPos);
@@ -89,16 +88,17 @@
 				if(linearDepth > 0.9)
 					caustics = 0;
 
+
 				// FOG COLOR
 				half4 fog = fogColor(worldPos);
 				float fogDiff = fogBlend(linearDepth);
 
-				//FINAL OUTPUT BLENDING
-				scene += caustics;
+
+				//final output blending
+//				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
-				scene = scene + pulseCol + pulseEdge;
-				scene += pingInterCol;
-				scene += pingHostileCol;
+				scene += outlineColor + highlightColor;
+				scene += pingColor;
 
 				return scene;
 			}
