@@ -32,7 +32,7 @@ public class TimeManager : MonoBehaviour {
             EditorApplication.isPlaying = false;
             //Application.Quit();
         }
-        Debug.Log((_timeFromMuseum + 15) - Time.time);
+
         if((_timeFromMuseum - 15) - Time.time <= 0)
         {
             DisableOxygenCracks();

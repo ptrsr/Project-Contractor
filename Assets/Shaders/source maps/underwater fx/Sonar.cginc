@@ -2,72 +2,106 @@
 #define SONAR_INCLUDED
 
 // SONAR DATA
-uniform int _pulselength;
-uniform float _pulses[10];
-uniform float4 originarray[10];
-uniform float width;
-uniform float widthFade;
-uniform float fade;
-uniform float edgeWidth;
+uniform float4 _pulseOrigins[10];
+uniform float _pulseDistances[10];
+uniform float _outlineWidth;
+uniform float _highlightWidth;
+uniform float _fade;
 uniform float _start;
-uniform float _distance;
+
+uniform float4 _outlineColor;
+uniform float4 _highlightColor;
 
 // PING DATA
-uniform float _pingInter[10];
-uniform float4 _originInter[10];
-uniform int _pingsInter;
-uniform float _pingHostile[10];
-uniform float4 _originHostile[10];
-uniform int _pingsHostile;
+uniform float _pingDistances[10];
+uniform float _pingMaxDistances[10];
+uniform float4 _pingPositions[10];
+uniform float4 _pingColors[10];
+uniform float4 _sonarOrigins[10];
 
-half4 pulseColor (float3 pos, float2 uv) {
-	half4 pulsecol = half4(0,0,0,0);
-	float depthMask = 0;
-	if (abs(pos.z) < width/2 + widthFade)
-		depthMask = saturate( 1 - ((abs(pos.z) - width/2) / widthFade) );
-	// calculating each pulse draw
-	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos.xy, originarray[i].xy);
-		if (dist < _pulses[i] && dist > _pulses[i] - fade && dist > _start) {
-			pulsecol = half4(1,0,0,1);
-			float diff = 1 - (_pulses[i] - dist) / (fade);
-			pulsecol *= diff;
+half4 pulseOutline (float3 pos, float2 uv) 
+{
+	half4 color = half4(0,0,0,0);
+
+	for(int i = 0; i < 10; i++) 
+	{
+		float pulseDist = _pulseDistances[i];
+		
+		if (pulseDist == -1.0)
+			break;
+
+		float fragDist = distance(pos, _pulseOrigins[i]);
+		if (fragDist < pulseDist && fragDist > pulseDist - _fade)
+		{
+			float diff = 1 - (pulseDist - fragDist) / (_fade);
+
+			color = _outlineColor;
+			color *= diff;
 		}
+		if (fragDist < _start)
+			color *= 0;
 	}
-	pulsecol *= depthMask;
-	return pulsecol;
+	// masking pulse highlight
+	float depthMask = 0;
+
+	float _fadeDiff = (_outlineWidth /2) / abs(pos.z);
+
+	if (pos.z > -_outlineWidth / 2 && pos.z < _outlineWidth / 2)
+		depthMask = 1;
+
+//	color *= _fadeDiff;
+	color *= depthMask;
+	// return pulse
+	return color;
 }
 
-half4 edgeCol (float3 pos) {
+half4 pulseHighlight (float3 pos) 
+{
 	// calculating each pulse draw
-	half4 col = half4(0,0,0,0);
-	for(int i = 0; i < _pulselength; i++) {
-		float dist = distance(pos, originarray[i]);
-		if (dist < _pulses[i] + edgeWidth/2 && dist > _pulses[i] - edgeWidth/2 && dist > _start)
-			col = half4(1,1,1,1);
+	half4 color = half4(0,0,0,0);
+
+	for(int i = 0; i < 10; i++) 
+	{
+		float pulseDist = _pulseDistances[i];
+
+		if (pulseDist == -1.0)
+			break;
+
+		float fragDist = distance(pos, _pulseOrigins[i]);
+		if (fragDist < pulseDist + _highlightWidth /2 && fragDist > pulseDist - _highlightWidth/2 && fragDist > _start)
+			color = _highlightColor;
+
+		// fading edge over distance (didnt really work)
+//		color *= pow(1 - dist / _distance, 0.2);
+
 	}
-	return col;
+	return color;
 } 
 
-half4 pingInterColor (float3 pos) {
+half4 pulsePing (float3 pos) 
+{
 	half4 col = half4(0,0,0,0);
-	for(int i = 0; i < _pingsInter; i++) {
-		// double ping draw
-		float dist = distance(pos, _originInter[i]);
-		if (dist < _pingInter[i] + edgeWidth/2 && dist > _pingInter[i] - edgeWidth/2 && dist > 2)
-			col = half4(0,1,0,1);
-//		if (dist < _pingInter[i] - 3 + edgeWidth/2 && dist > _pingInter[i] - 3 - edgeWidth/2 && dist > 2)
-//			col = half4(0,1,0,1);
-	}
-	return col;
-}
+	
+	for(int i = 0; i < 10; i++) 
+	{
+		float pingDist = _pingDistances[i];
 
-half4 pingHostileColor (float3 pos) {
-	half4 col = half4(0,0,0,0);
-	for(int i = 0; i < _pingsHostile; i++) {
-		float dist = distance(pos, _originHostile[i]);
-		if (dist < _pingHostile[i] + edgeWidth/2 && dist > _pingHostile[i] - edgeWidth/2 && dist > 2)
-			col = half4(1,0,0,1);
+		if (pingDist == -1)
+			break;
+
+		float2 pingPos = _pingPositions[i].xy;
+
+
+		float fragDist = distance(pos.xy, pingPos);
+
+		float multi = pow(max(0, dot(normalize(pingPos - pos.xy), normalize(pingPos - _sonarOrigins[i]))), 12) * max(0, 1 - fragDist / _pingMaxDistances[i]);
+
+
+		if (fragDist < pingDist + _highlightWidth /2 && fragDist > pingDist - _highlightWidth /2 && pingDist > 2)
+			col += _pingColors[i] * multi;
+
+		if (fragDist < pingDist - 3 + _highlightWidth /2 && fragDist > pingDist - 3 - _highlightWidth /2 && pingDist > 2)
+			col += _pingColors[i] * multi;
 	}
 	return col;
 }
