@@ -37,6 +37,8 @@ public class VolumeOrtho : Volumetric
 
     protected override void CreateTextures()
     {
+        _cam.enabled = false;
+
         if (_pingPong != null)
             foreach (var texture in _pingPong)
                 if (texture.IsCreated())
@@ -73,7 +75,12 @@ public class VolumeOrtho : Volumetric
             SetupBox();
 
         if (!CheckOnScreen())
+        {
+            _cam.enabled = false;
             return;
+        }
+
+        _cam.enabled = true;
 
         base.Render(ref dst);
 

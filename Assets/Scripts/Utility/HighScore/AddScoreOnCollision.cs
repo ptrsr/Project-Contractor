@@ -8,27 +8,28 @@ public class AddScoreOnCollision : MonoBehaviour {
     [SerializeField]
     private int _scoreToAdd = 0;
 
+    public int Score { get { return _scoreToAdd; } }
+
     private HighScoreManager _manager;
     private TreasureId _id;
     private Vector3 _newPos;
+    private PickUp _pickUp;
 
     private bool _update = false;
     
 	void Start () {
         _manager = FindObjectOfType<HighScoreManager>();
         _id = GetComponent<TreasureId>();
+        _pickUp = GetComponent<PickUp>();
 	}
 
     private void Update()
     {
         if (_update)
         {
-            if(InterpolateWithScale(gameObject,_newPos,new Vector3(0.1f, 0.1f, 0.1f), 0.2f)){
-				gameObject.GetComponent<PingInter> ().active = false;
-				gameObject.GetComponent<PingInter> ().getPing = 0;
+            if(_pickUp.Finished){
 
                 gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
-
                 _update = false;
             }
         }
@@ -69,6 +70,8 @@ public class AddScoreOnCollision : MonoBehaviour {
             _update = true;
             _newPos = collider.transform.position;
             _manager.AddScore(_scoreToAdd);
+            _pickUp.Pick();
+            
         }
 
 

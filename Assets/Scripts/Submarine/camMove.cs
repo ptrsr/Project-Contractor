@@ -11,6 +11,8 @@ public class camMove : MonoBehaviour {
 	private GameObject _lazyTarget;
 	private GameObject player;
 
+    private bool _followingAnimation = false;
+
 	void Start () {
 		setupMultiple ("lazyTarget", 0.5f, new Color (0, 0, 1));
 		_lazyTarget = GameObject.Find ("lazyTarget");
@@ -24,22 +26,28 @@ public class camMove : MonoBehaviour {
 	void FixedUpdate () {
 		dynaTarget ();
 		lazyTarget ();
-		dynaCam ();
+        if (_followingAnimation) return;
+        dynaCam ();
 	}
 
-	void lazyTarget() {
+
+    public void FollowAnimation(bool value)
+    {
+        _followingAnimation = value;
+    }
+	private void lazyTarget() {
 		Vector3 dir = player.transform.position - _lazyTarget.transform.position;
 		float dis = dir.magnitude;
 		if (dis > 1)
 			_lazyTarget.transform.position += dir.normalized * (dis/5);
 	}
 		
-	void dynaTarget() {
+	private void dynaTarget() {
 		_dynaTarget.transform.position = Vector3.Lerp 
 			(_dynaTarget.transform.position, _lazyTarget.transform.position, smoothness);
 	}
 
-	void dynaCam() {
+	private void dynaCam() {
 		transform.position = _dynaTarget.transform.position + perspective;
 		transform.LookAt (player.transform);
 	}

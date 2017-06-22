@@ -11,7 +11,7 @@ public class SpotLightRotation : MonoBehaviour
         _mainCamera = Camera.main;
 	}
 	
-	void Update ()
+	void LateUpdate ()
     {
         Vector3 pos = GetMousePosition();
         Vector3 dir = pos - transform.position;

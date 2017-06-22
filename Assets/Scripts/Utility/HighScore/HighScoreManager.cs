@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class HighScoreManager : MonoBehaviour {
-
-    [SerializeField]
+    
     private int _highScore = 0;
+    
+    public int SetHighScore { set { _highScore = value; } }
     [SerializeField]
     private Transform[] _pillarPositions;
     [SerializeField]
@@ -41,13 +42,14 @@ public class HighScoreManager : MonoBehaviour {
     private bool _done3 = false;
     private bool _done4 = false;
 
-    private Canvas _canvas;
-    private Text _text1;
-    private Text _text2;
+
 
     private bool _startedPlacement = false;
     private bool _finished = false;
     private float _finishedAt = 0.0f;
+
+
+    private HUDWin[] _huds;
 
 
     public int HighScore { get { return _highScore; } }
@@ -57,20 +59,29 @@ public class HighScoreManager : MonoBehaviour {
         {
             _subPositions[i].position = new Vector3(_subPositions[i].position.x, _subPositions[i].position.y, 0);
         }
-        _canvas = GetComponentInChildren<Canvas>();
-        _text1 = _canvas.GetComponentsInChildren<Text>()[0];
-        _text2 = _canvas.GetComponentsInChildren<Text>()[1];
-        _canvas.enabled = false;
+        _huds = GetComponentsInChildren<HUDWin>();
 	}
 
-    private void Update()
+    private void FixedUpdate()
     {
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            SceneManager.LoadScene(0);
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ShowEndHUD(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            ShowEndHUD(false);
+        }
         if (_update)
         {
             if(_newPos1 != null && !_initialInterpolation1)
             {
                 if (InterpolateWithScale(_treasureObj1, _newPos1.position, new Vector3(12.5f, 12.5f, 12.5f), 0.2f)){
-                    Debug.Log("done scaling treasure 1");
                     _newPos1 = _pillarPositions[0];
                     _initialInterpolation1 = true;
                 }
@@ -102,42 +113,34 @@ public class HighScoreManager : MonoBehaviour {
             if (_initialInterpolation1)
             {
                 if(Interpolate(_treasureObj1, _newPos1.position, 0.2f))
-                {
                     _done1 = true;
-                }
             }
             if (_initialInterpolation2)
             {
                 if(Interpolate(_treasureObj2, _newPos2.position, 0.2f))
-                {
                     _done2 = true;
-                }
             }
             if (_initialInterpolation3)
             {
                 if(Interpolate(_treasureObj3, _newPos3.position, 0.2f))
-                {
                     _done3 = true;
-                }
             }
             if (_initialInterpolation4)
             {
                 if(Interpolate(_treasureObj4, _newPos4.position, 0.2f))
-                {
                     _done4 = true;
-                }
             }
             if(_done1 && _done2 && _done3 && _done4)
             {
                 _update = false;
                 _finished = true;
-                _finishedAt = Time.time;
-                ShowEndHUD();
+                _finishedAt = Time.timeSinceLevelLoad;
+                ShowEndHUD(true);
             }
         }
         if (_finished)
         {
-            if((_finishedAt + 5.0f) < Time.time)
+            if((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
             {
                 SceneManager.LoadScene(0);
             }
@@ -149,18 +152,14 @@ public class HighScoreManager : MonoBehaviour {
         obj.transform.position = Vector3.Lerp(obj.transform.position, pos, 0.1f);
         obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, scale, 0.3f);
         if(Vector3.Distance(obj.transform.position,pos) < distanceToDone)
-        {
             return true;
-        }
         else { return false; }
     }
     private bool Interpolate(GameObject obj, Vector3 pos, float distanceToDone)
     {
         obj.transform.position = Vector3.Lerp(obj.transform.position, pos, 0.1f);
         if (Vector3.Distance(obj.transform.position, pos) < distanceToDone)
-        {
             return true;
-        }
         else { return false; }
     }
 
@@ -169,74 +168,46 @@ public class HighScoreManager : MonoBehaviour {
         if (_startedPlacement) return;
         _startedPlacement = true;
         subPos.Freeze(true);
-        Debug.Log("StartPlacement");
         if (_treasure1)
         {
-            _treasureObj1.GetComponentInChildren<MeshRenderer>().enabled = true;
-            _treasureObj1.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            _treasureObj1.transform.position = subPos.transform.position;
-            if (_left)
-            {
-                _newPos1 = _subPositions[1];
-                _left = false;
-            }
-            else
-            {
-                _newPos1 = _subPositions[0];
-                _left = true;
-            }
+            PrepareForPlacement(_treasureObj1, subPos);
+            _newPos1 = SideToSpawnOn();
         }else { _done1 = true; }
         if (_treasure2)
         {
-            _treasureObj2.GetComponentInChildren<MeshRenderer>().enabled = true;
-            _treasureObj2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            _treasureObj2.transform.position = subPos.transform.position;
-            if (_left)
-            {
-                _newPos2 = _subPositions[1];
-                _left = false;
-            }
-            else {
-                _newPos2 = _subPositions[0];
-                _left = true;
-            }
+            PrepareForPlacement(_treasureObj2, subPos);
+            _newPos2 = SideToSpawnOn();
         }else { _done2 = true; }
         if (_treasure3)
         {
-            _treasureObj3.GetComponentInChildren<MeshRenderer>().enabled = true;
-            _treasureObj3.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            _treasureObj3.transform.position = subPos.transform.position;
-            if (_left)
-            {
-                _newPos3 = _subPositions[1];
-                _left = false;
-            }
-            else
-            {
-                _newPos3 = _subPositions[0];
-                _left = true;
-            }
+            PrepareForPlacement(_treasureObj3, subPos);
+            _newPos3 = SideToSpawnOn();
         } else { _done3 = true; }
         if (_treasure4)
         {
-            _treasureObj4.GetComponentInChildren<MeshRenderer>().enabled = true;
-            _treasureObj4.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            _treasureObj4.transform.position = subPos.transform.position;
-            if (_left)
-            {
-                _newPos4 = _subPositions[1];
-                _left = false;
-            }
-            else
-            {
-                _newPos4 = _subPositions[0];
-                _left = true;
-            }
+            PrepareForPlacement(_treasureObj4, subPos);
+            _newPos4 = SideToSpawnOn();
         }else { _done4 = true; }
         _update = true;
     }
 
+    private void PrepareForPlacement(GameObject obj, SubMovement subPos)
+    {
+        obj.GetComponentInChildren<MeshRenderer>().enabled = true;
+        obj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        obj.transform.position = subPos.transform.position;
+    }
 
+    private Transform SideToSpawnOn(){
+        if (_left){
+            _left = false;
+            return _subPositions[1];
+        }
+        else{
+            _left = true;
+            return _subPositions[0];
+        }
+    }
     public void Treasure1Pickup(GameObject obj)
     {
         _treasureObj1 = obj;
@@ -257,16 +228,23 @@ public class HighScoreManager : MonoBehaviour {
         _treasureObj4 = obj;
         _treasure4 = true;
     }
+    
 
 
-    private void ShowEndHUD()
+    public void ShowEndHUD(bool win)
     {
-        _canvas.enabled = true;
-        float time = Mathf.Floor(Time.time);
-        time = time / 60;
-        string timestring = string.Format("{0:0.00}", time);
-        _text1.text = "HighScore: " + _highScore;
-        _text2.text = "Time to Finish: " + timestring;
+        HUDWin hud;
+        if (win) { hud = _huds[0]; }
+        else { hud = _huds[1]; }
+        if (_treasureObj1)
+            hud.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj2)
+            hud.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj3)
+            hud.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj4)
+            hud.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
+        hud.ShowHud();
     }
 
     public void AddScore(int score)
