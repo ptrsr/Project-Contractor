@@ -57,7 +57,7 @@ public class SkullDoorAnimator : MonoBehaviour {
         if (_finished) return;
         if (_opened)
         {
-            if (_startedAt2 + _lenghtLockedDoor <= Time.time)
+            if (_startedAt2 + _lenghtLockedDoor <= Time.timeSinceLevelLoad)
             {
                 _subMov.Freeze(false);
                 _counter = 0;
@@ -79,20 +79,20 @@ public class SkullDoorAnimator : MonoBehaviour {
                 _camAnimator.runtimeAnimatorController = _controller;
                 _camAnimator.enabled = true;
                 _animator[1].SetBool("Rotate", true);
-                _startedAt = Time.time;
+                _startedAt = Time.timeSinceLevelLoad;
                 _played = true;
             }
-            if ((_startedAt + _lenghtRotateEyes) - Time.time < 0.0f)
+            if ((_startedAt + _lenghtRotateEyes) - Time.timeSinceLevelLoad < 0.0f)
             {
                 _opened = true;
                 _animator[0].SetBool("Open", true);
-                _startedAt2 = Time.time;
+                _startedAt2 = Time.timeSinceLevelLoad;
             }
-            if (Time.time < 150)
+            if (Time.timeSinceLevelLoad < 150)
             {
                 _sceneManager.LoadScene(2);
             }
-            else if (Time.time < 200 && Time.time > 150)
+            else if (Time.timeSinceLevelLoad < 200 && Time.time > 150)
             {
                 _sceneManager.LoadScene(1);
             }

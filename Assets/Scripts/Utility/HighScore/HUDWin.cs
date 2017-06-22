@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class HUDWin : MonoBehaviour {
 
@@ -30,6 +31,8 @@ public class HUDWin : MonoBehaviour {
     private int _treasureKind1 = 0;
     private int _treasureKind2 = 0;
     private bool _animateHUD = false;
+
+    private float _finishedAt = 0;
     void Start () {
 
 
@@ -51,15 +54,27 @@ public class HUDWin : MonoBehaviour {
             _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
             _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
 
-            if (_highScore >= _highScoreToAdd) _highScore = _highScoreToAdd;
+            if (_highScore > _highScoreToAdd)
+            {
+                _highScore = _highScoreToAdd;
+                _finishedAt = Time.timeSinceLevelLoad;
+            }
             _text4.text = "Total HighScore: " + _highScore;
+            if (_highScore == _highScoreToAdd)
+            {
+                if ((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
+                {
+                    SceneManager.LoadScene(0);
+                }
+            }
         }
+       
     }
 
     public void ShowHud()
     {
         _canvas.enabled = true;
-        float time = Mathf.Floor(Time.time);
+        float time = Mathf.Floor(Time.timeSinceLevelLoad);
         time = (time / 60);
         if (_scoreTreasure1 != 0) { _treasureKind1++; }
         if (_scoreTreasure2 != 0) { _treasureKind1++; }

@@ -48,6 +48,10 @@ public class SubMovement : MonoBehaviour {
     private ParticleSystem _particles;
     private HighScoreManager _manager;
 
+    private int _lossOfOxygen = 1;
+
+    public int LossOfOxygen { set { _lossOfOxygen = value; } }
+
 
     void Awake () {
         _rigidBody = GetComponent<Rigidbody>();
@@ -69,7 +73,7 @@ public class SubMovement : MonoBehaviour {
             SceneManager.LoadScene(0);
         }
         if (_frozen) return;
-        _oxygen.Remove(1);
+        _oxygen.Remove(_lossOfOxygen);
         //keeps the player on the correct plane
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         //return only if stunned
@@ -101,13 +105,13 @@ public class SubMovement : MonoBehaviour {
         //check for double taps
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            float clickTime = Time.time - _lastTap;
+            float clickTime = Time.timeSinceLevelLoad - _lastTap;
 
             if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
             { 
                 _charged = true;
             }
-            _lastTap = Time.time;
+            _lastTap = Time.timeSinceLevelLoad;
         }
         //Movement through dragging
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1))

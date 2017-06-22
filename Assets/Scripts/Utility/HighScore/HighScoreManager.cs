@@ -64,10 +64,13 @@ public class HighScoreManager : MonoBehaviour {
 
     private void FixedUpdate()
     {
-       
         if (Input.GetKeyDown(KeyCode.H))
         {
             ShowEndHUD();
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            SceneManager.LoadScene(0);
         }
         if (_update)
         {
@@ -126,13 +129,13 @@ public class HighScoreManager : MonoBehaviour {
             {
                 _update = false;
                 _finished = true;
-                _finishedAt = Time.time;
+                _finishedAt = Time.timeSinceLevelLoad;
                 ShowEndHUD();
             }
         }
         if (_finished)
         {
-            if((_finishedAt + 5.0f) < Time.time)
+            if((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
             {
                 SceneManager.LoadScene(0);
             }
@@ -223,7 +226,7 @@ public class HighScoreManager : MonoBehaviour {
     
 
 
-    private void ShowEndHUD()
+    public void ShowEndHUD()
     {
         //if(_treasureObj1)
         //    _hudWin.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
