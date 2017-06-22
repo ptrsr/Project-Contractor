@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Tentacles : Fish
 {
+    [Header("Tentacle Variables")]
     [SerializeField]
     private Rigidbody[] _tentacleTips = null;
     public Rigidbody[] TentacleTips { get { return _tentacleTips; } }

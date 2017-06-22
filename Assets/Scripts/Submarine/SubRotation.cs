@@ -22,6 +22,7 @@ public class SubRotation : MonoBehaviour {
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
             if (_sub.Frozen) return;
+            if (_sub.hasCharged) return;
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(transform.position);
             Vector3 dir = mouse_pos - object_pos;

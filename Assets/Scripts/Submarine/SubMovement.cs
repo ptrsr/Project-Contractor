@@ -31,6 +31,8 @@ public class SubMovement : MonoBehaviour {
     private bool _stunned = false;
     private bool _frozen = false;
 
+    public bool hasCharged { get { return _charged; } }
+
 
     //---------------------------------Charging data--------------------------------------------
     private float _lastTap;
@@ -107,7 +109,7 @@ public class SubMovement : MonoBehaviour {
         {
             float clickTime = Time.timeSinceLevelLoad - _lastTap;
 
-            if (clickTime > 0.05f && clickTime < _tapIntervalsForCharge)
+            if (clickTime > 0.08f && clickTime < _tapIntervalsForCharge)
             { 
                 _charged = true;
             }
@@ -188,10 +190,11 @@ public class SubMovement : MonoBehaviour {
             _oxygen.Remove(_oxygenLossOnHit);
             _particles.Play();
         }
-        if (other.gameObject.tag == "Shark")
-        {
-            _oxygen.Remove(_oxygenLossOnHit);
-        }
+    }
+
+    public void PlayParticles()
+    {
+        _particles.Play();
     }
 
     //Using a position provided at start to move the submarine to surface

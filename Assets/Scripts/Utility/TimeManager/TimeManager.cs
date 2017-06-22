@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 
 
@@ -29,8 +28,8 @@ public class TimeManager : MonoBehaviour {
         CheckInput();
         if ((_lastInput + _delayBeforeExit) - Time.timeSinceLevelLoad <= 0)
         {
-            EditorApplication.isPlaying = false;
-            //Application.Quit();
+            //EditorApplication.isPlaying = false;
+            Application.Quit();
         }
         if((_timeFromMuseum - 15) - Time.timeSinceLevelLoad <= 0)
         {

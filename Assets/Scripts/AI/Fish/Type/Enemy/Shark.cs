@@ -38,12 +38,19 @@ public class Shark : FishEnemy
 
     public Shark SyncTarget = null;
 
+    private SharkTail _tail;
+
     [HideInInspector]
     public int SyncStep = 0;
+
+    private bool _isChasing = false;
+    public bool IsChasing { get { return _isChasing; } }
 
     public override void Start()
     {
         base.Start();
+
+        _tail = GetComponent<SharkTail>();
 
         //Remove parent from array
         List<Transform> temp = _path.GetComponentsInChildren<Transform>().ToList();
@@ -79,6 +86,7 @@ public class Shark : FishEnemy
         OxygenVals.Remove(OxygenDrain);
 
         SetState<SharkIdle>();
+        _tail.SetState<TailIdle>();
     }
 
     public Transform GetNearestWayPointTo(Transform target)
@@ -128,16 +136,17 @@ public class Shark : FishEnemy
          * Target is not obstructed by walls
          * Target is near a waypoint
          * Shark is in range of the Target */
-        return (Vector3.Angle(-transform.right, Target.position - transform.position) < _detectionAngle &&
-            !Physics.Raycast(transform.position, Target.position, ~IgnoreDetection) &&
+        _isChasing = (Vector3.Angle(transform.forward, Target.position - transform.position) < _detectionAngle &&
+            !Physics.Linecast(transform.position, Target.position, ~IgnoreDetection) &&
             targetPointDis < Range && targetDis < ViewRange);
+        return _isChasing;
     }
 
     public override Quaternion GetLookRotation(Vector3 direction)
     {
         //Proper rotation for the model for rotating towards points
         Quaternion lookRot = base.GetLookRotation(direction);
-        lookRot.eulerAngles = new Vector3(0, lookRot.eulerAngles.y + 90f, lookRot.eulerAngles.x);
+        lookRot.eulerAngles -= new Vector3(0, 0, 0);
         return lookRot;
     }
 

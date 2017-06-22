@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 public class ReefAnimation : MonoBehaviour {
 
@@ -38,7 +37,6 @@ public class ReefAnimation : MonoBehaviour {
         if (_played)
         {
             if (_camAnimator.GetCurrentAnimatorStateInfo(0).IsName("Cutscene1")){
-                _cam.GetComponent<camMove>().FollowAnimation(true);
             }
             if (_startedAt + _lenghtAnimation <= Time.timeSinceLevelLoad)
             {
@@ -78,7 +76,7 @@ public class ReefAnimation : MonoBehaviour {
         Quaternion newRot = new Quaternion();
         newRot.eulerAngles = (new Vector3(0,0,0));
         transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 5 * Time.deltaTime);
-        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 1)
+        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 2)
         {
             return true;
         }
