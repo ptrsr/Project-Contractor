@@ -11,22 +11,23 @@ public class AddScoreOnCollision : MonoBehaviour {
     private HighScoreManager _manager;
     private TreasureId _id;
     private Vector3 _newPos;
+    private PickUp _pickUp;
 
     private bool _update = false;
     
 	void Start () {
         _manager = FindObjectOfType<HighScoreManager>();
         _id = GetComponent<TreasureId>();
+        _pickUp = GetComponent<PickUp>();
 	}
 
     private void Update()
     {
         if (_update)
         {
-            if(InterpolateWithScale(gameObject,_newPos,new Vector3(0.1f, 0.1f, 0.1f), 0.2f)){
+            if(_pickUp.Finished){
 
                 gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
-
                 _update = false;
             }
         }
@@ -67,6 +68,8 @@ public class AddScoreOnCollision : MonoBehaviour {
             _update = true;
             _newPos = collider.transform.position;
             _manager.AddScore(_scoreToAdd);
+            _pickUp.Pick();
+            
         }
 
 

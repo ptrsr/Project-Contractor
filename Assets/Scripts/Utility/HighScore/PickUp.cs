@@ -41,11 +41,9 @@ public class PickUp : MonoBehaviour {
 
     public void Pick()
     {
-       
-        //Vector3 spawnPos = (camPos - trinketPos) / 2;
         _rotateAround = GameObject.CreatePrimitive(PrimitiveType.Cube);
         _rotateAround.name = "Cubisimo";
-        Vector3 spawnPos = (_subPos - _cam.transform.position).normalized * 25;
+        Vector3 spawnPos = (_subPos - _cam.transform.position).normalized * 23;
         transform.position = _sub.transform.position;
         _rotateAround.transform.position = spawnPos + _cam.transform.position;
         _rotateAround.transform.parent = _cam.transform;
@@ -57,7 +55,6 @@ public class PickUp : MonoBehaviour {
     }
     public void RotateBack(GameObject objectToRotateAround, GameObject objectToRotate, Vector3 angles)
     {
-        Debug.Log("back");
         if (_counter >= _finalRotation)
         {
             _finished = true;
@@ -105,7 +102,6 @@ public class PickUp : MonoBehaviour {
     {
         if (_startAt + seconds <= Time.timeSinceLevelLoad)
         {
-            Debug.Log("delay passed");
             return true;
         }
         else
