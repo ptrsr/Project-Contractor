@@ -74,7 +74,7 @@ public class Oxygen : MonoBehaviour {
         {
             if (_timeManager.DisabledOxygen)
             {
-                _highScoreManager.ShowEndHUD();
+                _highScoreManager.ShowEndHUD(false);
                 _done = true;
             }
             else {

@@ -33,6 +33,7 @@ public class HUDWin : MonoBehaviour {
     private bool _animateHUD = false;
 
     private float _finishedAt = 0;
+    
     void Start () {
 
 
@@ -53,13 +54,6 @@ public class HUDWin : MonoBehaviour {
             if (_totalTreasureKind2 != 0) { _totalTreasureKind2 -= 10; _highScore += 10; if (_totalTreasureKind2 <= 0) _totalTreasureKind2 = 0; }
             _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
             _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
-
-            if (_highScore > _highScoreToAdd)
-            {
-                _highScore = _highScoreToAdd;
-                _finishedAt = Time.timeSinceLevelLoad;
-            }
-            _text4.text = "Total HighScore: " + _highScore;
             if (_highScore == _highScoreToAdd)
             {
                 if ((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
@@ -67,6 +61,12 @@ public class HUDWin : MonoBehaviour {
                     SceneManager.LoadScene(0);
                 }
             }
+            if (_highScore > _highScoreToAdd)
+            {
+                _highScore = _highScoreToAdd;
+                _finishedAt = Time.timeSinceLevelLoad;
+            }
+            _text4.text = "Total HighScore: " + _highScore;
         }
        
     }
