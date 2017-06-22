@@ -49,7 +49,7 @@ public class HighScoreManager : MonoBehaviour {
     private float _finishedAt = 0.0f;
 
 
-    private HUDWin _hudWin;
+    private HUDWin[] _huds;
 
 
     public int HighScore { get { return _highScore; } }
@@ -59,18 +59,23 @@ public class HighScoreManager : MonoBehaviour {
         {
             _subPositions[i].position = new Vector3(_subPositions[i].position.x, _subPositions[i].position.y, 0);
         }
-        _hudWin = GetComponentInChildren<HUDWin>();
+        _huds = GetComponentsInChildren<HUDWin>();
 	}
 
     private void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            ShowEndHUD();
-        }
+        
         if (Input.GetKeyDown(KeyCode.D))
         {
             SceneManager.LoadScene(0);
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ShowEndHUD(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            ShowEndHUD(false);
         }
         if (_update)
         {
@@ -130,7 +135,7 @@ public class HighScoreManager : MonoBehaviour {
                 _update = false;
                 _finished = true;
                 _finishedAt = Time.timeSinceLevelLoad;
-                ShowEndHUD();
+                ShowEndHUD(true);
             }
         }
         if (_finished)
@@ -226,17 +231,20 @@ public class HighScoreManager : MonoBehaviour {
     
 
 
-    public void ShowEndHUD()
+    public void ShowEndHUD(bool win)
     {
-        //if(_treasureObj1)
-        //    _hudWin.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
-        //if(_treasureObj2)
-        //    _hudWin.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
-        //if(_treasureObj3)
-        //    _hudWin.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
-        //if(_treasureObj4)
-        //    _hudWin.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
-        _hudWin.ShowHud();
+        HUDWin hud;
+        if (win) { hud = _huds[0]; }
+        else { hud = _huds[1]; }
+        if (_treasureObj1)
+            hud.Score1 = _treasureObj1.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj2)
+            hud.Score2 = _treasureObj2.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj3)
+            hud.Score3 = _treasureObj3.GetComponent<AddScoreOnCollision>().Score;
+        if (_treasureObj4)
+            hud.Score4 = _treasureObj4.GetComponent<AddScoreOnCollision>().Score;
+        hud.ShowHud();
     }
 
     public void AddScore(int score)
