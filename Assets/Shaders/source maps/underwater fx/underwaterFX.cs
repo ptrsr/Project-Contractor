@@ -222,11 +222,16 @@ public class underwaterFX : MonoBehaviour {
 
 		RaycastCornerBlit (src, dst, _mat);
 
-        foreach (var volume in Volumes.Get())
-            volume.Render(ref dst);
+
     }
 
-	void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
+    void OnPostRender()
+    {
+        foreach (var volume in Volumes.Get())
+            volume.Render();
+    }
+
+    void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
 	{
 		// Compute Frustum Corners
 		float camFar = _cam.farClipPlane;

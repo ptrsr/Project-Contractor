@@ -60,9 +60,9 @@ public class VolumeProj : Volumetric
         _mat.SetFloat("_fallOff", _litFallOff);
     }
 
-    public override void Render(ref RenderTexture src)
+    public override void Render()
     {
-        base.Render(ref src);
+        base.Render();
         _mat.SetPass(3);
 
         Vector3 pos = transform.position;

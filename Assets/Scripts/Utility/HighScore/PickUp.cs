@@ -51,6 +51,8 @@ public class PickUp : MonoBehaviour {
         _rotateAround.GetComponent<MeshRenderer>().enabled = false;
         _rotate = true;
         transform.parent = _rotateAround.transform;
+
+        GetComponent<Ping>()._active = false;
     }
     public void RotateBack(GameObject objectToRotateAround, GameObject objectToRotate, Vector3 angles)
     {

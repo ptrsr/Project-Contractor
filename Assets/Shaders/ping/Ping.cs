@@ -50,6 +50,8 @@ public class Ping : MonoBehaviour
 
     public int _lastPulse = -1;
 
+    public bool _active = true;
+
     private Vector3
         _tl,
         _tr,

@@ -43,7 +43,7 @@ public class PingUpdater : MonoBehaviour
     {
         foreach (Ping ping in _allPings)
         {
-            if (!ping.CheckOnScreen())
+            if (!ping._active || !ping.CheckOnScreen())
                 continue;
 
             foreach (Pulse pulse in _fx._pulses)
