@@ -8,15 +8,20 @@ ModelImporter:
     100000: //RootNode
     100002: polySurface8_pilar7
     100004: pillarBase
+    100006: pillarBase_LP
     400000: //RootNode
     400002: polySurface8_pilar7
     400004: pillarBase
+    400006: pillarBase_LP
     2300000: polySurface8_pilar7
     2300002: pillarBase
+    2300004: pillarBase_LP
     3300000: polySurface8_pilar7
     3300002: pillarBase
+    3300004: pillarBase_LP
     4300000: polySurface8_pilar7
     4300002: pillarBase
+    4300004: pillarBase_LP
   materials:
     importMaterials: 1
     materialName: 0
