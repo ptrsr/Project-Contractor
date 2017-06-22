@@ -35,7 +35,7 @@ public abstract class Volumetric : MonoBehaviour
 
     abstract protected void applySettings(Camera cam);
 
-    virtual public void Render(ref RenderTexture src)
+    virtual public void Render()
     {
         _cam.Render();
 
