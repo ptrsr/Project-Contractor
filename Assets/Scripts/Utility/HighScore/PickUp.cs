@@ -88,7 +88,7 @@ public class PickUp : MonoBehaviour {
         }
         else if (_counter >= _finalRotation)
         {
-            _startAt = Time.time;
+            _startAt = Time.timeSinceLevelLoad;
             _done = true;
         }
         else
@@ -103,7 +103,7 @@ public class PickUp : MonoBehaviour {
     }
     private bool Delay(int seconds)
     {
-        if (_startAt + seconds <= Time.time)
+        if (_startAt + seconds <= Time.timeSinceLevelLoad)
         {
             Debug.Log("delay passed");
             return true;

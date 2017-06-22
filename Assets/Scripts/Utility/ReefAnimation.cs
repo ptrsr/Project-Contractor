@@ -40,7 +40,7 @@ public class ReefAnimation : MonoBehaviour {
             if (_camAnimator.GetCurrentAnimatorStateInfo(0).IsName("Cutscene1")){
                 _cam.GetComponent<camMove>().FollowAnimation(true);
             }
-            if (_startedAt + _lenghtAnimation <= Time.time)
+            if (_startedAt + _lenghtAnimation <= Time.timeSinceLevelLoad)
             {
                 _sub.Freeze(false);
                 _cam.GetComponent<camMove>().FollowAnimation(false);
@@ -57,7 +57,7 @@ public class ReefAnimation : MonoBehaviour {
                 _camAnimator.enabled = true;
                 _animator.SetBool("Open", true);
                 _played = true;
-                _startedAt = Time.time;
+                _startedAt = Time.timeSinceLevelLoad;
 
 			}
 		}

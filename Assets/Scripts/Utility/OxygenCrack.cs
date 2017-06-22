@@ -23,7 +23,7 @@ public class OxygenCrack : MonoBehaviour {
 
     private bool _disableCreation = false;
 
-    public bool DisableCreation { get { return _disableCreation; } set { _disableCreation = value; } }
+    public bool IsDisabled { get { return _disableCreation; } }
 
     // Use this for initialization
     void Start () {
@@ -64,6 +64,16 @@ public class OxygenCrack : MonoBehaviour {
             else {_counterBeforeNew++;  }
         }
 	}
+
+    public void DisableCreation()
+    {
+        _disableCreation = true;
+        if(_oxygen != null)
+        {
+            _oxygen.SetActive(false);
+        }
+        _sub.LossOfOxygen = 10;
+    }
 
     private void CreateOxygen()
     {

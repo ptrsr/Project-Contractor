@@ -10,7 +10,7 @@ public class TimeManager : MonoBehaviour {
     private int _delayBeforeExit = 30;
     private float _lastInput = 0;
 
-    private int _timeFromMuseum = 180;
+    private int _timeFromMuseum = 360;
 
     public int TimeFromMuseum { set { _timeFromMuseum = value; } }
 
@@ -27,14 +27,14 @@ public class TimeManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         CheckInput();
-        if ((_lastInput + _delayBeforeExit) - Time.time <= 0)
+        if ((_lastInput + _delayBeforeExit) - Time.timeSinceLevelLoad <= 0)
         {
             EditorApplication.isPlaying = false;
             //Application.Quit();
         }
-        Debug.Log((_timeFromMuseum + 15) - Time.time);
-        if((_timeFromMuseum - 15) - Time.time <= 0)
+        if((_timeFromMuseum - 15) - Time.timeSinceLevelLoad <= 0)
         {
+            _disabledOxygen = true;
             DisableOxygenCracks();
         }
 
@@ -46,9 +46,8 @@ public class TimeManager : MonoBehaviour {
     {
         foreach(OxygenCrack oc in _oxygenCracks)
         {
-            oc.DisableCreation = true;
+            oc.DisableCreation();
         }
-        _disabledOxygen = true;
     }
     
 
@@ -56,11 +55,11 @@ public class TimeManager : MonoBehaviour {
     {
         if(Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
-            _lastInput = Time.time;
+            _lastInput = Time.timeSinceLevelLoad;
         }
         else if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            _lastInput = Time.time;
+            _lastInput = Time.timeSinceLevelLoad;
         }
     }
 }
