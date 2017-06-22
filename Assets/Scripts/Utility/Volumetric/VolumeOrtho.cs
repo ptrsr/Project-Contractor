@@ -37,6 +37,8 @@ public class VolumeOrtho : Volumetric
 
     protected override void CreateTextures()
     {
+        _cam.enabled = false;
+
         if (_pingPong != null)
             foreach (var texture in _pingPong)
                 if (texture.IsCreated())
