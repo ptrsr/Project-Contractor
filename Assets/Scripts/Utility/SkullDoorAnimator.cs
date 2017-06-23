@@ -16,8 +16,7 @@ public class SkullDoorAnimator : MonoBehaviour {
     private int _lenghtRotateEyes = 0;
     [SerializeField]
     private int _lenghtLockedDoor = 0;
-    [SerializeField]
-    private Transform _playerPos;
+    private Vector3 _playerPos;
     [SerializeField]
     private Transform _camPos;
     [SerializeField]
@@ -35,6 +34,10 @@ public class SkullDoorAnimator : MonoBehaviour {
     private camMove _camMove;
 
 
+    [SerializeField]
+    private Animator _animator1;
+    [SerializeField]
+    private Animator _animator2;
 
 
     private AdditiveSceneManager _sceneManager;
@@ -45,11 +48,12 @@ public class SkullDoorAnimator : MonoBehaviour {
         _sceneManager = FindObjectOfType<AdditiveSceneManager>();
         if(_playerPos == null)
         {
-            _playerPos = _subMov.transform;
+            _playerPos = _subMov.transform.position;
         }
         _cam = Camera.main;
         _camAnimator = _cam.GetComponent<Animator>();
         _camMove = _cam.GetComponent<camMove>();
+        _playerPos = new Vector3(_camPos.position.x, _camPos.position.y, 0);
 	}
 	
 	// Update is called once per frame
@@ -92,7 +96,7 @@ public class SkullDoorAnimator : MonoBehaviour {
             {
                 _sceneManager.LoadScene(2);
             }
-            else if (Time.timeSinceLevelLoad < 200 && Time.time > 150)
+            else if (Time.timeSinceLevelLoad < 200 && Time.timeSinceLevelLoad > 150)
             {
                 _sceneManager.LoadScene(1);
             }
@@ -107,8 +111,8 @@ public class SkullDoorAnimator : MonoBehaviour {
 
     private bool MovePlayer()
     {
-        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, 0.05f);
-        if (Vector3.Distance(_subMov.transform.position, _playerPos.position) < 1)
+        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos, 0.05f);
+        if (Vector3.Distance(_subMov.transform.position, _playerPos) < 1)
         {
             return true;
         }
@@ -126,9 +130,11 @@ public class SkullDoorAnimator : MonoBehaviour {
     public void Key1InPlace()
     {
         _key1InPlace = true;
+        _animator1.enabled = true;
     }
     public void Key2InPlace()
     {
         _key2InPlace = true;
+        _animator2.enabled = true;
     }
 }

@@ -22,9 +22,11 @@ public class CameraAnimator : MonoBehaviour {
 
     private bool _update = false;
     private bool _cameraAnimatorActive = false;
+    private bool _animatorActive = false;
     private bool _finished = false;
 
     private float _startedAt = 0;
+    private float _startedAt2 = 0;
 	// Use this for initialization
 	void Start () {
         _cam = Camera.main;
@@ -51,7 +53,16 @@ public class CameraAnimator : MonoBehaviour {
             }
             return;
         }
-        if (_update)
+        else if (_animatorActive)
+        {
+            if (_startedAt2 + _lenghtOfAnimation <= Time.timeSinceLevelLoad)
+            {
+                _subMov.Freeze(false);
+                _finished = true;
+            }
+            return;
+        }
+        else if (_update)
         {
             if(_camAnimator != null)
             {
@@ -60,16 +71,18 @@ public class CameraAnimator : MonoBehaviour {
                 if (MoveCamera())
                 {
 
-                    _camAnimator.enabled = true; 
-                    _animator1.SetBool("EnterTrigger", true);
+                    _camAnimator.enabled = true;
+                    _animator1.enabled = true;
                     _cameraAnimatorActive = true;
                     _startedAt = Time.timeSinceLevelLoad;
                 }
             }
             else
             {
-                _animator1.SetBool("EnterTrigger", true);
-                _finished = true;
+                _subMov.Freeze(true);
+                _animator1.enabled = true;
+                _startedAt2 = Time.timeSinceLevelLoad;
+                _animatorActive = true;
             }
         }
 		

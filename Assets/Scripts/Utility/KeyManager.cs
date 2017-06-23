@@ -13,6 +13,7 @@ public class KeyManager : MonoBehaviour {
     private GameObject _key1;
 	private GameObject _key2;
 	private GameObject _key3;
+    private GameObject _key4;
     private Transform _keyPos;
     private SkullDoorAnimator _skullAnimator;
 	private ReefAnimation _reefAnimation;
@@ -58,6 +59,10 @@ public class KeyManager : MonoBehaviour {
 					_reefAnimation.Key3InPlace();
 				}
 			}
+            if (_key4 != null)
+            {
+                _key4.transform.position = Vector3.Lerp(_key4.transform.position, _keyPos.position, 0.05f);
+            }
         }
 	}
 
@@ -92,6 +97,12 @@ public class KeyManager : MonoBehaviour {
 		_keyPos = transform;
 		_key3 = key3;
 	}
+    public void PickUpKey4(GameObject key4)
+    {
+        _key3PickedUp = true;
+        _keyPos = transform;
+        _key4 = key4;
+    }
 
 
     public bool Open { get { return _open; } }
