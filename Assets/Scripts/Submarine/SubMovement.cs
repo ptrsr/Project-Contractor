@@ -188,10 +188,11 @@ public class SubMovement : MonoBehaviour {
             _oxygen.Remove(_oxygenLossOnHit);
             _particles.Play();
         }
-        if (other.gameObject.tag == "Shark")
-        {
-            _oxygen.Remove(_oxygenLossOnHit);
-        }
+    }
+
+    public void PlayParticles()
+    {
+        _particles.Play();
     }
 
     //Using a position provided at start to move the submarine to surface

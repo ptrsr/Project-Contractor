@@ -72,6 +72,10 @@ public class Oxygen : MonoBehaviour {
         }
         else if (_oxygen < 0)
         {
+            Octopus octo = GetComponentInChildren<Octopus>();
+            if (octo != null)
+                octo.SetState<OctopusLatchOffPlayer>();
+
             if (_timeManager.DisabledOxygen)
             {
                 _highScoreManager.ShowEndHUD(false);

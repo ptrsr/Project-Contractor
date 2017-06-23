@@ -25,6 +25,8 @@ public class OctopusLatchOnPlayer : FishState
         //Get movement script
         _subMove = _octo.Target.GetComponent<SubMovement>();
 
+        _subMove.PlayParticles();
+
         //Pre-check if player is charging, so you can avoid the Octopus quickly
         if (_subMove.Charged)
             _octo.SetState<OctopusLatchOffPlayer>();
