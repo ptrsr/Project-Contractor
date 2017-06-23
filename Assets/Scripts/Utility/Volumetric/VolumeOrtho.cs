@@ -69,18 +69,19 @@ public class VolumeOrtho : Volumetric
         cam.farClipPlane = _height;
     }
 
-    public override void Render()
+    public override void Render(ref RenderTexture dst)
     {
         if (!_done)
-            SetupBox();
-
-        if (!CheckOnScreen())
         {
-            _cam.enabled = false;
-            return;
+            SetupBox();
+            CreateTextures();
+            _done = true;
         }
 
-        _cam.enabled = true;
+        if (!CheckOnScreen())
+            return;
+
+        base.Render(ref dst);
 
         _mat.SetFloat("_height", _height);
         _mat.SetInt("_layers", _layers);
@@ -109,6 +110,8 @@ public class VolumeOrtho : Volumetric
             }
             nextTexture = (j - 1) * 2 + 1;
         }
+
+        RenderTexture.active = dst;
 
         _mat.SetPass(2);
         _mat.SetTexture("_texture", _pingPong[0]);
@@ -155,7 +158,5 @@ public class VolumeOrtho : Volumetric
          _tr = pos + toRight;
          _bl = pos - toRight + toBottom;
          _br = pos + toRight + toBottom;
-
-        _done = true;
     }
 }
