@@ -62,10 +62,21 @@ public class KeyPickup : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void FixedUpdate ()
+    {
+        float chaseDist = 5;
+
         if (_pickedUp && !_keyManager.Open)
         {
-            transform.position = Vector3.Lerp(transform.position, _chaseTarget.position, 0.1f);
+            Vector3 posDelta = transform.position - (_chaseTarget.position + new Vector3(0,0,5));
+            float length = posDelta.magnitude;
+
+            if (length < chaseDist)
+                return;
+
+            posDelta = (posDelta / length) * (length - chaseDist);
+
+            transform.position -= posDelta / 10;
         }
 	}
 

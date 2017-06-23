@@ -227,8 +227,10 @@ public class underwaterFX : MonoBehaviour {
 
     void OnPostRender()
     {
+        RenderTexture screen = RenderTexture.active;
+
         foreach (var volume in Volumes.Get())
-            volume.Render();
+            volume.Render(ref screen);
     }
 
     void RaycastCornerBlit(RenderTexture source, RenderTexture dest, Material mat)
