@@ -16,11 +16,22 @@ public class OctopusBurstChase : FishState
 
     public override void Step()
     {
-        if (Vector3.Distance(_octo.transform.position, _octo.OriginPos) > _octo.Range)
-            _octo.SetState<OctopusBurstMove>();
+        //Return to normal movement when the target is out of range or broke line of sight
+        if (Vector3.Distance(_octo.transform.position, _octo.OriginPos) > _octo.Range ||
+            Physics.Linecast(_octo.transform.position, _octo.Target.position, ~_octo.IgnoreDetection))
+        {
+            _octo.IsChasing = false;
+            _octo.SetState<OctopusFindRock>();
+            return;
+        }
 
-        if (Vector3.Distance(_octo.transform.position, _octo.Target.position) < _octo.LatchOnRange)
+        //Check for latch on distance and line of sight
+        if (Vector3.Distance(_octo.transform.position, _octo.Target.position) < _octo.LatchOnRange &&
+            !Physics.Linecast(_octo.transform.position, _octo.Target.position, ~_octo.IgnoreDetection))
+        {
             _octo.SetState<OctopusLatchOnPlayer>();
+            return;
+        }
 
         //Move towards target, predicts target movement based on target's velocity
         _octo.Direction = ((_octo.Target.position + (_octo.TargetBody.velocity / _octo.Difficulty)) - _octo.transform.position).normalized;
