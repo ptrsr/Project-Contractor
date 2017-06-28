@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraAnimator : MonoBehaviour {
 
     [SerializeField]
-    private Animator _camAnimator;
+    private RuntimeAnimatorController _camController;
     [SerializeField]
     private Transform _camPos;
     [SerializeField]
@@ -15,6 +15,7 @@ public class CameraAnimator : MonoBehaviour {
 
     private Camera _cam;
     private camMove _camMove;
+    private Animator _camAnimator;
 
     private Vector3 _playerPos;
 
@@ -31,6 +32,7 @@ public class CameraAnimator : MonoBehaviour {
 	void Start () {
         _cam = Camera.main;
         _camMove = _cam.GetComponent<camMove>();
+        _camAnimator = _cam.GetComponent<Animator>();
         _subMov = FindObjectOfType<SubMovement>();
         _playerPos = new Vector3(_camPos.position.x, _camPos.position.y, 0);
 	}
@@ -49,6 +51,7 @@ public class CameraAnimator : MonoBehaviour {
                 }
                 _camAnimator.enabled = false;
                 _camMove.FollowAnimation(false);
+                _animator1.enabled = false;
                 _finished = true;
             }
             return;
@@ -59,6 +62,7 @@ public class CameraAnimator : MonoBehaviour {
             {
                 _subMov.Freeze(false);
                 _finished = true;
+                _animator1.enabled = false;
             }
             return;
         }
@@ -70,7 +74,7 @@ public class CameraAnimator : MonoBehaviour {
                 _subMov.Freeze(true);
                 if (MoveCamera())
                 {
-
+                    _camAnimator.runtimeAnimatorController = _camController;
                     _camAnimator.enabled = true;
                     _animator1.enabled = true;
                     _cameraAnimatorActive = true;

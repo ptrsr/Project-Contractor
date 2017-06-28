@@ -35,9 +35,17 @@ public class SkullDoorAnimator : MonoBehaviour {
 
 
     [SerializeField]
+    private RuntimeAnimatorController _controller1;
+    [SerializeField]
+    private RuntimeAnimatorController _controller2;
+
+
+
+    [SerializeField]
     private Animator _animator1;
     [SerializeField]
     private Animator _animator2;
+
 
 
     private AdditiveSceneManager _sceneManager;
@@ -130,11 +138,14 @@ public class SkullDoorAnimator : MonoBehaviour {
     public void Key1InPlace()
     {
         _key1InPlace = true;
+        _animator1.runtimeAnimatorController = _controller1;
         _animator1.enabled = true;
     }
     public void Key2InPlace()
     {
         _key2InPlace = true;
+
+        _animator2.runtimeAnimatorController = _controller2;
         _animator2.enabled = true;
     }
 }

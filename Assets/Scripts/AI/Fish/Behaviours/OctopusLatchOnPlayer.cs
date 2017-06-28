@@ -10,6 +10,9 @@ public class OctopusLatchOnPlayer : FishState
     private SubMovement _subMove;
     private int _rotCounter = 0;
 
+    private int _delay = 20;
+    private int _counter = 0;
+
     public override void Initialize()
     {
         _octo = (Octopus)fish;
@@ -24,6 +27,8 @@ public class OctopusLatchOnPlayer : FishState
         _octo.TargetNormal = hit.normal;
         //Get movement script
         _subMove = _octo.Target.GetComponent<SubMovement>();
+
+        _subMove.PlayParticles();
 
         //Pre-check if player is charging, so you can avoid the Octopus quickly
         if (_subMove.Charged)
@@ -51,6 +56,13 @@ public class OctopusLatchOnPlayer : FishState
 
         //Drain oxygen
         _octo.OxygenVals.Remove(_octo.OxygenDrain);
+
+        if (_counter >= _delay)
+        {
+            _counter = 0;
+            _subMove.PlayParticles();
+        }
+            _counter++;
 
         //Set position and rotation
         SetPos(_octo.Target.position, _octo.TargetNormal);
