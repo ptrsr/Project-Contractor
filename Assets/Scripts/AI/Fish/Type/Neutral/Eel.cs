@@ -71,6 +71,7 @@ public class Eel : FishNeutral
 
         //Stun player
         SubMovement sub = Target.GetComponent<SubMovement>();
+        sub.PlayParticles();
         sub.StunSlowCooldown = 40;
         sub.StunPlayer();
 

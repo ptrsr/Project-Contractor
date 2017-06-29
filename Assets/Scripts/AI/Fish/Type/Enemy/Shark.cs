@@ -78,6 +78,7 @@ public class Shark : FishEnemy
         //Add force to the player's body in which direction the shark is going
         c.rigidbody.AddForce(Direction * KnockBackStrength, ForceMode.Impulse);
         SubMovement sub = Target.GetComponent<SubMovement>();
+        sub.PlayParticles();
         //Set stun time
         sub.StunSlowCooldown = 60;
         //Stun the player

@@ -27,6 +27,10 @@ public class KeyPickup : MonoBehaviour {
 			{
 				_keyManager = km[2];
 			}
+            else if (km[3].ID == 1)
+            {
+                _keyManager = km[3];
+            }
         }
         else if (_id == 2)
         {
@@ -41,8 +45,12 @@ public class KeyPickup : MonoBehaviour {
 			else if (km[2].ID == 2)
 			{
 				_keyManager = km[2];
-			}
-		}
+            }
+            else if (km[3].ID == 2)
+            {
+                _keyManager = km[3];
+            }
+        }
 		else if (_id == 3)
 		{
 			if (km[0].ID == 3)
@@ -56,10 +64,33 @@ public class KeyPickup : MonoBehaviour {
 			else if (km[2].ID == 3)
 			{
 				_keyManager = km[2];
-			}
-		}
+            }
+            else if (km[3].ID == 3)
+            {
+                _keyManager = km[3];
+            }
+        }
+        else if (_id == 4)
+        {
+            if (km[0].ID == 4)
+            {
+                _keyManager = km[0];
+            }
+            else if (km[1].ID == 4)
+            {
+                _keyManager = km[1];
+            }
+            else if (km[2].ID == 4)
+            {
+                _keyManager = km[2];
+            }
+            else if (km[3].ID == 4)
+            {
+                _keyManager = km[3];
+            }
+        }
 
-	}
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate ()
@@ -96,5 +127,6 @@ public class KeyPickup : MonoBehaviour {
         if (_id == 1) { _keyManager.PickUpKey1(this.gameObject); }
 		else if(_id == 2) { _keyManager.PickUpKey2(this.gameObject); }
 		else if(_id == 3) { _keyManager.PickUpKey3(this.gameObject); }
+        else if (_id == 4) { _keyManager.PickUpKey4(this.gameObject); }
     }
 }

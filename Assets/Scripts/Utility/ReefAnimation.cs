@@ -12,8 +12,7 @@ public class ReefAnimation : MonoBehaviour {
     private float _startedAt = 0;
     [SerializeField]
     private int _lenghtAnimation = 0;
-    [SerializeField]
-    private Transform _playerPos;
+    private Vector3 _playerPos;
     [SerializeField]
     private Transform _camPos;
 
@@ -29,15 +28,14 @@ public class ReefAnimation : MonoBehaviour {
         _cam = Camera.main;
         _camAnimator = _cam.GetComponent<Animator>();
         _camAnimator.enabled = false;
+        _playerPos = new Vector3(_camPos.position.x, _camPos.position.y, 0);
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (_finished) return;
         if (_played)
         {
-            if (_camAnimator.GetCurrentAnimatorStateInfo(0).IsName("Cutscene1")){
-            }
             if (_startedAt + _lenghtAnimation <= Time.timeSinceLevelLoad)
             {
                 _sub.Freeze(false);
@@ -63,8 +61,8 @@ public class ReefAnimation : MonoBehaviour {
 
     private bool MovePlayer()
     {
-        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos.position, 0.05f);
-        if (Vector3.Distance(_sub.transform.position, _playerPos.position) < 1)
+        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos, 0.1f);
+        if (Vector3.Distance(_sub.transform.position, _playerPos) < 1f)
         {
             return true;
         }
@@ -72,11 +70,11 @@ public class ReefAnimation : MonoBehaviour {
     }
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.05f);
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.1f);
         Quaternion newRot = new Quaternion();
         newRot.eulerAngles = (new Vector3(0,0,0));
         transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 5 * Time.deltaTime);
-        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 2)
+        if (Vector3.Distance(_cam.transform.position, _camPos.position) < 1f)
         {
             return true;
         }

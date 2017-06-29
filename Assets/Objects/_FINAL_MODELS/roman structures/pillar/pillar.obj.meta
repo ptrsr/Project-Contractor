@@ -7,11 +7,16 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     100002: polySurface1_pilar7
+    100004: pillar_LP
     400000: //RootNode
     400002: polySurface1_pilar7
+    400004: pillar_LP
     2300000: polySurface1_pilar7
+    2300002: pillar_LP
     3300000: polySurface1_pilar7
+    3300002: pillar_LP
     4300000: polySurface1_pilar7
+    4300002: pillar_LP
   materials:
     importMaterials: 1
     materialName: 0
