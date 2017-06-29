@@ -19,7 +19,7 @@ uniform float4 _pingPositions[10];
 uniform float4 _pingColors[10];
 uniform float4 _sonarOrigins[10];
 
-half4 pulseOutline (float3 pos, float2 uv) 
+half4 pulseHighlight (float3 pos) 
 {
 	half4 color = half4(0,0,0,0);
 
@@ -35,7 +35,7 @@ half4 pulseOutline (float3 pos, float2 uv)
 		{
 			float diff = 1 - (pulseDist - fragDist) / (_fade);
 
-			color = _outlineColor;
+			color = _highlightColor;
 			color *= diff;
 		}
 		if (fragDist < _start)
@@ -55,7 +55,7 @@ half4 pulseOutline (float3 pos, float2 uv)
 	return color;
 }
 
-half4 pulseHighlight (float3 pos) 
+half4 pulseOutline (float3 pos) 
 {
 	// calculating each pulse draw
 	half4 color = half4(0,0,0,0);
@@ -69,14 +69,46 @@ half4 pulseHighlight (float3 pos)
 
 		float fragDist = distance(pos, _pulseOrigins[i]);
 		if (fragDist < pulseDist + _highlightWidth /2 && fragDist > pulseDist - _highlightWidth/2 && fragDist > _start)
-			color = _highlightColor;
-
-		// fading edge over distance (didnt really work)
-//		color *= pow(1 - dist / _distance, 0.2);
-
+			color = _outlineColor;
 	}
 	return color;
 } 
+
+
+half4 pulseForPaul (float3 pos) {
+	half4 color = half4(0,0,0,0);
+
+	for(int i = 0; i < 10; i++) 
+	{
+		float pulseDist = _pulseDistances[i];
+		
+		if (pulseDist == -1.0)
+			break;
+
+		float fragDist = distance(pos, _pulseOrigins[i]);
+		if (fragDist < pulseDist && fragDist > pulseDist - 2)
+		{
+			float diff = 1 - (pulseDist - fragDist) / (_fade);
+
+			color = _highlightColor;
+			color *= diff;
+		}
+		if (fragDist < _start)
+			color *= 0;
+	}
+//	float depthMask = 0;
+
+//	float _fadeDiff = (_outlineWidth /2) / abs(pos.z);
+
+//	if (pos.z > -_outlineWidth / 2 && pos.z < _outlineWidth / 2)
+//		depthMask = 1;
+
+//	color *= depthMask;
+	return color;
+}
+
+
+
 
 half4 pulsePing (float3 pos) 
 {

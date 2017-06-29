@@ -66,18 +66,18 @@
 
 
 				// PULSE COLORS
-				half4 outlineColor = pulseOutline(worldPos, i.uv);
-				half4 highlightColor = pulseHighlight(xyPlanePos);
+				half4 outlineColor = pulseOutline(xyPlanePos);
+				half4 highlightColor = pulseHighlight(worldPos);
+				half4 paul = pulseForPaul(worldPos);
 
 				// PING COLORS
 				half4 pingColor = pulsePing(xyPlanePos);
 
 				// PULSES MASKING
 				if(worldPos.z < 0) {
-					highlightColor = 0;
+					outlineColor = 0;
 					pingColor = 0;
 				}
-
 				
 				// CAUSTICS COLOR
 				half4 caustics = Caustics(worldPos);
@@ -95,7 +95,8 @@
 
 
 				//final output blending
-//				scene += caustics;
+				scene += caustics;
+//				scene += paul;
 				scene = lerp(scene, fog, fogDiff);
 				scene += outlineColor + highlightColor;
 				scene += pingColor;
