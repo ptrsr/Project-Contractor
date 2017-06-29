@@ -25,6 +25,7 @@ public class Sonar
 [System.Serializable]
 class Fog
 {
+
 	public Color 
         startColor, 
         endColor;
@@ -41,6 +42,7 @@ class Fog
 [System.Serializable]
 class Caustics
 {
+
 	public Color causticsColor;
 
     [Range(0f,50f)]

@@ -4,6 +4,7 @@
 		_screenWarp("screen warp", 2D) = ""{}
 		_int("intensity", float) = 1
 		_spd("speed", float) = 0
+		_push("push", Range(0,0.5)) = 0
 	}
 
 	SubShader
@@ -40,6 +41,7 @@
 
 			uniform float _int;
 			uniform float _spd;
+			uniform float _push;
 
 			v2f vert (appdata v)
 			{
@@ -101,19 +103,28 @@
 
 				// DIFF FOR WARPING
 				float warpdiff = saturate((dist - start) / ((_range - 0.2) - start));
-				diff = pow(diff, 1 + _curve);
-				diff = min(diff, _intensity);
+				warpdiff = pow(diff, 1 + _curve);
+				warpdiff = min(diff, _intensity);
 
 				// DISTORTION
 				float2 centerShift = i.uv - float2(0.5, 0.5);
-				i.uv += (centerShift * warp) * warpdiff;
+				float2 uvWarp = i.uv + (centerShift * warp) * warpdiff;
 
-				half4 centerScene = tex2D(_scene, i.uv);
+
+				float2 uvCenter = i.uv * 2 - 1;
+
+				float2 dir = normalize(uvCenter);
+
+				float2 uvPush = i.uv + (dir * _push) * (1-diff);
+
+				half4 pushScene = tex2D(_scene, uvPush);
+
+				half4 warpScene = tex2D(_scene, uvWarp);
 				half4 vignette = half4(1,1,1,1);
 				vignette *= diff;
 
-//				return centerScene;
-				return centerScene + vignette;
+//				return pushScene + vignette;
+				return warpScene + vignette;
 			}
 			ENDCG
 		}
