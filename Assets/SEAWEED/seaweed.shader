@@ -10,7 +10,8 @@
 	}
 	SubShader {
 		Cull Off
-		Tags { "Queue"="Geometry-1" }
+//		Tags { "Rendertype" = "Opaque"}
+		Tags { "Rendertype" = "Grass"}
 		CGPROGRAM
 		#pragma surface surf Standard fullForwardShadows vertex:vert addshadow
 		#pragma target 3.0
@@ -29,19 +30,13 @@
 		uniform half _Metallic;
 		uniform fixed4 _Color;
 
-		void vert( inout appdata_base v)
-		{	
+		void vert( inout appdata_base v) {	
 			float time = _Time;
 			float mask = min(v.vertex.y / 2, 1);
-
 			float4 objectOrigin = mul(unity_ObjectToWorld, float4(0,0,0,0));
-
 			// push vertex positions into world space to get proper offset
 			float4 worldVert = mul(unity_ObjectToWorld, v.vertex);
-
-
 			worldVert.x += (sin(time * _speed + worldVert.y * _shift) * _intensity) *mask;
-
 			// revert offset back into objectspace position
 			v.vertex = mul(unity_WorldToObject, worldVert);
 		}
@@ -53,7 +48,7 @@
 
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
-			o.Alpha = 1;
+			o.Alpha = c.a;
 		}
 		ENDCG
 	}
