@@ -85,11 +85,8 @@
 				// float warpRadial = tex2D(_screenWarp, float2(radial, 0.5));
 				//–––––––––––––––––––––––––––––––––––––
 
-				half4 normalCol1 = tex2D(_screenWarp, i.uv + float2(0.5, time));
-				half4 normalCol2 = tex2D(_screenWarp, i.uv + float2(time * 0.75, 0.25));
-				float warp = (normalCol1.g) + (normalCol2.g);
-				warp = warp * 0.5 - 0.25;
-				warp *= _int;
+				half4 normalCol1 = tex2D(_screenWarp, i.uv + float2(-time, 0.5));
+				float warp = normalCol1.g * _int;
 
 				float dist = distance(i.uv, float2(0.5,0.5));
 				float start = _range - _width;
@@ -100,7 +97,7 @@
 				diff = min(diff, _intensity);
 
 				// DIFF FOR WARPING
-				float warpdiff = saturate((dist - start) / ((_range - 0.2) - start));
+				float warpdiff = saturate((dist - start) / (_range - start));
 				diff = pow(diff, 1 + _curve);
 				diff = min(diff, _intensity);
 
@@ -112,7 +109,6 @@
 				half4 vignette = half4(1,1,1,1);
 				vignette *= diff;
 
-//				return centerScene;
 				return centerScene + vignette;
 			}
 			ENDCG
