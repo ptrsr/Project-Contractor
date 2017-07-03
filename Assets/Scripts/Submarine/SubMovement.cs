@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Singleton;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SubMovement : MonoBehaviour {
@@ -73,6 +74,9 @@ public class SubMovement : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(0);
+            Volumes.Reset();
+            Pings.Reset();
+            DarkZones.Reset();
         }
         if (_frozen) return;
         _oxygen.Remove(_lossOfOxygen);

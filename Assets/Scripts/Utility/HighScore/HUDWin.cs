@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Singleton;
 
 public class HUDWin : MonoBehaviour {
 
@@ -61,6 +62,9 @@ public class HUDWin : MonoBehaviour {
                 if ((_finishedAt + 10.0f) < Time.timeSinceLevelLoad)
                 {
                     SceneManager.LoadScene(0);
+                    Volumes.Reset();
+                    Pings.Reset();
+                    DarkZones.Reset();
                 }
             }
             if (_highScore > _highScoreToAdd)

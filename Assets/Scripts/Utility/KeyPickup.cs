@@ -122,6 +122,11 @@ public class KeyPickup : MonoBehaviour {
     private void PickUp(Transform chaseTarget)
     {
         _pickedUp = true;
+
+        var ping = GetComponent<Ping>();
+        if (ping != null)
+            ping.enabled = false;
+
         _chaseTarget = chaseTarget;
         GetComponent<Collider>().enabled = false;
         if (_id == 1) { _keyManager.PickUpKey1(this.gameObject); }
