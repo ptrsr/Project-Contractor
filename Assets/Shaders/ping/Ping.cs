@@ -17,7 +17,6 @@ public class PingData
         _position,
         _pulseOrigin;
 
-
     public bool Move()
     {
         _currentDistance += _speed * Time.deltaTime;
@@ -33,6 +32,7 @@ public class PingData
     public static PingData Clone(PingData original)
     {
         PingData ping = new PingData();
+        ping._maxDistance = original._maxDistance;
         ping._color = original._color;
         ping._speed = original._speed;
         ping._position = original._position;
@@ -71,7 +71,7 @@ public class Ping : MonoBehaviour
 
     public bool CheckOnScreen()
     {
-        return true; //REPLACE
+        return enabled; //REPLACE
 
         Camera cam = Camera.main;
         Vector3 pos = cam.transform.position;

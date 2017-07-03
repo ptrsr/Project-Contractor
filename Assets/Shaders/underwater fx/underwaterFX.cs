@@ -157,16 +157,20 @@ public class underwaterFX : MonoBehaviour {
 		_mat.SetFloat ("_intensity", _fog.intensity);
 		_mat.SetFloat ("_curve", _fog.curveShift);
 
+        int zoneCount = DarkZones.Get().Count;
 
-        //_mat.SetFloat("_darkZones", DarkZones.Get().Count);
-        //_mat.SetVectorArray("_darkPositions", DarkZones.Positions());
-        //_mat.SetFloatArray("_darkCloseRadius", DarkZones.CloseRadius());
-        //_mat.SetFloatArray("_darkFarRadius", DarkZones.FarRadius());
+        if (zoneCount > 0)
+        {
+            _mat.SetFloat("_darkZones", zoneCount);
+            _mat.SetVectorArray("_darkPositions", DarkZones.Positions());
+            _mat.SetFloatArray("_darkCloseRadius", DarkZones.CloseRadius());
+            _mat.SetFloatArray("_darkFarRadius", DarkZones.FarRadius());
 
-        //_mat.SetVectorArray("_darkColors", DarkZones.Colors());
+            _mat.SetVectorArray("_darkColors", DarkZones.Colors());
+        }
 
-		// caustics
-		_mat.SetFloat("causticsSize", _caustics.size);
+        // caustics
+        _mat.SetFloat("causticsSize", _caustics.size);
 		_mat.SetFloat("causticsIntensity", _caustics.intensity);
 		_mat.SetFloat ("causticsDepth", _caustics.causticsDepth);
 		_mat.SetColor ("causticsColor", _caustics.causticsColor);

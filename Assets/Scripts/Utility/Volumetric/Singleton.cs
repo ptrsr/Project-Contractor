@@ -24,6 +24,11 @@ namespace Singleton
         {
             return instance.volumes;
         }
+
+        public static void Reset()
+        {
+            instance.volumes.Clear();
+        }
     }
 
     public class DarkZones
@@ -86,6 +91,11 @@ namespace Singleton
 
             return colors;
         }
+
+        public static void Reset()
+        {
+            instance.zones.Clear();
+        }
     }
 
     public class Pings
@@ -107,6 +117,11 @@ namespace Singleton
         public static List<Ping> Get()
         {
             return instance.pings;
+        }
+
+        public static void Reset()
+        {
+            instance.pings.Clear();
         }
     }
 }
