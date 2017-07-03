@@ -30,7 +30,6 @@ public class ReefAnimation : MonoBehaviour {
         _camAnimator.enabled = false;
         _playerPos = new Vector3(_camPos.position.x, _camPos.position.y, 0);
     }
-	
 	// Update is called once per frame
 	void FixedUpdate () {
         if (_finished) return;

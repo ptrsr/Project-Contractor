@@ -5,9 +5,9 @@ using UnityEngine;
 public class ActivateAnimation : MonoBehaviour {
 
     // Use this for initialization
-    [SerializeField]
     private Animator _animator;
 	void Start () {
+        _animator = GetComponentInParent<Animator>();
         _animator.enabled = false;
 	}
 	
@@ -15,10 +15,10 @@ public class ActivateAnimation : MonoBehaviour {
 	void Update () {
 		
 	}
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) {
+        if (other.gameObject.tag == "Player") {
+            Debug.Log("Animator activate");
             _animator.enabled = true;
         }
     }

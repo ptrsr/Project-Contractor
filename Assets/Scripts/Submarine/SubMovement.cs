@@ -164,8 +164,12 @@ public class SubMovement : MonoBehaviour {
         if(other.gameObject.tag == "Oxygen")
         {
            OxygenCrack value = other.gameObject.GetComponent<OxygenCrack>();
-            _oxygen.Refill();
-            value.PickUp();
+            if (value.IsDisabled) { return; }
+            else
+            {
+                _oxygen.Refill();
+                value.PickUp();
+            }
 
         }
         if(other.gameObject.tag == "SpawnPoint")

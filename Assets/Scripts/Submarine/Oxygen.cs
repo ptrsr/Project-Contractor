@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class Oxygen : MonoBehaviour {
 
@@ -21,6 +22,7 @@ public class Oxygen : MonoBehaviour {
     private float _delay = 0;
     private float _smoothness = 0.05f;
     private float _currentOxygen = 0;
+    
 
     private bool _done = false;
 
@@ -70,7 +72,7 @@ public class Oxygen : MonoBehaviour {
         {
             _vignette.range = _oxygen / _maxOxygen;
         }
-        else if (_oxygen < 0)
+        else if (_oxygen <= 0)
         {
             Octopus octo = _sub.GetComponentInChildren<Octopus>();
             if (octo != null)
