@@ -30,6 +30,7 @@ public class AddScoreOnCollision : MonoBehaviour {
             if(_pickUp.Finished){
 
                 gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
+                gameObject.GetComponentInChildren<Light>().enabled = false;
                 _update = false;
             }
         }

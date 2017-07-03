@@ -140,7 +140,7 @@ public class HighScoreManager : MonoBehaviour {
         }
         if (_finished)
         {
-            if((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
+            if((_finishedAt + 10.0f) < Time.timeSinceLevelLoad)
             {
                 SceneManager.LoadScene(0);
             }
@@ -188,12 +188,14 @@ public class HighScoreManager : MonoBehaviour {
             PrepareForPlacement(_treasureObj4, subPos);
             _newPos4 = SideToSpawnOn();
         }else { _done4 = true; }
+        FindObjectOfType<FinalGem>().PlaceFinalGem();
         _update = true;
     }
 
     private void PrepareForPlacement(GameObject obj, SubMovement subPos)
     {
         obj.GetComponentInChildren<MeshRenderer>().enabled = true;
+        obj.GetComponentInChildren<Light>().enabled = true;
         obj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         obj.transform.position = subPos.transform.position;
     }

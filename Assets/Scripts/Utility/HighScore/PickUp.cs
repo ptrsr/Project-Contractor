@@ -59,6 +59,9 @@ public class PickUp : MonoBehaviour {
         if (_counter >= _finalRotation)
         {
             _finished = true;
+            Quaternion quat = new Quaternion();
+            quat.eulerAngles = new Vector3(0, 0, 0);
+            transform.rotation = quat;
         }
         else
         {

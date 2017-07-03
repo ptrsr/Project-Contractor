@@ -12,6 +12,7 @@ public class HUDWin : MonoBehaviour {
     private int _highScoreToAdd = 0;
     private int _highScore = 0;
     private HighScoreManager _highscoreManager;
+    private TimeManager _timeManager;
 
     private Canvas _canvas;
     private Text _text1;
@@ -40,6 +41,7 @@ public class HUDWin : MonoBehaviour {
 
         _canvas = GetComponentInParent<Canvas>();
         _highscoreManager = _canvas.GetComponentInParent<HighScoreManager>();
+        _timeManager = FindObjectOfType<TimeManager>();
         _text1 = GetComponentsInChildren<Text>()[0];
         _text2 = GetComponentsInChildren<Text>()[1];
         _text3 = GetComponentsInChildren<Text>()[2];
@@ -57,7 +59,7 @@ public class HUDWin : MonoBehaviour {
             _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
             if (_highScore == _highScoreToAdd)
             {
-                if ((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
+                if ((_finishedAt + 10.0f) < Time.timeSinceLevelLoad)
                 {
                     SceneManager.LoadScene(0);
                     Volumes.Reset();
@@ -85,10 +87,13 @@ public class HUDWin : MonoBehaviour {
         if (_scoreTreasure3 != 0) { _treasureKind2++; }
         if (_scoreTreasure4 != 0) { _treasureKind2++; }
         string timestring = string.Format("{0:0.00}", time);
-        _text1.text = "Time to Finish: " + timestring;
+        int remainingTime = _timeManager.TimeFromMuseum - Mathf.FloorToInt(time);
+        int timeBonus = Mathf.FloorToInt(remainingTime * 100);
+        _text1.text = "Time to Finish: " + timestring + " Time Bonus Points: " + timeBonus;
         _totalTreasureKind1 = _scoreTreasure1 + _scoreTreasure2;
         _totalTreasureKind2 = _scoreTreasure3 + _scoreTreasure4;
-        _highScoreToAdd = _totalTreasureKind1 + _totalTreasureKind2;
+        _highScore = timeBonus;
+        _highScoreToAdd = _totalTreasureKind1 + _totalTreasureKind2 + timeBonus;
         _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
         _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
 

@@ -11,7 +11,7 @@ public class TimeManager : MonoBehaviour {
 
     private int _timeFromMuseum = 360;
 
-    public int TimeFromMuseum { set { _timeFromMuseum = value; } }
+    public int TimeFromMuseum { set { _timeFromMuseum = value; } get { return _timeFromMuseum; } }
 
     private OxygenCrack[] _oxygenCracks;
 

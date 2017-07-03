@@ -100,18 +100,18 @@ public class SkullDoorAnimator : MonoBehaviour {
                 _animator[0].SetBool("Open", true);
                 _startedAt2 = Time.timeSinceLevelLoad;
             }
-            if (Time.timeSinceLevelLoad < 150)
-            {
-                _sceneManager.LoadScene(2);
-            }
-            else if (Time.timeSinceLevelLoad < 200 && Time.timeSinceLevelLoad > 150)
-            {
-                _sceneManager.LoadScene(1);
-            }
-            else
-            {
-                _sceneManager.LoadScene(0);
-            }
+            //if (Time.timeSinceLevelLoad < 150)
+            //{
+            //    _sceneManager.LoadScene(2);
+            //}
+            //else if (Time.timeSinceLevelLoad < 200 && Time.timeSinceLevelLoad > 150)
+            //{
+            //    _sceneManager.LoadScene(1);
+            //}
+            //else
+            //{
+            //    _sceneManager.LoadScene(0);
+            //}
 
         }
         
