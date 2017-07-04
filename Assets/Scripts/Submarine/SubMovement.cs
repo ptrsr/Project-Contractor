@@ -114,7 +114,7 @@ public class SubMovement : MonoBehaviour {
             _lastTap = Time.timeSinceLevelLoad;
         }
         //Movement through dragging
-        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+        else if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
 
             Vector3 pos = GetMousePosition();
@@ -135,6 +135,13 @@ public class SubMovement : MonoBehaviour {
                 speed /= 2;
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
+        }
+        else
+        {
+            float x = Mathf.Sin(Time.time/3);
+            float y = Mathf.Cos(Time.time/2);
+            Vector3 dir = new Vector3(x, y, 0);
+            _rigidBody.AddForce(dir * 3, ForceMode.Force);
         }
         
     }

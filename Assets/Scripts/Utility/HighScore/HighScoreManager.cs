@@ -133,16 +133,7 @@ public class HighScoreManager : MonoBehaviour {
             if(_done1 && _done2 && _done3 && _done4)
             {
                 _update = false;
-                _finished = true;
-                _finishedAt = Time.timeSinceLevelLoad;
                 ShowEndHUD(true);
-            }
-        }
-        if (_finished)
-        {
-            if((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
-            {
-                SceneManager.LoadScene(0);
             }
         }
     }

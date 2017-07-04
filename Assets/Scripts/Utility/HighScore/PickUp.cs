@@ -95,7 +95,7 @@ public class PickUp : MonoBehaviour {
             Quaternion rotation = transform.rotation;
             Quaternion straightRot = new Quaternion();
             straightRot.eulerAngles = new Vector3(0, transform.rotation.eulerAngles.y, 0);
-            transform.rotation = Quaternion.Slerp(rotation, straightRot, 0.05f);
+            transform.rotation = Quaternion.Slerp(rotation, straightRot, Time.deltaTime * 0.2f);
         }
     }
     private bool Delay(int seconds)
