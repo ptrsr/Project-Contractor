@@ -16,7 +16,7 @@ public class FinalGem : MonoBehaviour {
 	void Update () {
         if (_update)
         {
-            _gem.transform.position = Vector3.Lerp(_gem.transform.position, transform.position, 0.1f);
+            _gem.transform.position = Vector3.Lerp(_gem.transform.position, transform.position, Time.deltaTime * 0.5f);
             if(Vector3.Distance(_gem.transform.position,transform.position) < 0.3f)
             {
                 _update = false;

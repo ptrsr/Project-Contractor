@@ -60,7 +60,7 @@ public class ReefAnimation : MonoBehaviour {
 
     private bool MovePlayer()
     {
-        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos, 0.1f);
+        _sub.transform.position = Vector3.Lerp(_sub.transform.position, _playerPos, Time.deltaTime * 4);
         if (Vector3.Distance(_sub.transform.position, _playerPos) < 1f)
         {
             return true;
@@ -69,7 +69,7 @@ public class ReefAnimation : MonoBehaviour {
     }
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.1f);
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, Time.deltaTime * 4);
         Quaternion newRot = new Quaternion();
         newRot.eulerAngles = (new Vector3(0,0,0));
         transform.rotation = Quaternion.Slerp(transform.rotation, newRot, 5 * Time.deltaTime);

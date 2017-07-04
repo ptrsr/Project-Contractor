@@ -69,7 +69,7 @@ public class PickUp : MonoBehaviour {
             _counter += _rotationSpeed;
             Vector3 scale = transform.localScale;
             Vector3 finalScale = new Vector3(0.1f, 0.1f, 0.1f);
-            transform.localScale = Vector3.Lerp(scale, finalScale, 0.05f);
+            transform.localScale = Vector3.Lerp(scale, finalScale, Time.deltaTime * 0.2f);
         }
     }
     public void RotateToCamera(GameObject objectToRotateAround, GameObject objectToRotate, Vector3 angles)
@@ -79,7 +79,7 @@ public class PickUp : MonoBehaviour {
             Quaternion rotation = transform.rotation;
             Quaternion straightRot = new Quaternion();
             straightRot.eulerAngles = new Vector3(0, 0, 0);
-            transform.rotation = Quaternion.Slerp(rotation, straightRot, 0.2f);
+            transform.rotation = Quaternion.Slerp(rotation, straightRot, Time.deltaTime * 0.5f);
             if (Delay(2))
             {
                 _rotateBack = true;
@@ -99,7 +99,7 @@ public class PickUp : MonoBehaviour {
             Quaternion rotation = transform.rotation;
             Quaternion straightRot = new Quaternion();
             straightRot.eulerAngles = new Vector3(0, transform.rotation.eulerAngles.y, 0);
-            transform.rotation = Quaternion.Slerp(rotation, straightRot, 0.05f);
+            transform.rotation = Quaternion.Slerp(rotation, straightRot, Time.deltaTime * 0.2f);
         }
     }
     private bool Delay(int seconds)

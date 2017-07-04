@@ -33,7 +33,7 @@ public class FinalCameraPlayer : MonoBehaviour {
     }
     private bool MovePlayer()
     {
-        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, 0.05f);
+        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos.position, Time.deltaTime * 2);
         if (Vector3.Distance(_subMov.transform.position, _playerPos.position) < 1)
         {
             return true;
@@ -43,7 +43,7 @@ public class FinalCameraPlayer : MonoBehaviour {
 
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.05f);
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, Time.deltaTime * 2);
         Quaternion quat = new Quaternion();
         quat.eulerAngles = _camPos.rotation.eulerAngles;
         _cam.transform.rotation = Quaternion.Slerp(_cam.transform.rotation, quat, 0.05f);

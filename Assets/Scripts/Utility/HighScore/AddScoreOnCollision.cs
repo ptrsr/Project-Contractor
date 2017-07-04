@@ -37,8 +37,8 @@ public class AddScoreOnCollision : MonoBehaviour {
     }
     private bool InterpolateWithScale(GameObject obj, Vector3 pos, Vector3 scale, float distanceToDone)
     {
-        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, 0.1f);
-        obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, scale, 0.3f);
+        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, Time.deltaTime);
+        obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, scale, Time.deltaTime * 2);
         if (Vector3.Distance(obj.transform.position, pos) < distanceToDone)
         {
             return true;

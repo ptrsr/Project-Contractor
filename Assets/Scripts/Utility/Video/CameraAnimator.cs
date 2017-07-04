@@ -93,7 +93,7 @@ public class CameraAnimator : MonoBehaviour {
 	}
     private bool MovePlayer()
     {
-        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos, 0.05f);
+        _subMov.transform.position = Vector3.Lerp(_subMov.transform.position, _playerPos, Time.deltaTime * 2);
         if (Vector3.Distance(_subMov.transform.position, _playerPos) < 1)
         {
             return true;
@@ -103,7 +103,7 @@ public class CameraAnimator : MonoBehaviour {
 
     private bool MoveCamera()
     {
-        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, 0.05f);
+        _cam.transform.position = Vector3.Lerp(_cam.transform.position, _camPos.position, Time.deltaTime * 2);
         if (Vector3.Distance(_cam.transform.position, _camPos.position) < 1)
         {
             return true;

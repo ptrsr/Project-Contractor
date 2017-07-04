@@ -78,7 +78,7 @@ public class HighScoreManager : MonoBehaviour {
         {
             if(_newPos1 != null && !_initialInterpolation1)
             {
-                if (InterpolateWithScale(_treasureObj1, _newPos1.position, new Vector3(12.5f, 12.5f, 12.5f), 0.2f)){
+                if (InterpolateWithScale(_treasureObj1, _newPos1.position, new Vector3(12.5f, 12.5f, 12.5f), 1)){
                     _newPos1 = _pillarPositions[0];
                     _initialInterpolation1 = true;
                 }
@@ -137,15 +137,15 @@ public class HighScoreManager : MonoBehaviour {
     //returns if done
     private bool InterpolateWithScale(GameObject obj, Vector3 pos, Vector3 scale, float distanceToDone)
     {
-        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, 0.1f);
-        obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, scale, 0.3f);
+        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, Time.deltaTime * 4);
+        obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, scale, Time.deltaTime * 4);
         if(Vector3.Distance(obj.transform.position,pos) < distanceToDone)
             return true;
         else { return false; }
     }
     private bool Interpolate(GameObject obj, Vector3 pos, float distanceToDone)
     {
-        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, 0.1f);
+        obj.transform.position = Vector3.Lerp(obj.transform.position, pos, Time.deltaTime * 4);
         if (Vector3.Distance(obj.transform.position, pos) < distanceToDone)
             return true;
         else { return false; }
