@@ -4,6 +4,7 @@
 	{
 		_Scene ("Scene", 2D) = "white" {}
 		_Caustics ("Caustics", 2D) = "white" {}
+		_Grid("Grid", 2D) = "white" {}
 	}
 	SubShader
 	{
@@ -39,6 +40,7 @@
 			uniform sampler2D _Scene;
 //			uniform sampler2D _CameraDepthNormalsTexture;
 			uniform sampler2D _CameraDepthTexture;
+			uniform sampler2D _Grid;
 
 			v2f vert (appdata v)
 			{
@@ -103,7 +105,6 @@
 				scene = lerp(scene, fog, fogDiff);
 				scene += outlineColor + highlightColor;
 				scene += pingColor;
-
 //				return float(linearDepth);
 
 				return scene;
