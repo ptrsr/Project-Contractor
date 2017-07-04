@@ -57,8 +57,8 @@ public class HUDWin : MonoBehaviour {
         {
             if (_totalTreasureKind1 != 0) { _totalTreasureKind1 -= 10; _highScore += 10; if (_totalTreasureKind1 <= 0) _totalTreasureKind1 = 0; }
             if (_totalTreasureKind2 != 0) { _totalTreasureKind2 -= 10; _highScore += 10; if (_totalTreasureKind2 <= 0) _totalTreasureKind2 = 0; }
-            _text2.text = " x " + _treasureKind1 + " \n    " + _totalTreasureKind1 + " Points";
-            _text3.text = " x " + _treasureKind2 + " \n    " + _totalTreasureKind2 + " Points";
+            _text2.text = " x " + _treasureKind1 + " \n    " + _totalTreasureKind1 + " punten";
+            _text3.text = " x " + _treasureKind2 + " \n    " + _totalTreasureKind2 + " punten";
             if (_highScore == _highScoreToAdd)
             {
                 _finished = true;
@@ -93,21 +93,22 @@ public class HUDWin : MonoBehaviour {
     {
         _canvas.enabled = true;
         float time = Mathf.Floor(Time.timeSinceLevelLoad);
-        time = (time / 60);
+        int munites = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time % 60);
         if (_scoreTreasure1 != 0) { _treasureKind1++; }
         if (_scoreTreasure2 != 0) { _treasureKind1++; }
         if (_scoreTreasure3 != 0) { _treasureKind2++; }
         if (_scoreTreasure4 != 0) { _treasureKind2++; }
-        string timestring = string.Format("{0:0.00}", time);
+        string timestring = string.Format("{0}:{1:00}", munites, seconds);
         int remainingTime = _timeManager.TimeFromMuseum - Mathf.FloorToInt(time);
         int timeBonus = Mathf.FloorToInt(remainingTime * 100);
-        _text1.text = "Time to Finish: " + timestring + " Time Bonus Points: " + timeBonus;
+        _text1.text = "Jouw tijd: " + timestring + " seconden" +"\nTijd Bonus: " + timeBonus + " punten";
         _totalTreasureKind1 = _scoreTreasure1 + _scoreTreasure2;
         _totalTreasureKind2 = _scoreTreasure3 + _scoreTreasure4;
         _highScore = timeBonus;
         _highScoreToAdd = _totalTreasureKind1 + _totalTreasureKind2 + timeBonus;
-        _text2.text = " x " + _treasureKind1 + " \n   " + _totalTreasureKind1 + " Points";
-        _text3.text = " x " + _treasureKind2 + " \n   " + _totalTreasureKind2 + " Points";
+        _text2.text = " x " + _treasureKind1 + " \n   " + _totalTreasureKind1 + " punten";
+        _text3.text = " x " + _treasureKind2 + " \n   " + _totalTreasureKind2 + " punten";
 
         _highscoreManager.SetHighScore = _highScoreToAdd;
         _text4.text = _highScore.ToString();

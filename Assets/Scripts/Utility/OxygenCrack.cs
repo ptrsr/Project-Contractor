@@ -7,15 +7,17 @@ public class OxygenCrack : MonoBehaviour {
     [SerializeField]
     private GameObject _oxygenPrefab;
     [SerializeField]
-    private float _smoothness = 1;
+    private float _smoothness = 0.02f;
 
     private float _counter = 0;
     private float _delay = 0;
     private bool _increaseSize = false;
     private bool _pickUp = false;
-    Vector3 pos = new Vector3(0, 0, 0);
+    private Vector3 pos = new Vector3(0, 0, 0);
     private float _delayBeforeNew = 120;
     private float _counterBeforeNew = 0;
+    private Vector3 _tempScale = new Vector3(0, 0, 0);
+    private bool _tempDone = false;
 
     private GameObject _oxygen;
     private SubMovement _sub;
@@ -28,7 +30,7 @@ public class OxygenCrack : MonoBehaviour {
     // Use this for initialization
     void Start () {
         _sub = FindObjectOfType<SubMovement>();
-        _delay = (1 / _smoothness);
+        _delay = 60;
         CreateOxygen();
     }
 	
@@ -45,11 +47,23 @@ public class OxygenCrack : MonoBehaviour {
             
             pos = _sub.gameObject.transform.position;
             _oxygen.transform.position = Vector3.Lerp(_oxygen.transform.position, new Vector3(pos.x, pos.y, pos.z), 0.04f);
-            _oxygen.transform.localScale = Vector3.Lerp(_oxygen.transform.localScale, new Vector3(0.1f, 0.1f, 0.1f), 0.04f);
+
+            if (_oxygen.transform.localScale.x < 7.8f && !_tempDone)
+            {
+                _tempScale = new Vector3(8, 8, 8);
+                if(_oxygen.transform.localScale.x > 7.0f)
+                    _tempDone = true;
+            }
+            else
+            {
+                _tempScale = new Vector3(0.1f, 0.1f, 0.1f);
+            }
+            _oxygen.transform.localScale = Vector3.Lerp(_oxygen.transform.localScale, _tempScale, 0.16f);
             if(_counter >= _delay)
             {
                 _counter = 0;
                 _pickUp = false;
+                _tempDone = false;
                 Destroy(_oxygen);
             }
             else { _counter++; }

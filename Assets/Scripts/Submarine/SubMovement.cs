@@ -142,7 +142,14 @@ public class SubMovement : MonoBehaviour {
             }
             _rigidBody.AddForce(dir * speed, ForceMode.VelocityChange);
         }
-        
+        else
+        {
+            float x = Mathf.Sin(Time.time/ 2);
+            float y = Mathf.Cos(Time.time / 3);
+            Vector3 dir = new Vector3(x, y, 0);
+            _rigidBody.AddForce(dir * 2, ForceMode.Force);
+        }
+       
     }
 
     //Get mouse position in world space

@@ -38,8 +38,8 @@
 			};
 
 			uniform sampler2D _Scene;
-//			uniform sampler2D _CameraDepthNormalsTexture;
-			uniform sampler2D _CameraDepthTexture;
+			uniform sampler2D _CameraDepthNormalsTexture;
+			//uniform sampler2D _CameraDepthTexture;
 			uniform sampler2D _Grid;
 
 			v2f vert (appdata v)
@@ -61,8 +61,8 @@
 				float linearDepth;
 				float3 viewNormal;
 
-				linearDepth = Linear01Depth(tex2D(_CameraDepthTexture, i.uv));
-//				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
+				//linearDepth = Linear01Depth(tex2D(_CameraDepthTexture, i.uv));
+				DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.uv), linearDepth, viewNormal);
 
 				// fragments world position
 				float3 worldPos = worldPosition (linearDepth, i.ray);
@@ -87,9 +87,9 @@
 				// CAUSTICS COLOR
 				half4 caustics = Caustics(worldPos);
 				float cDiff = causticsDepthBlend(worldPos);
-//				float cMask = causticsMask(viewNormal, float3(0,1,0));
+				float cMask = causticsMask(viewNormal, float3(0,1,0));
 				caustics *= cDiff;
-//				caustics *= cMask;
+				caustics *= cMask;
 				if(linearDepth > 0.9)
 					caustics = 0;
 

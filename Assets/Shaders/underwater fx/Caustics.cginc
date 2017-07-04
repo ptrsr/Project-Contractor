@@ -31,7 +31,7 @@ half4 Caustics (float3 worldPos) {
 
 float causticsDepthBlend (float3 worldPos) {
 	float fragDepth = worldPos.y;
-	float depthBlend = 1 - ((fragDepth - surface) / (causticsDepth - surface));
+	float depthBlend = 1;
 	if(fragDepth < causticsDepth)
 		depthBlend = 0;
 	if(fragDepth > surface)
