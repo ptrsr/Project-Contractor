@@ -187,9 +187,11 @@ public class SubMovement : MonoBehaviour {
             if(_manager != null)
             {
                 _manager.StartEndPlacement(this);
+                
             }
         }
-       
+        
+
     }
     private void OnCollisionEnter(Collision other)
     {

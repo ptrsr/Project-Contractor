@@ -13,6 +13,7 @@ public class HUDWin : MonoBehaviour {
     private int _highScore = 0;
     private HighScoreManager _highscoreManager;
     private TimeManager _timeManager;
+    private Arguments _museumData;
 
     private Canvas _canvas;
     private Text _text1;
@@ -35,10 +36,11 @@ public class HUDWin : MonoBehaviour {
     private bool _animateHUD = false;
 
     private float _finishedAt = 0;
+    private bool _finished = false;
     
     void Start () {
 
-
+        _museumData = FindObjectOfType<Arguments>();
         _canvas = GetComponentInParent<Canvas>();
         _highscoreManager = _canvas.GetComponentInParent<HighScoreManager>();
         _timeManager = FindObjectOfType<TimeManager>();
@@ -55,24 +57,34 @@ public class HUDWin : MonoBehaviour {
         {
             if (_totalTreasureKind1 != 0) { _totalTreasureKind1 -= 10; _highScore += 10; if (_totalTreasureKind1 <= 0) _totalTreasureKind1 = 0; }
             if (_totalTreasureKind2 != 0) { _totalTreasureKind2 -= 10; _highScore += 10; if (_totalTreasureKind2 <= 0) _totalTreasureKind2 = 0; }
-            _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
-            _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
+            _text2.text = " x " + _treasureKind1 + " \n    " + _totalTreasureKind1 + " Points";
+            _text3.text = " x " + _treasureKind2 + " \n    " + _totalTreasureKind2 + " Points";
             if (_highScore == _highScoreToAdd)
             {
-                if ((_finishedAt + 10.0f) < Time.timeSinceLevelLoad)
-                {
-                    SceneManager.LoadScene(0);
-                    Volumes.Reset();
-                    Pings.Reset();
-                    DarkZones.Reset();
-                }
-            }
-            if (_highScore > _highScoreToAdd)
-            {
+                _finished = true;
+                _animateHUD = false;
                 _highScore = _highScoreToAdd;
                 _finishedAt = Time.timeSinceLevelLoad;
             }
-            _text4.text = "Total HighScore: " + _highScore;
+            else if (_highScore > _highScoreToAdd)
+            {
+                _finished = true;
+                _animateHUD = false;
+                _highScore = _highScoreToAdd;
+                _finishedAt = Time.timeSinceLevelLoad;
+            }
+            _text4.text = _highScore.ToString();
+        }
+        if (_finished)
+        {
+            if ((_finishedAt + 5.0f) < Time.timeSinceLevelLoad)
+            {
+                _museumData.UploadScore(_highScore);
+                Volumes.Reset();
+                Pings.Reset();
+                DarkZones.Reset();
+                _finished = false;
+            }
         }
        
     }
@@ -94,11 +106,11 @@ public class HUDWin : MonoBehaviour {
         _totalTreasureKind2 = _scoreTreasure3 + _scoreTreasure4;
         _highScore = timeBonus;
         _highScoreToAdd = _totalTreasureKind1 + _totalTreasureKind2 + timeBonus;
-        _text2.text = " x " + _treasureKind1 + "   :" + _totalTreasureKind1 + " Points";
-        _text3.text = " x " + _treasureKind2 + "   :" + _totalTreasureKind2 + " Points";
+        _text2.text = " x " + _treasureKind1 + " \n   " + _totalTreasureKind1 + " Points";
+        _text3.text = " x " + _treasureKind2 + " \n   " + _totalTreasureKind2 + " Points";
 
         _highscoreManager.SetHighScore = _highScoreToAdd;
-        _text4.text = "Total HighScore: " + _highScore;
+        _text4.text = _highScore.ToString();
         _animateHUD = true;
     }
 }

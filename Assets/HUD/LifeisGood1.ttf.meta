@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 471f0b0e7838a684f96debf994e7d736
+timeCreated: 1499162898
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Life is Good
+  fontNames:
+  - Life is Good
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

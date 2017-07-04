@@ -74,9 +74,14 @@ public class Oxygen : MonoBehaviour {
         }
         else if (_oxygen <= 0)
         {
-            Octopus octo = _sub.GetComponentInChildren<Octopus>();
-            if (octo != null)
-                octo.SetState<OctopusLatchOffPlayer>();
+            Octopus[] octo = _sub.GetComponentsInChildren<Octopus>();
+            if (octo.Length > 0)
+            {
+                foreach (Octopus oc in octo)
+                {
+                    oc.SetState<OctopusLatchOffPlayer>();
+                }
+            }
 
             if (_timeManager.DisabledOxygen)
             {
