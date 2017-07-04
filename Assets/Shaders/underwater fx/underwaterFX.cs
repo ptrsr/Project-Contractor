@@ -9,7 +9,8 @@ public class Sonar
 {
     public Color
         highlightColor,
-        outlineColor;
+        outlineColor,
+        gridColor;
 
     public float
         interval = 2,
@@ -18,7 +19,8 @@ public class Sonar
         highlightWidth = 1,
         distance = 100,
         speed = 50,
-        start = 5;
+        start = 5,
+        gridWidth;
 
 	public bool enabled = true;
 }
@@ -141,10 +143,12 @@ public class underwaterFX : MonoBehaviour {
         // sonar
         _mat.SetColor("_outlineColor", _sonar.outlineColor);
         _mat.SetColor("_highlightColor", _sonar.highlightColor);
+        _mat.SetColor("_gridColor", _sonar.gridColor);
 
         _mat.SetFloat ("_fade", _sonar.fade);
 		_mat.SetFloat ("_highlightWidth", _sonar.highlightWidth);
         _mat.SetFloat("_outlineWidth", _sonar.outlineWidth);
+        _mat.SetFloat("_gridWidth", 1 / _sonar.gridWidth);
         _mat.SetFloat ("_start", _sonar.start);
 
 		// fog
@@ -215,6 +219,7 @@ public class underwaterFX : MonoBehaviour {
 
         _mat.SetFloatArray ("_pulseDistances", distances);
 		_mat.SetVectorArray ("_pulseOrigins", origins);
+        _mat.SetVector("_playerPos", _player.transform.position);
 	}
 
 	[ImageEffectOpaque]

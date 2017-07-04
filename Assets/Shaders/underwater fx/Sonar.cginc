@@ -3,14 +3,17 @@
 
 // SONAR DATA
 uniform float4 _pulseOrigins[10];
+uniform float4 _playerPos;
 uniform float _pulseDistances[10];
 uniform float _outlineWidth;
 uniform float _highlightWidth;
+uniform float _gridWidth;
 uniform float _fade;
 uniform float _start;
 
 uniform float4 _outlineColor;
 uniform float4 _highlightColor;
+uniform float4 _gridColor;
 
 // PING DATA
 uniform float _pingDistances[10];
@@ -21,7 +24,7 @@ uniform float4 _sonarOrigins[10];
 
 half4 pulseHighlight (float3 pos) 
 {
-	half4 color = half4(0,0,0,0);
+	half4 color = 0;
 
 	for(int i = 0; i < 10; i++) 
 	{
@@ -30,31 +33,23 @@ half4 pulseHighlight (float3 pos)
 		if (pulseDist == -1.0)
 			break;
 
+		if (distance(pos, _playerPos) < _start)
+			continue;
+
 		float fragDist = distance(pos, _pulseOrigins[i]);
+		float diff = 0;
+
 		if (fragDist < pulseDist && fragDist > pulseDist - _fade)
-		{
-			float diff = 1 - (pulseDist - fragDist) / (_fade);
+			diff = max(0, 1 - (pulseDist - fragDist) / _fade);
 
-			color = _highlightColor;
-			color *= diff;
-		}
-		if (fragDist < _start)
-			color *= 0;
+		if (abs(pos.z) < _outlineWidth)
+			return _highlightColor * diff;
+
+		if (abs(pos.z) % 2.5f < 0.15f || abs(pos.y) % 2.5f < 0.15f || abs(pos.x) % 2.5f < 0.15f)
+			return _gridColor * max(0, (1 - abs(pos.z * _gridWidth)) * diff);
 	}
-	// masking pulse highlight
-	float depthMask = 0;
 
-	if (
-		pos.z > -_outlineWidth / 2 && pos.z < _outlineWidth / 2 ||
-		abs(pos.z) % 2.5f < 0.15f || abs(pos.y) % 2.5f < 0.15f || abs(pos.x) % 2.5f < 0.15f
-		)
-		depthMask = 1;
-
-	depthMask *= max(0, 1 - abs(pos.z) * 0.2f);
-
-	color *= depthMask;
-	// return pulse
-	return color;
+	return 0;
 }
 
 half4 pulseOutline (float3 pos) 
