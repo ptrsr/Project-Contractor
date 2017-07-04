@@ -44,12 +44,14 @@ half4 pulseHighlight (float3 pos)
 	// masking pulse highlight
 	float depthMask = 0;
 
-	float _fadeDiff = (_outlineWidth /2) / abs(pos.z);
-
-	if (pos.z > -_outlineWidth / 2 && pos.z < _outlineWidth / 2)
+	if (
+		pos.z > -_outlineWidth / 2 && pos.z < _outlineWidth / 2 ||
+		abs(pos.z) % 2.5f < 0.15f || abs(pos.y) % 2.5f < 0.15f || abs(pos.x) % 2.5f < 0.15f
+		)
 		depthMask = 1;
 
-//	color *= _fadeDiff;
+	depthMask *= max(0, 1 - abs(pos.z) * 0.2f);
+
 	color *= depthMask;
 	// return pulse
 	return color;
