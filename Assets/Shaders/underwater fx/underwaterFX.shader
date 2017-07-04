@@ -100,8 +100,7 @@
 
 
 				//final output blending
-//				scene += caustics;
-//				scene += paul;
+				scene += caustics;
 				scene = lerp(scene, fog, fogDiff);
 				scene += outlineColor + highlightColor;
 				scene += pingColor;

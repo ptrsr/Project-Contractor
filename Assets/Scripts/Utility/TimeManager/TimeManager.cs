@@ -9,7 +9,7 @@ public class TimeManager : MonoBehaviour {
     private int _delayBeforeExit = 30;
     private float _lastInput = 0;
 
-    private int _timeFromMuseum = 360;
+    private int _timeFromMuseum = 3600000;
 
     public int TimeFromMuseum { set { _timeFromMuseum = value; } get { return _timeFromMuseum; } }
 

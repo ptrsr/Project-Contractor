@@ -65,10 +65,7 @@ public class HighScoreManager : MonoBehaviour {
     private void FixedUpdate()
     {
         
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            SceneManager.LoadScene(0);
-        }
+        
         if (Input.GetKeyDown(KeyCode.W))
         {
             ShowEndHUD(true);
@@ -133,16 +130,7 @@ public class HighScoreManager : MonoBehaviour {
             if(_done1 && _done2 && _done3 && _done4)
             {
                 _update = false;
-                _finished = true;
-                _finishedAt = Time.timeSinceLevelLoad;
                 ShowEndHUD(true);
-            }
-        }
-        if (_finished)
-        {
-            if((_finishedAt + 10.0f) < Time.timeSinceLevelLoad)
-            {
-                SceneManager.LoadScene(0);
             }
         }
     }
